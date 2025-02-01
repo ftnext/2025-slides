@@ -1,0 +1,24 @@
+name: Publish on GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Build slide
+        run: |
+          make slide
+          rm -r build/revealjs/_sources
+      - name: Publish on GitHub Pages
+        uses: ftnext/action-push-ghpages@v1.0.0
+        with:
+          build_dir: build/revealjs
+          github_token: ${{ secrets.GITHUB_TOKEN }}
