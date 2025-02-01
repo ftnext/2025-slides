@@ -1,0 +1,13 @@
+{% extends "sphinx_revealjs/page.html" %}
+
+{% block extrahead %}
+    {{ super() }}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/{{ meta.ogp_event_name }}/{{ meta.ogp_slide_name }}.html">
+    <meta property="og:title" content="{{ meta.ogp_title }}">
+    <meta property="og:description" content="{{ meta.ogp_description }}">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/{{ meta.ogp_image_name }}.png">
+{% endblock extrahead %}
