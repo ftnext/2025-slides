@@ -1,0 +1,288 @@
+.. _logging.getLogger(...): https://docs.python.org/ja/3/library/logging.html#logging.getLogger
+.. _基本 logging チュートリアル: https://docs.python.org/ja/3/howto/logging.html#basic-logging-tutoriala
+.. _上級ロギングチュートリアル: https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial
+.. _ハンドラ（上級ロギングチュートリアル）: https://docs.python.org/ja/3/howto/logging.html#handlers
+
+1️⃣ライブラリ開発におけるロギングの実装
+======================================================================
+
+あなたが作るライブラリにロギングをどう仕込むか
+
+`ライブラリのためのロギングの設定`_ 📄の2点
+--------------------------------------------------
+
+1. ``logging.getLogger(...)`` （ロガー）
+2. ``logger.addHandler(...)`` （ハンドラ）
+
+.. code-block:: python
+
+    logging.getLogger("mylib").addHandler(logging.NullHandler())
+
+先行発表：loggingの構成要素（:icon-link:`🎥 <https://youtu.be/ahaslerbm_g?si=uymzSa4NdoeyqRcU>`）
+--------------------------------------------------------------------------------------------------------------
+
+.. https://2021.pycon.jp/time-table/?id=272259
+
+.. raw:: html
+
+    <iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/645f81e8b8144b1ba894a9bf5e78263e?slide=16" title="Loggingモジュールではじめるログ出力入門 / Introduction to Python Logging" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+1️⃣-1️⃣ `logging.getLogger(...)`_ 📄
+======================================================================
+
+    Return a logger with the specified name (略)
+
+「指定された名前のロガーを返す」
+
+ロガー
+--------------------------------------------------
+
+    ロガーは、アプリケーションコードが直接使うインターフェースを公開します。
+
+`上級ロギングチュートリアル`_ 📄
+
+.. https://docs.python.org/ja/3/library/logging.html の冒頭にもある
+
+ロギングのための **インターフェース**
+--------------------------------------------------
+
+    You can access logging functionality by creating a logger via ``logger = getLogger(__name__)``, and then calling the logger's ``debug()``, ``info()``, ``warning()``, ``error()`` and ``critical()`` methods.
+
+「基本 logging チュートリアル」📄の「`logging を使うとき <https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging>`__」
+
+開発者は **ロガーを操作** すればOK
+--------------------------------------------------
+
+* ``getLogger(...)`` でロガーインスタンスを得る
+* ロガーインスタンスのメソッドを呼び出してロギング
+
+.. code-block:: python
+
+    logger.warning("ちょっとヤバいよ")
+    logger.error("ヤバイよ。マジヤバイよ")
+
+そもそも、なぜロギングする？
+======================================================================
+
+.. https://nikkie-ftnext.hatenablog.com/entry/python-exception-with-repr-recommendation#PS-logging%E3%81%AE%E5%A0%B4%E5%90%88%E3%82%82repr%E3%81%AE%E8%BF%94%E3%82%8A%E5%80%A4%E3%82%92s%E3%81%B8%E6%B8%A1%E3%81%9D%E3%81%86
+
+.. code-block:: python
+    :caption: ロギングのイメージ
+
+    try:
+        大事な処理()
+    except Exception as ex:
+        logger.warning("Raised %s", repr(ex))
+
+開発者は **イベントの発生を記録** する
+--------------------------------------------------
+
+    ソフトウェアの開発者は、特定のイベントが発生したことを示す logging の呼び出しをコードに加えます。
+
+`基本 logging チュートリアル`_ 📄
+
+イベントには **レベル（重要性）** も含む
+--------------------------------------------------
+
+    イベントには、開発者がそのイベントに定めた重要性も含まれます。重要性は、レベル (level) や 重大度 (severity) とも呼ばれます。
+
+`基本 logging チュートリアル`_ 📄
+
+ロギングレベル 5つ
+--------------------------------------------------
+
+* ``DEBUG``
+* ``INFO``
+* ``WARNING``
+* ``ERROR``
+* ``CRITICAL``
+
+`logging を使うとき <https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging>`__ 📄（基本 logging チュートリアル）
+
+ロガーもレベルを持つ
+--------------------------------------------------
+
+* ロガーはメソッドを持っていた（＝ロギングのインターフェース）
+* ログが記録されるのは、 **ロガーの持つレベル以上** の重要性のイベント
+
+    level よりも深刻でないログメッセージは無視されます（`Logger.setLevel`_ 📄）
+
+例：ログが記録される場合
+--------------------------------------------------
+
+``WARNING`` レベルのロガー ``logger`` は
+
+* ``logger.warning()`` は記録する
+* ``logger.info()`` は記録しない
+
+.. ロガーのレベルはアプリケーション開発者が設定できる（カスタマイズ）
+
+.. イベントは記録される場合、ログレコードを経由する
+
+ログレコード 🏃‍♂️
+--------------------------------------------------
+
+    LogRecord インスタンスは、何かをログ記録するたびに Logger によって生成されます。
+
+`LogRecord オブジェクト <https://docs.python.org/ja/3/library/logging.html#logrecord-objects>`__ 📄
+
+.. ロガーのインターフェースに渡されるログメッセージは、ログレコードとなって処理される
+
+ロガーの名前について
+======================================================================
+
+``getLogger`` に渡す引数の話
+
+ドット（ピリオド）区切り
+--------------------------------------------------
+
+    ロガー名は、何でも望むものにでき、ロギングされたメッセージが発生した場所を指し示します。（`上級ロギングチュートリアル`_ 📄）
+
+.. code-block:: python
+
+    logging.getLogger("spam")
+    logging.getLogger("spam.ham")
+
+ロガーの親子関係
+--------------------------------------------------
+
+.. code-block:: python
+
+    logger = logging.getLogger("spam.ham")
+
+* ``spam.ham`` ロガーの **親** にあたるのが ``spam`` ロガー
+* すべてのロガーの親 *ルートロガー* （``logging.getLogger()``）
+
+.. revealjs-break::
+
+.. image:: ../_static/pyconshizu/logger-ancestors.drawio.png
+    :scale: 120%
+
+``logging.getLogger(__name__)`` 🏃‍♂️
+--------------------------------------------------
+
+* ``__name__`` はモジュールの名前（`3.2.9. モジュール <https://docs.python.org/ja/3/reference/datamodel.html#modules>`__ 📄）
+* このコードで **モジュールレベルのロガー** インスタンスを得た
+
+    ロガー名だけで、どこでイベントのログが取られたか、直感的に明らかになります。（`上級ロギングチュートリアル`_ 📄）
+
+.. `logging.getLogger(...)`_ のドキュメントでオススメされている（後述の親子関係とも関連）
+
+.. https://docs.python.org/ja/3/library/logging.html の冒頭「creating a module level logger with getLogger(__name__)」
+
+同名のロガー 🏃‍♂️
+--------------------------------------------------
+
+    与えられた名前に対して、この関数はどの呼び出しでも同じロガーインスタンスを返します。 (`logging.getLogger(...)`_ 📄)
+
+シングルトンなので都度 ``getLogger`` ！（`避けるべきパターン <https://docs.python.org/ja/3/howto/logging-cookbook.html#using-loggers-as-attributes-in-a-class-or-passing-them-as-parameters>`__ 📄も参照）
+
+.. code-block:: pycon
+
+    >>> logging.getLogger("mylib") is logging.getLogger("mylib")
+    True
+
+ロガー まとめ🥟 ここまでで **ロギングできます**
+======================================================================
+
+.. literalinclude:: ../../samplecode/python-logging/last_resort_example.py
+    :language: python
+
+.. code-block:: txt
+
+    ちょっとヤバいよ
+
+1️⃣-2️⃣ ``logger.addHandler(...)``
+======================================================================
+
+    ハンドラは、(ロガーによって生成された) ログ記録を適切な送信先に送ります。（`上級ロギングチュートリアル`_ 📄）
+
+.. loggerがログレコード（ここでいうログ記録）を作ってハンドラへ（先行発表より）
+
+ロガーはハンドラを持つ
+--------------------------------------------------
+
+* 1つのロガーが **0個以上のハンドラを持つ**
+* ハンドラはログレコードを出力先に振り分ける
+
+`ハンドラ（上級ロギングチュートリアル）`_ 📄
+
+ログメッセージの流れ 🏃‍♂️
+--------------------------------------------------
+
+.. code-block:: python
+
+    logger.warning("<ログメッセージ>")
+
+* 開発者はロガーのメソッドを呼び出してイベントを記録
+* ロガーの持つレベル以上の呼び出しのとき、ロガーは **ログレコード** を作成
+* ロガーはハンドラにログレコードを渡し、ハンドラがログを出力
+
+ログの出力先に応じたハンドラ
+--------------------------------------------------
+
+* ストリーム `StreamHandler <https://docs.python.org/ja/3/library/logging.handlers.html#logging.StreamHandler>`__
+* ファイル `FileHandler <https://docs.python.org/ja/3/library/logging.handlers.html#logging.FileHandler>`__
+* まだまだあります：`便利なハンドラ <https://docs.python.org/ja/3/howto/logging.html#useful-handlers>`__ 📄（ログファイルのローテーションなど）
+
+先のコードはなぜロギングできたか
+======================================================================
+
+.. literalinclude:: ../../samplecode/python-logging/last_resort_example.py
+    :language: python
+
+ハンドラを指定しないとき
+--------------------------------------------------
+
+    イベントは、 lastResort に格納された「最終手段ハンドラ」を使用して出力されます。
+
+`環境設定が与えられないとどうなるか <https://docs.python.org/ja/3/howto/logging.html#what-happens-if-no-configuration-is-provided>`__ 📄
+
+**最終手段ハンドラ** によるログ出力
+--------------------------------------------------
+
+.. code-block:: txt
+
+    ちょっとヤバいよ
+
+* warning以上のログメッセージが、標準エラー出力に表示される
+* フォーマットはなし
+
+常に最終手段ハンドラを使わなきゃいけない？
+--------------------------------------------------
+
+    何らかの理由でロギング設定がなされていないときにメッセージを表示 させたくない のであれば、ライブラリのトップレベルのロガーに何もしないハンドラを取り付けられます。
+
+`ライブラリのためのロギングの設定`_ 📄
+
+``NullHandler``
+======================================================================
+
+* **何もしない** ハンドラ
+
+https://docs.python.org/ja/3/library/logging.handlers.html#logging.NullHandler
+
+最終手段ハンドラの出番にはしたくない
+--------------------------------------------------
+
+* ライブラリのロガーになにかハンドラを持たせよう
+* **何もしないハンドラ** （``NullHandler``）の出番！
+
+`ライブラリのためのロギングの設定`_ 📄
+
+最終手段ハンドラの出番はなく、ログ出力はない
+--------------------------------------------------
+
+.. literalinclude:: ../../samplecode/python-logging/conclusion.py
+    :language: python
+    :lines: 1-5,7
+
+まとめ🥟 ライブラリ開発におけるロギングの実装
+======================================================================
+
+.. code-block:: python
+
+    logging.getLogger("mylib").addHandler(logging.NullHandler())
+
+* あなたのライブラリ用のロガーインスタンスを得よう
+* 最終手段ハンドラを望まない場合、 ``NullHandler`` を持たせよう

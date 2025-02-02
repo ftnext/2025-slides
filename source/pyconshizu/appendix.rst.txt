@@ -1,0 +1,81 @@
+Appendix
+======================================================================
+
+ハンドラのロギングレベル
+======================================================================
+
+* 結論のコード、``NullHandler`` のレベルは NOTSET
+
+    ハンドラが生成された際、レベルは NOTSET (すべてのメッセージが処理される) に設定されます。
+
+`Handler.setLevel <https://docs.python.org/ja/3/library/logging.html#logging.Handler.setLevel>`__ 📄
+
+フィルタ
+======================================================================
+
+* ロガーやハンドラに取り付けられる
+
+https://docs.python.org/ja/3/library/logging.html#filter
+
+フィルタは何をするのか
+--------------------------------------------------
+
+    (略) name はロガーの名前を表します。指定されたロガーとその子ロガーのイベントがフィルタを通過できるようになります。(`logging.Filter() <https://docs.python.org/ja/3/library/logging.html#logging.Filter>`__ 📄)
+
+ロガーの階層構造が関係
+
+例： ``logging.Filter("A.B")``
+--------------------------------------------------
+
+    例えば、'A.B' で初期化されたフィルタは、ロガー 'A.B', 'A.B.C', 'A.B.C.D', 'A.B.D' 等によって記録されたイベントは許可しますが、'A.BB', 'B.A.B' などは許可しません。
+
+`フィルタオブジェクト <https://docs.python.org/ja/3/library/logging.html#filter>`__ 📄
+
+環境設定（このトークではスコープアウト）
+======================================================================
+
+* `logging.config <https://docs.python.org/ja/3/library/logging.config.html>`__ 📄
+* ``dictConfig`` や ``fileConfig``
+* 最初に読むなら『`Python実践レシピ <https://gihyo.jp/book/2022/978-4-297-12576-9>`__』17.4
+
+これまでのlogging関連アウトプット
+======================================================================
+
+2023年3月みんなのPython勉強会（資料公開のみ）
+--------------------------------------------------
+
+.. raw:: html
+
+    <iframe width="800" height="480" src="https://ftnext.github.io/2023-slides/stapy-march/logging-introduction.html"
+        title="Pythonのlogging入門"></iframe>
+
+拙ブログより、logging関連エントリ 1/4
+--------------------------------------------------
+
+* `Pythonのloggingを よ う や く 完全に理解しました 〜revChatGPTでdebugレベルログを出そうとした試行錯誤を題材に〜 <https://nikkie-ftnext.hatenablog.com/entry/python-logging-root-logger-and-chain-propagation>`__
+* `Pythonのloggingモジュールのドキュメントの「もっとも単純な例」を説明する 〜logging.warningの裏側で起こっていること〜 <https://nikkie-ftnext.hatenablog.com/entry/python-logging-the-simplest-example-under-the-hood>`__
+
+拙ブログより、logging関連エントリ 2/4
+--------------------------------------------------
+
+* `Pythonのloggingモジュールで、ロガーのフィルタと、ロガーのハンドラのフィルタとで、伝播されたログに対する挙動が違うことにハマりました <https://nikkie-ftnext.hatenablog.com/entry/python-logging-filter-with-propagation-too-difficult>`__
+* `Pythonのloggingモジュールのチュートリアルの中のフローチャートを、理解を深めるために写経する <https://nikkie-ftnext.hatenablog.com/entry/python-logging-handwriting-logging-flow>`__
+
+拙ブログより、logging関連エントリ 3/4
+--------------------------------------------------
+
+* `Pythonで標準ライブラリloggingを使って自作ライブラリの中でロギングしたい未来の私へ <https://nikkie-ftnext.hatenablog.com/entry/python-logging-developing-library-take-advantage-nullhandler-and-propagate>`__
+* `Pythonのloggingモジュールのドキュメント、実は小さく改善しています！👏 ようこそgetLogger() <https://nikkie-ftnext.hatenablog.com/entry/python-logging-docs-improvement-bye-logging-functions-welcome-getlogger>`__
+
+拙ブログより、logging関連エントリ 4/4
+--------------------------------------------------
+
+* `Pythonでライブラリのロガーを使ったロギングをLogging Flowに沿って、かつフィルタやハンドラの設定にも注意を払って説明する <https://nikkie-ftnext.hatenablog.com/entry/python-logging-flow-detailed-logger-level-filter-handler>`__
+
+お前、誰よ（詳細版）
+======================================================================
+
+* :fab:`twitter` `@ftnext <https://twitter.com/ftnext>`__ ／ 登壇 `2024 <https://github.com/ftnext/2024-slides>`__ `2023 <https://github.com/ftnext/2023-slides>`__
+* PyCon JP 2021 座長
+* 毎月の `みんなのPython勉強会 <https://startpython.connpass.com/>`__ スタッフ
+* 代表作：Sphinx拡張 `sphinx-new-tab-link <https://github.com/ftnext/sphinx-new-tab-link>`__
