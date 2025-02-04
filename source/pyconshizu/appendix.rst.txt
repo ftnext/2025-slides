@@ -38,6 +38,21 @@ https://docs.python.org/ja/3/library/logging.html#filter
 * ``dictConfig`` や ``fileConfig``
 * 最初に読むなら『`Python実践レシピ <https://gihyo.jp/book/2022/978-4-297-12576-9>`__』17.4
 
+標準ライブラリ logging 以外の選択肢
+======================================================================
+
+* `vinta/awesome-pythonのLogging <https://github.com/vinta/awesome-python?tab=readme-ov-file#logging>`__
+* 標準ライブラリ logging
+* loguru
+* logbook
+
+loguru
+--------------------------------------------------
+
+* https://github.com/Delgan/loguru
+* 「*Python logging made (stupidly) simple*」と謳う
+* IMO：simpleというより **easy** 。未検証だがアプリケーション向けのような
+
 これまでのlogging関連アウトプット
 ======================================================================
 
