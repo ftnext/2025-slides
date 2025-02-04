@@ -21,9 +21,9 @@
 お前、誰よ
 ======================================================================
 
-* nikkie ／ :fab:`github` `@ftnext <https://github.com/ftnext>`__ ／ `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ 連続 **650** 日突破
+* nikkie ／ :fab:`github` `@ftnext <https://github.com/ftnext>`__ ／ `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ 連続 **810** 日突破
 * 機械学習エンジニア・自然言語処理（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
-* Python歴は6年。PyConで登壇多数
+* Python歴は7年。PyConで登壇多数
 
 .. image:: ../_static/uzabase-white-logo.png
 
@@ -70,7 +70,7 @@
 
 斜体はこのトークで解説します
 
-これらはオススメしません（ぶっぶー🙅‍♂️） 🏃‍♂️
+ライブラリではオススメしません（ぶっぶー🙅‍♂️） 🏃‍♂️
 --------------------------------------------------
 
 .. code-block:: python
@@ -82,11 +82,10 @@
     logging.warning()
 
 .. code-block:: python
+    :emphasize-lines: 2
 
     logger = logging.getLogger("mylib")
     logger.addHandler(logging.StreamHandler())
-
-``import`` して使いたいコードでの話です
 
 Logging クックブックの「避けるべきパターン」の1つ
 ======================================================================
