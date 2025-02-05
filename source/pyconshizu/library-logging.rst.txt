@@ -8,6 +8,17 @@
 
 あなたが作るライブラリにロギングをどう仕込むか
 
+このパートで扱うloggingモジュール
+--------------------------------------------------
+
+* **ロガー**
+
+  * レベル
+  * ログレコード
+
+* **ハンドラ**
+* *フォーマッタ*
+
 `ライブラリのためのロギングの設定`_ 📄の2点
 --------------------------------------------------
 
@@ -16,16 +27,7 @@
 
 .. code-block:: python
 
-    logging.getLogger("mylib").addHandler(logging.NullHandler())
-
-先行発表：loggingの構成要素（:icon-link:`🎥 <https://youtu.be/ahaslerbm_g?si=uymzSa4NdoeyqRcU>`）
---------------------------------------------------------------------------------------------------------------
-
-.. https://2021.pycon.jp/time-table/?id=272259
-
-.. raw:: html
-
-    <iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/645f81e8b8144b1ba894a9bf5e78263e?slide=16" title="Loggingモジュールではじめるログ出力入門 / Introduction to Python Logging" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+    logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 1️⃣-1️⃣ `logging.getLogger(...)`_ 📄
 ======================================================================
@@ -58,7 +60,7 @@
 
 .. code-block:: python
 
-    logger.warning("ちょっとヤバいよ")
+    logger.warning("ちょっとヤバいよ")  # 再掲：説明のための例です
     logger.error("ヤバイよ。マジヤバイよ")
 
 そもそも、なぜロギングする？
@@ -102,7 +104,7 @@
 ロガーもレベルを持つ
 --------------------------------------------------
 
-* ロガーはメソッドを持っていた（＝ロギングのインターフェース）
+* ロガーはレベルを冠したメソッドを持っていた（＝ロギングのインターフェース）
 * ログが記録されるのは、 **ロガーの持つレベル以上** の重要性のイベント
 
     level よりも深刻でないログメッセージは無視されます（`Logger.setLevel`_ 📄）
@@ -126,7 +128,7 @@
 
 `LogRecord オブジェクト <https://docs.python.org/ja/3/library/logging.html#logrecord-objects>`__ 📄
 
-.. ロガーのインターフェースに渡されるログメッセージは、ログレコードとなって処理される
+ロガーに渡されるログメッセージ（文字列）は、 **ログレコードとなって処理される**
 
 ロガーの名前について
 ======================================================================
@@ -196,6 +198,8 @@
 ======================================================================
 
     ハンドラは、(ロガーによって生成された) ログ記録を適切な送信先に送ります。（`上級ロギングチュートリアル`_ 📄）
+
+ログ記録＝ログレコード（原語 *log records*）
 
 .. loggerがログレコード（ここでいうログ記録）を作ってハンドラへ（先行発表より）
 
@@ -282,7 +286,7 @@ https://docs.python.org/ja/3/library/logging.handlers.html#logging.NullHandler
 
 .. code-block:: python
 
-    logging.getLogger("mylib").addHandler(logging.NullHandler())
+    logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 * あなたのライブラリ用のロガーインスタンスを得よう
 * 最終手段ハンドラを望まない場合、 ``NullHandler`` を持たせよう

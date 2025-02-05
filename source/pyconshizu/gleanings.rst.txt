@@ -13,17 +13,19 @@
 --------------------------------------------------
 
 .. code-block:: python
+    :caption: ライブラリ
     :emphasize-lines: 4
 
     import logging
 
-    logger = logging.getLogger("mylib")
+    logger = logging.getLogger(__name__)
     logger.addHandler(logging.StreamHandler())
 
 2重出力😱
 --------------------------------------------------
 
 .. code-block:: python
+    :caption: アプリケーション
 
     logging.basicConfig(
         level=logging.DEBUG,
@@ -56,6 +58,7 @@
 --------------------------------------------------
 
 .. code-block:: python
+    :caption: ライブラリ
 
     import logging
 
@@ -91,14 +94,13 @@
 
 `Logging Flow`_ 📄を読み解く
 
-Pythonのloggingの構成要素
+loggingモジュールの構成要素
 --------------------------------------------------
 
 * ロガー
-* ロギングレベル
 * ハンドラ
 * フォーマッタ
-* **フィルタ** （👉 *Appendix*）
+* フィルタ（👉 *Appendix*）
 
 ロガーを構成する要素
 --------------------------------------------------
@@ -133,3 +135,5 @@ Pythonのloggingの構成要素
 * ライブラリのロガーのレベル以上の呼び出し
 * そのロガーのハンドラがログレコードを処理
 * ライブラリのロガーの親のハンドラにもログレコードが渡る（親のレベルは見ない）
+
+.. TODO 図示の余地あり？

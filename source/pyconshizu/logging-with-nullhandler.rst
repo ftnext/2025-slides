@@ -18,6 +18,8 @@
 :Event: PyCon mini Shizuoka 2024 continue
 :Presented: 2025/02/08 nikkie
 
+.. TODO 振替開催、ありがとうございます
+
 お前、誰よ
 ======================================================================
 
@@ -37,7 +39,7 @@
 本トークの対象者
 --------------------------------------------------
 
-* Pythonのloggingモジュール **触ったことがある**
+* Python標準ライブラリのloggingモジュールを **触ったことがある**
 * loggingモジュールの中身はよく分からなくて全然OK👌
 
 皆さんに質問です
@@ -70,8 +72,8 @@
 
 斜体はこのトークで解説します
 
-ライブラリではオススメしません（ぶっぶー🙅‍♂️） 🏃‍♂️
---------------------------------------------------
+ライブラリではオススメしません（ぶっぶー🙅‍♂️）🏃‍♂️
+------------------------------------------------------------
 
 .. code-block:: python
 
@@ -84,7 +86,7 @@
 .. code-block:: python
     :emphasize-lines: 2
 
-    logger = logging.getLogger("mylib")
+    logger = logging.getLogger(__name__)
     logger.addHandler(logging.StreamHandler())
 
 Logging クックブックの「避けるべきパターン」の1つ
@@ -100,6 +102,26 @@ Logging クックブックの「避けるべきパターン」の1つ
 1. ライブラリ開発者へ
 2. アプリケーション開発者へ
 3. 落ち穂拾い
+
+本トークで扱うloggingモジュール
+--------------------------------------------------
+
+* *ロガー*
+* *ハンドラ*
+* *フォーマッタ*
+* フィルタ（Appendixのみ）
+
+先行発表：loggingの構成要素（:icon-link:`🎥 <https://youtu.be/ahaslerbm_g?si=uymzSa4NdoeyqRcU>`）🏃‍♂️
+--------------------------------------------------------------------------------------------------------------
+
+.. https://2021.pycon.jp/time-table/?id=272259
+
+.. raw:: html
+
+    <iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/645f81e8b8144b1ba894a9bf5e78263e?slide=16" title="Loggingモジュールではじめるログ出力入門 / Introduction to Python Logging" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+.. TODO 🏃‍♂️ loggingモジュールを使った実装だけが焦点。ログの内容は説明のためのもので不適切
+    ロギングの使い方（プラクティス） https://speakerdeck.com/irof/yi-li-turokuniqu-rizu-mou
 
 .. include:: library-logging.rst.txt
 
