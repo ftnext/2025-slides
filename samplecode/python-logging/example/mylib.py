@@ -1,6 +1,6 @@
 import logging
 
-logger = logging.getLogger("mylib")
+logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
 
