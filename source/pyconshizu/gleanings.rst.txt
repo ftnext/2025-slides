@@ -21,6 +21,8 @@
     logger = logging.getLogger(__name__)
     logger.addHandler(logging.StreamHandler())
 
+.. https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/libs/antipattern-logging/src/antipattern_logging/add_non_nullhandler.py
+
 2重出力😱
 --------------------------------------------------
 
@@ -37,17 +39,20 @@
     想定通り
     2024-08-31 14:16:34,968 | INFO | antipattern_logging.add_non_nullhandler:awesome:8 - 想定通り
 
+.. https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/tragedies/non_nullhandler_twice_log.py
+
 2重出力の裏にpropagate
 --------------------------------------------------
 
-* ``mylib`` ロガーのロギングレベル以上のメソッドが呼ばれた
-* ``mylib`` ロガーのハンドラ（``StreamHandler``）が処理して出力
+* ライブラリロガーのロギングレベル以上のメソッドが呼ばれた
+* ライブラリロガーのハンドラ（``StreamHandler``）が処理して出力
 * 親のルートロガーに伝播し、 **ルートロガーのハンドラでも処理** して出力
 
 `ライブラリのためのロギングの設定`_ の注釈📄
 --------------------------------------------------
 
-    ライブラリのロガーには、 NullHandler 以外のハンドラを追加しない ことを強く推奨します。これは、ハンドラの設定が、あなたのライブラリを使うアプリケーション開発者にも伝播するからです。
+    | ライブラリのロガーには、 NullHandler 以外のハンドラを追加しない ことを強く推奨します。
+    | これは、ハンドラの設定が、あなたのライブラリを使うアプリケーション開発者にも伝播するからです。
 
 もう1例：ライブラリがルートロガーを触る
 ======================================================================
@@ -66,6 +71,8 @@
         level=logging.DEBUG, format="%(levelname)s:%(name)s:%(message)s"
     )
 
+.. https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/libs/antipattern-logging/src/antipattern_logging/call_basic_config.py
+
 ``basicConfig()`` がルートロガーを設定するのは「一度だけ」
 ----------------------------------------------------------------------
 
@@ -83,7 +90,7 @@
 ``logging.warning()`` なども全部 ``basicConfig()`` を呼んでます
 ----------------------------------------------------------------------
 
-    if the root logger has no handlers, then ``basicConfig()`` is called, prior to calling debug on the root logger. (📄 `logging.debug() <https://docs.python.org/ja/3/library/logging.html#logging.debug>`__)
+    （*ルートロガーがハンドラを持たない場合は*）ルートロガーの debug メソッドを呼び出す前に basicConfig() が呼ばれます。 (📄 `logging.debug() <https://docs.python.org/ja/3/library/logging.html#logging.debug>`__)
 
 ``basicConfig()`` 同様にライブラリで使ってはいけません
 
@@ -119,7 +126,14 @@ loggingモジュールの構成要素
 なぜこんなに構成要素がある？
 --------------------------------------------------
 
-* **柔軟なロギング** を提供
+* 組合せることで **柔軟なロギング** を提供
+* IMO：まさにsimple（`simpleはeasyのことではありません <https://ftnext.github.io/2024-slides/ooc/software-lessons.html#/6/1>`__）
+
+.. Pythonに小さなパッケージングツールがたくさんあるのと同じ
+
+柔軟なロギングの例
+--------------------------------------------------
+
 * 例：ロガーに複数のハンドラを設定。ハンドラのロギングレベルを使って、レベルごとに異なる出力先へ出し分ける
 
     それぞれのハンドラで設定されるレベルは、そのハンドラがどのメッセージを転送するべきか決めます。(`ハンドラ（上級ロギングチュートリアル）`_ 📄)
@@ -127,7 +141,7 @@ loggingモジュールの構成要素
 `Logging Flow`_
 ======================================================================
 
-構成要素がどのように組み合さって動くかを示す
+構成要素がどのように組み合わさって動くかを示す
 
 一例：propagate（ただし抜粋）
 --------------------------------------------------
