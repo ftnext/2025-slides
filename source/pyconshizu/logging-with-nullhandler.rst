@@ -160,7 +160,16 @@ Logging クックブックの「避けるべきパターン」にも
 ご清聴ありがとうございました
 --------------------------------------------------
 
-Enjoy Python logging❤️
+.. code-block:: pycon
+    :caption: One more thing...
+
+    % uv run --python 3.12 --with happy-python-logging python -q
+    >>> from happy_python_logging import getLoggerForLibrary
+    >>> logger = getLoggerForLibrary("mylib")
+    >>> logger.handlers
+    [<NullHandler (NOTSET)>]
+
+Enjoy `happy-python-logging <https://pypi.org/project/happy-python-logging/>`__ ❤️
 
 .. include:: appendix.rst.txt
 
