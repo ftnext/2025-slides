@@ -150,4 +150,12 @@ loggingモジュールの構成要素
 * そのロガーのハンドラがログレコードを処理
 * ライブラリのロガーの親のハンドラにもログレコードが渡る（親のレベルは見ない）
 
-.. TODO 図示の余地あり？
+propagate 抜粋して簡易版
+--------------------------------------------------
+
+.. revealjs-section::
+   :data-background-color: white
+
+.. mermaid:: logging-propagate-flow.mmd
+
+`完全版 <https://gist.github.com/ftnext/9944017bd5c827b512a675b3ee0388f0>`__

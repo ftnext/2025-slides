@@ -1,0 +1,8 @@
+flowchart LR
+    START[ロギング<br/>呼び出し] -->|"例 logger.info(...)"| cond1{ロガーの<br/>レベル以上の<br/>呼び出しか};
+    cond1 -->|はい<br/>=有効| node1[LogRecord<br/>作成];
+    node1 --> node2[現在のロガーの<br/>ハンドラへ<br/>渡す];
+    node2 --> cond3{現在のロガーの<br/>propagate属性は<br/>Trueか};
+    cond3 -->|はい=true<br/>=伝播する| cond4{親のロガー<br/>はあるか};
+    cond4 -->|はい=親ロガー<br/>がある| node3[親ロガーを現在の<br/>ロガーとする];
+    node3 --> node2;
