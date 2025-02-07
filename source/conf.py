@@ -19,6 +19,7 @@ extensions = [
     'sphinx_design',
     'sphinx_new_tab_link',
     'sphinxcontrib.budoux',
+    "sphinxcontrib.mermaid",
     'sphinx_revealjs_copycode',
     'sphinx_revealjs_ext_codeblock',
 ]
