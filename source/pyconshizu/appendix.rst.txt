@@ -109,3 +109,18 @@ loguru
 --------------------------------------------------
 
 * `Pythonでライブラリのロガーを使ったロギングをLogging Flowに沿って、かつフィルタやハンドラの設定にも注意を払って説明する <https://nikkie-ftnext.hatenablog.com/entry/python-logging-flow-detailed-logger-level-filter-handler>`__
+
+2024年8月バージョン
+--------------------------------------------------
+
+.. raw:: html
+
+    <iframe width="800" height="480" src="https://ftnext.github.io/2024-slides/pyconshizu/logging-with-nullhandler.html#/2"
+        title="ライブラリ開発者に贈る「ロギングで NullHandler 以外はいけません」（2024/08）"></iframe>
+
+2024年8月時点での発表
+--------------------------------------------------
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/UZWE7OjIWII?si=0Xv1N2yRpXlNUGar" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
