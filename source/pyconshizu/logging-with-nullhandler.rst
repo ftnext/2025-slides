@@ -98,7 +98,7 @@ Logging クックブックの「避けるべきパターン」にも
     logger = logging.getLogger(__name__)
     logger.addHandler(logging.StreamHandler())
 
-本トークのメッセージ（Takeaway）
+本トークのメッセージ（**Takeaway**）
 ======================================================================
 
 * ライブラリ開発者は *ロガー* を用意し、 *何もしないハンドラ* を設定しよう
