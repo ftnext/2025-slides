@@ -188,6 +188,7 @@ propagate まとめ🥟 ライブラリのロギング
 .. literalinclude:: ../../samplecode/python-logging/conclusion/mylib.py
     :language: python
     :lines: 1-7,9
+    :caption: :fab:`github` `mylib.py <https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/conclusion/mylib.py>`__
 
 例：ルートロガーのロギングレベルが ``WARNING`` だと出力されない
 ----------------------------------------------------------------------
@@ -195,6 +196,7 @@ propagate まとめ🥟 ライブラリのロギング
 .. literalinclude:: ../../samplecode/python-logging/conclusion/warning_app.py
     :language: python
     :emphasize-lines: 5
+    :caption: :fab:`github` `app.py <https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/conclusion/warning_app.py>`__
 
 ``mylib`` ロガーも ``WARNING`` レベル
 
@@ -204,6 +206,7 @@ propagate まとめ🥟 ライブラリのロギング
 .. literalinclude:: ../../samplecode/python-logging/conclusion/debug_app.py
     :language: python
     :emphasize-lines: 5
+    :caption: :fab:`github` `app.py <https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/conclusion/debug_app.py>`__
 
 .. code-block:: txt
 
@@ -241,6 +244,7 @@ propagateで祖先ロガーのレベルが考慮されない例 🏃‍♂️
 .. literalinclude:: ../../samplecode/python-logging/propagate/app.py
     :language: python
     :lines: 1-13
+    :caption: :fab:`github` `app.py <https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/propagate/app.py>`__
 
 .. literalinclude:: ../../samplecode/python-logging/propagate/app.py
     :language: txt

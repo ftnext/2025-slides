@@ -316,6 +316,7 @@ https://docs.python.org/ja/3/library/logging.handlers.html#logging.NullHandler
     :language: python
     :lines: 1-7,9
     :emphasize-lines: 4
+    :caption: :fab:`github` `mylib.py <https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/conclusion/mylib.py>`__
 
 まとめ🥟 ライブラリ開発におけるロギングの実装
 ======================================================================
