@@ -13,7 +13,7 @@
 --------------------------------------------------
 
 .. code-block:: python
-    :caption: ライブラリ
+    :caption: :fab:`github` `mylib.py <https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/libs/antipattern-logging/src/antipattern_logging/add_non_nullhandler.py>`__
     :emphasize-lines: 4
 
     import logging
@@ -21,13 +21,11 @@
     logger = logging.getLogger(__name__)
     logger.addHandler(logging.StreamHandler())
 
-.. https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/libs/antipattern-logging/src/antipattern_logging/add_non_nullhandler.py
-
 2重出力😱
 --------------------------------------------------
 
 .. code-block:: python
-    :caption: アプリケーション
+    :caption: :fab:`github` `app.py <https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/tragedies/non_nullhandler_twice_log.py>`__
 
     logging.basicConfig(
         level=logging.DEBUG,
@@ -38,8 +36,6 @@
 
     想定通り
     2024-08-31 14:16:34,968 | INFO | antipattern_logging.add_non_nullhandler:awesome:8 - 想定通り
-
-.. https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/tragedies/non_nullhandler_twice_log.py
 
 2重出力の裏にpropagate
 --------------------------------------------------
@@ -63,15 +59,13 @@
 --------------------------------------------------
 
 .. code-block:: python
-    :caption: ライブラリ
+    :caption: :fab:`github` `mylib.py <https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/libs/antipattern-logging/src/antipattern_logging/call_basic_config.py>`__
 
     import logging
 
     logging.basicConfig(
         level=logging.DEBUG, format="%(levelname)s:%(name)s:%(message)s"
     )
-
-.. https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/libs/antipattern-logging/src/antipattern_logging/call_basic_config.py
 
 ``basicConfig()`` がルートロガーを設定するのは「一度だけ」
 ----------------------------------------------------------------------
@@ -90,7 +84,7 @@
 ``logging.warning()`` なども全部 ``basicConfig()`` を呼んでます
 ----------------------------------------------------------------------
 
-    （*ルートロガーがハンドラを持たない場合は*）ルートロガーの debug メソッドを呼び出す前に basicConfig() が呼ばれます。 (📄 `logging.debug() <https://docs.python.org/ja/3/library/logging.html#logging.debug>`__)
+    （補足：ルートロガーがハンドラを持たない場合は）ルートロガーの debug メソッドを呼び出す前に basicConfig() が呼ばれます。 (📄 `logging.debug() <https://docs.python.org/ja/3/library/logging.html#logging.debug>`__)
 
 ``basicConfig()`` 同様にライブラリで使ってはいけません
 
@@ -158,4 +152,4 @@ propagate 抜粋して簡易版
 
 .. mermaid:: logging-propagate-flow.mmd
 
-`完全版 <https://gist.github.com/ftnext/9944017bd5c827b512a675b3ee0388f0>`__
+読み込めてなさそうならリロードを。 `完全版 <https://gist.github.com/ftnext/9944017bd5c827b512a675b3ee0388f0>`__
