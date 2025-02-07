@@ -15,16 +15,19 @@
 ライブラリ開発者に贈る「ロギングで ``NullHandler`` 以外はいけません」
 ======================================================================
 
-:Event: PyCon mini Shizuoka 2024 continue
+:Event: PyCon mini Shizuoka 2024 **continue**
 :Presented: 2025/02/08 nikkie
 
-.. TODO 振替開催、ありがとうございます
+振替開催、誠にありがとうございます🫶
+--------------------------------------------------
 
-お前、誰よ
+引き続き盛り上がって参りましょう！
+
+お前、誰よ（👉Appendix）
 ======================================================================
 
 * nikkie ／ :fab:`github` `@ftnext <https://github.com/ftnext>`__ ／ `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ 連続 **810** 日突破
-* 機械学習エンジニア・自然言語処理（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
+* 機械学習エンジニア・LLM・自然言語処理（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
 * Python歴は7年。PyConで登壇多数
 
 .. image:: ../_static/uzabase-white-logo.png
@@ -48,29 +51,35 @@
 * あなたはPythonで ``import`` して使いたいコードを書いています（例：ライブラリ）
 * その中で **ロギング** 、どう実装しますか？
 
+``import`` する予定のコードの中でのロギング
+--------------------------------------------------
+
+* ``logging.warning()`` （など）❓
+* ``logging.basicConfig()`` ❓
+* ``logging.getLogger()`` ❓
+
 結論：「``NullHandler`` 以外はいけません」
 --------------------------------------------------
 
-.. literalinclude:: ../../samplecode/python-logging/conclusion.py
+.. literalinclude:: ../../samplecode/python-logging/conclusion/mylib.py
     :language: python
     :lines: 1-4
 
 公式ドキュメント📄「`ライブラリのためのロギングの設定`_」
 
-すべて公式 **ドキュメント** に書いてあります！
+すべて **公式ドキュメント** に書いてあります！
 --------------------------------------------------
 
-* しかし、観測範囲ではPython使いに気づかれていない印象...😫
+* しかし、観測範囲ではライブラリ作成者に気づかれていない印象...😫
 * 📄の付いたリンクは、公式ドキュメントへのリンク
 * （別のemoji：🏃‍♂️は本編では飛ばします）
 
-本トークのメッセージ（Takeaway）
+Logging クックブックの「避けるべきパターン」にも
 --------------------------------------------------
 
-* ライブラリ開発者は *ロガー* を用意し、 *何もしないハンドラ* を設定しよう
-* アプリケーション開発者は *ルートロガー* を設定し、 *propagate* を利用してログを表示しよう
+* `ライブラリ内でロガーに NullHandler 以外のハンドラーを追加する`_ 📄
 
-斜体はこのトークで解説します
+    (略) ログ出力をカスタマイズするのはライブラリ開発者ではなく、アプリケーション開発者の責務です。
 
 ライブラリではオススメしません（ぶっぶー🙅‍♂️）🏃‍♂️
 ------------------------------------------------------------
@@ -89,12 +98,13 @@
     logger = logging.getLogger(__name__)
     logger.addHandler(logging.StreamHandler())
 
-Logging クックブックの「避けるべきパターン」の1つ
+本トークのメッセージ（Takeaway）
 ======================================================================
 
-* `ライブラリ内でロガーに NullHandler 以外のハンドラーを追加する`_ 📄
+* ライブラリ開発者は *ロガー* を用意し、 *何もしないハンドラ* を設定しよう
+* アプリケーション開発者は *ルートロガー* を設定し、 *propagate* を利用してログを表示しよう
 
-    (略) ログ出力をカスタマイズするのはライブラリ開発者ではなく、アプリケーション開発者の責務です。
+斜体を解説していきます
 
 本トークの構成
 --------------------------------------------------
@@ -120,9 +130,6 @@ Logging クックブックの「避けるべきパターン」の1つ
 
     <iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/645f81e8b8144b1ba894a9bf5e78263e?slide=16" title="Loggingモジュールではじめるログ出力入門 / Introduction to Python Logging" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
 
-.. TODO 🏃‍♂️ loggingモジュールを使った実装だけが焦点。ログの内容は説明のためのもので不適切
-    ロギングの使い方（プラクティス） https://speakerdeck.com/irof/yi-li-turokuniqu-rizu-mou
-
 .. include:: library-logging.rst.txt
 
 .. include:: application-logging.rst.txt
@@ -135,7 +142,7 @@ Logging クックブックの「避けるべきパターン」の1つ
 .. revealjs-break::
     :notitle:
 
-.. literalinclude:: ../../samplecode/python-logging/conclusion.py
+.. literalinclude:: ../../samplecode/python-logging/conclusion/mylib.py
     :language: python
     :lines: 1-4
 
