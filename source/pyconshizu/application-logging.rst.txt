@@ -56,7 +56,7 @@
 
     logging.basicConfig(level=logging.WARNING)
 
-* loggingでは、ロガーの持つレベル以上の重要性のイベントがログに記録される（再掲）
+* ロガーの持つレベル以上の重要性のイベントがログに記録される（再掲）
 
 フォーマッタ
 --------------------------------------------------
@@ -75,11 +75,11 @@
 
     format="%(asctime)s | %(levelname)s | %(name)s:%(funcName)s:%(lineno)d - %(message)s"
 
-時刻や関数名など、ログメッセージより情報が多い！（**ログレコード** をフォーマットするため）
+時刻や関数名など、ログメッセージより情報が多い！（**ログレコードをフォーマット** するため）
 
 `LogRecord 属性 <https://docs.python.org/ja/3/library/logging.html#logrecord-attributes>`__ 📄
 
-.. TODO 実装は LogRecord をフォーマットしている（リンク追加）
+.. 実装 https://github.com/python/cpython/blob/v3.13.2/Lib/logging/__init__.py#L468
 
 ルートロガーをカスタマイズ
 --------------------------------------------------
@@ -97,7 +97,7 @@
 ロガーの `propagate`_ 属性📄
 --------------------------------------------------
 
-    この属性が真と評価された場合、このロガーに記録されたイベントは、このロガーに取り付けられた全てのハンドラに加え、上位 (祖先) ロガーのハンドラにも渡されます。    
+    この属性が真と評価された場合、このロガーに記録されたイベントは、このロガーに取り付けられた全てのハンドラに加え、上位 (祖先) ロガーのハンドラにも渡されます。
 
 ロガーの親子関係（再び）
 --------------------------------------------------
@@ -141,11 +141,20 @@ propagate（伝播）
 ``NullHandler`` 以外はいけません（結論・再掲）
 --------------------------------------------------
 
-.. literalinclude:: ../../samplecode/python-logging/conclusion.py
+.. literalinclude:: ../../samplecode/python-logging/conclusion/mylib.py
     :language: python
     :lines: 1-4
 
-ライブラリのロガーに **ロギングレベルは設定していない**。では、どのレベル？
+ライブラリのロガーに **ロギングレベルは設定していない**
+
+レベルを設定していないライブラリロガーのレベルは❓
+--------------------------------------------------
+
+* ``DEBUG``
+* ``INFO``
+* ``WARNING``
+* ``ERROR``
+* ``CRITICAL``
 
 ロギングレベル ``NOTSET``
 --------------------------------------------------
@@ -176,13 +185,14 @@ propagate（伝播）
 propagate まとめ🥟 ライブラリのロギング
 ======================================================================
 
-.. literalinclude:: ../../samplecode/python-logging/example/mylib.py
+.. literalinclude:: ../../samplecode/python-logging/conclusion/mylib.py
     :language: python
+    :lines: 1-7,9
 
 例：ルートロガーのロギングレベルが ``WARNING`` だと出力されない
 ----------------------------------------------------------------------
 
-.. literalinclude:: ../../samplecode/python-logging/example/warning_app.py
+.. literalinclude:: ../../samplecode/python-logging/conclusion/warning_app.py
     :language: python
     :emphasize-lines: 5
 
@@ -191,15 +201,13 @@ propagate まとめ🥟 ライブラリのロギング
 例：ルートロガーのロギングレベルが ``DEBUG`` だと **出力される**
 ----------------------------------------------------------------------
 
-.. literalinclude:: ../../samplecode/python-logging/example/debug_app.py
+.. literalinclude:: ../../samplecode/python-logging/conclusion/debug_app.py
     :language: python
     :emphasize-lines: 5
 
 .. code-block:: txt
 
     INFO:mylib:想定通り
-
-.. TODO サンプルコード、__name__ にするか、"mylib"とハードコードするか
 
 ``mylib`` ロガーも ``DEBUG`` レベル
 
@@ -218,7 +226,7 @@ propagate まとめ🥟 ライブラリのロギング
     logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(name)s:%(message)s")
 
 * ライブラリを使う側の都合で、ルートロガーを設定
-* ライブラリのロガーはルートロガーのレベルを参照し、propagateで **ルートロガーのハンドラでログ出力**
+* ライブラリのロガーは **ルートロガーのレベルを参照** し、propagateで **ルートロガーのハンドラでログ出力**
 
 propagateは **親ロガーのレベルによらない** 🏃‍♂️
 --------------------------------------------------
@@ -230,13 +238,22 @@ propagateは **親ロガーのレベルによらない** 🏃‍♂️
 propagateで祖先ロガーのレベルが考慮されない例 🏃‍♂️
 ------------------------------------------------------------
 
-.. literalinclude:: ../../samplecode/python-logging/propagate.py
+.. literalinclude:: ../../samplecode/python-logging/propagate/app.py
     :language: python
-    :lines: 1-11
+    :lines: 1-13
 
-.. literalinclude:: ../../samplecode/python-logging/propagate.py
+.. literalinclude:: ../../samplecode/python-logging/propagate/app.py
     :language: txt
-    :lines: 14
+    :lines: 16
+
+ライブラリのロガーを触る 🏃‍♂️
+--------------------------------------------------
+
+    ロガーは、アプリケーションコードが直接使うインターフェースを公開します。
+
+`上級ロギングチュートリアル`_ 📄
+
+.. https://docs.python.org/ja/3/library/logging.html の冒頭にもある
 
 ライブラリのロガーを触ってログ出力をカスタマイズ 🏃‍♂️
 ------------------------------------------------------------
