@@ -1,6 +1,23 @@
 Appendix
 ======================================================================
 
+お前、誰よ（詳細版）
+======================================================================
+
+* :fab:`twitter` `@ftnext <https://twitter.com/ftnext>`__ ／ 登壇 `2025 <https://github.com/ftnext/2025-slides>`__ `2024 <https://github.com/ftnext/2024-slides>`__
+* PyCon JP 2021 座長
+* 毎月の `みんなのPython勉強会 <https://startpython.connpass.com/>`__ スタッフ
+* `Uberi/speech_recognition <https://github.com/Uberi/speech_recognition>`__ 8.4k⭐️ メンテナ
+
+スライドの秘密 〜お前、誰よ 補足〜
+--------------------------------------------------
+
+attakeiさんの `sphinx-revealjs <https://pypi.org/project/sphinx-revealjs/>`__ に以下の **自作拡張** を組み合わせて実現
+
+* 私の代表作： `sphinx-new-tab-link <https://pypi.org/project/sphinx-new-tab-link/>`__
+* `sphinx-revealjs-copycode <https://pypi.org/project/sphinx-revealjs-copycode/>`__
+* `sphinx-revealjs-ext-codeblock <https://pypi.org/project/sphinx-revealjs-ext-codeblock/>`__
+
 ハンドラのロギングレベル
 ======================================================================
 
@@ -37,6 +54,12 @@ https://docs.python.org/ja/3/library/logging.html#filter
 * `logging.config <https://docs.python.org/ja/3/library/logging.config.html>`__ 📄
 * ``dictConfig`` や ``fileConfig``
 * 最初に読むなら『`Python実践レシピ <https://gihyo.jp/book/2022/978-4-297-12576-9>`__』17.4
+
+ライブラリのロガーを触ってログ出力をカスタマイズ
+--------------------------------------------------
+
+* 本編で飛ばした🏃‍♂️ 拙ブログ `Pythonのライブラリに用意されたロガーを設定してログを出力する（httpxを例に） <https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger>`__
+* logging.config版 `Pythonのライブラリに用意されたロガーをlogging.configで設定する（httpxを例に、辞書やYAMLで設定） <https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger-logging-config-dict-or-yaml>`__
 
 標準ライブラリ logging 以外の選択肢
 ======================================================================
@@ -86,11 +109,3 @@ loguru
 --------------------------------------------------
 
 * `Pythonでライブラリのロガーを使ったロギングをLogging Flowに沿って、かつフィルタやハンドラの設定にも注意を払って説明する <https://nikkie-ftnext.hatenablog.com/entry/python-logging-flow-detailed-logger-level-filter-handler>`__
-
-お前、誰よ（詳細版）
-======================================================================
-
-* :fab:`twitter` `@ftnext <https://twitter.com/ftnext>`__ ／ 登壇 `2024 <https://github.com/ftnext/2024-slides>`__ `2023 <https://github.com/ftnext/2023-slides>`__
-* PyCon JP 2021 座長
-* 毎月の `みんなのPython勉強会 <https://startpython.connpass.com/>`__ スタッフ
-* 代表作：Sphinx拡張 `sphinx-new-tab-link <https://github.com/ftnext/sphinx-new-tab-link>`__
