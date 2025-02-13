@@ -1,3 +1,9 @@
+:ogp_title: Pythonの組み込み例外の小話
+:ogp_event_name: stapy-lt
+:ogp_slide_name: february-repr-exception
+:ogp_description: みんなのPython勉強会#112
+:ogp_image_name: stapy-lt-february
+
 ======================================================================
 Pythonの組み込み例外の小話
 ======================================================================
