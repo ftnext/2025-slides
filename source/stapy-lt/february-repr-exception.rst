@@ -52,6 +52,8 @@ Pythonの **組み込み例外** の小話
     except Exception as ex:
         print(f"エラー発生: {ex!r}")
 
+例外におすすめ！
+
 ``{ex!r}`` とはなにか
 ======================================================================
 
@@ -61,15 +63,15 @@ Pythonの **組み込み例外** の小話
 
 * 変換を書かないときは ``!s``
 
-``str()`` と ``repr()``
+返す文字列には違いがある
 --------------------------------------------------
 
-:``str()``: 人間に読める表現
-:``repr()``: Python **インタープリタ** に読める表現
+:``str()``: 人間が読める表現
+:``repr()``: **Python処理系** が読める表現
 
 参考 `7.1. 出力を見やすくフォーマットする <https://docs.python.org/ja/3/tutorial/inputoutput.html#fancier-output-formatting>`__
 
-引数を渡さない例外について
+引数を渡さない例外とf-strings
 --------------------------------------------------
 
 .. code-block:: pycon
@@ -100,19 +102,29 @@ HTTPクライアント HTTPX にて
         Timed out while receiving data from the host.
         """
 
-.. ``ReadTimeout`` は何を継承しているか
+参考： ``ReadTimeout`` の継承関係
+--------------------------------------------------
+
+.. code-block:: txt
+    :caption: https://github.com/encode/httpx/blob/0.28.1/httpx/_exceptions.py#L4-L9
+
+    * HTTPError
+      x RequestError
+        + TransportError
+          - TimeoutException
+            · ReadTimeout
 
 元のブログ記事
 --------------------------------------------------
 
 `Pythonで例外を文字列中に出力するときは、str()ではなくてrepr()に渡すのがオススメです <https://nikkie-ftnext.hatenablog.com/entry/python-exception-with-repr-recommendation>`__
 
-まとめ🌯 ``{ex!r}``
+まとめ🌯 f-stringsでは ``{ex!r}``
 ======================================================================
 
-* ``try ... except`` で例外を捕捉し、f-stringで出力するような場合
-* 例外は引数がないと ``{ex}`` すなわち ``str()`` は空文字列
-* ``{ex!r}`` で ``repr()`` を呼び出すことで、 **引数がない例外でもクラス名が表示される**
+* ``try ... except`` で例外を捕捉し出力するような場合
+* 例外は引数がないと ``f"{ex}"`` すなわち ``str()`` は空文字列
+* ``f"{ex!r}"`` で ``repr()`` を呼び出すことで、 **引数がない例外でもクラス名が表示される**
 
 One more 小話： ``except Exception:``
 --------------------------------------------------
