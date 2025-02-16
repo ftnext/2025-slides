@@ -53,3 +53,8 @@ XP（eXtreme Programming）
 
 * FastAPIをコンテナ化
 * GKEにデプロイ
+
+クリーンなアーキテクチャを志向する
+======================================================================
+
+.. include:: clean-architecture/layers.rst.txt
