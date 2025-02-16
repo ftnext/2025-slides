@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>FastAPIの現場から</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=40f0a724" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=e16ffa82" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides//.html">
+    <meta property="og:title" content="">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">FastAPIの現場から</h1>
+<p>ドラフト版</p>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DjangoCongress JP 2025</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/02/22🐈 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ</h2>
+<ul class="simple">
+<li><p>機械学習エンジニア</p></li>
+<li><p>専門は機械学習。プロダクトとして価値を届けるためにAPIの開発もします（今日の話）</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">FastAPI、ご存知ですか？</h2>
+<ul class="simple">
+<li><p>聞いたことがある🙋‍♂️</p></li>
+<li><p>使ったことがある🙋‍♀️</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">私はチームでFastAPIを使っています</h3>
+<ul class="simple">
+<li><p>チュートリアル修了レベルでスタート</p></li>
+<li><p>PyConのトークいくつかを手がかりに</p></li>
+<li><p>見聞き -&gt; 作る の中で得た、FastAPIの知見を共有します</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">私の現場のFastAPI</h2>
+<ul class="simple">
+<li><p>社内向けの小さなAPI</p></li>
+<li><p>外部のLLMの <strong>API</strong> を使うアプリケーション</p></li>
+<li><p><strong>非同期IO</strong> が必要ということで、FastAPIを選択（+皆やってみたさ）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">XP（eXtreme Programming）</h3>
+<ul class="simple">
+<li><p>アジャイル開発の1手法</p></li>
+<li><p>小さい価値でも届け、そこからの学びを活かすサイクルを何度も何度も回す（<strong>3ヶ月</strong> 経過）</p></li>
+<li><p>最初に全機能設計したわけではない。現場のアプリは小さく始まり、育てている最中（<strong>現時点の最適解</strong>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デプロイ先はKubernetes</h3>
+<ul class="simple">
+<li><p>FastAPIをコンテナ化</p></li>
+<li><p>GKEにデプロイ</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">クリーンなアーキテクチャを志向する</h2>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">The Clean Architecture</h2>
+<ul class="simple">
+<li><p>Robert C. Martin (Uncle Bob) によるブログ</p></li>
+<li><p><a class="reference external" href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html" rel="noopener noreferrer" target="_blank">https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html</a></p></li>
+<li><p>氏による書籍『Clean Architecture』と区別してます</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ブログ中のイラスト</h3>
+<p>TODO</p>
+<p>同心円の図は <strong>一例</strong> を示したにすぎない</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">次第に近づいていくもの（t-wadaさん）</h3>
+<p><a class="reference external" href="https://x.com/t_wada/status/1882578423094419522" rel="noopener noreferrer" target="_blank">https://x.com/t_wada/status/1882578423094419522</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">レイヤ分け</h2>
+<p>domain / usecase / gateway(port) / driver / rest</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">The Clean Architectureの黄金律</h3>
+<ul class="simple">
+<li><p>自分より <strong>内側にあるものだけ</strong> に依存する</p>
+<ul>
+<li><p>usecaseはdomainを知っている（依存する）</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">domain</h3>
+<ul class="simple">
+<li><p>同心円の一番内側</p></li>
+<li><p>システムがなくても存在するビジネスロジック（例：銀行）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">usecase</h3>
+<ul class="simple">
+<li><p>同心円の内側から2番目</p></li>
+<li><p>システムにするために必要なロジック</p></li>
+<li><p>メモリ上で完璧に構築（IOなどないのでアプリケーションではない）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">port</h3>
+<ul>
+<li><p>インターフェース</p></li>
+<li><p>usecaseはportを知っている</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>使い方を知っている</p></li>
+<li><p>中身（どんな実装をされているか）は知らない</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">gateway</h3>
+<ul class="simple">
+<li><p>portを実装する</p></li>
+<li><p>外界（プログラミング言語プリミティブな型で表現）から、ドメインの型に変換する</p></li>
+<li><p>システムレベルで見ると、usecaseには（portを実装した）gatewayを渡す</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">さらにgatewayでもインターフェースを定義する</h3>
+<ul class="simple">
+<li><p>driverが実装するインターフェース</p></li>
+<li><p>ORM（SQLModel）もgatewayに置いた（インターフェースの型に必要）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">driver</h3>
+<ul class="simple">
+<li><p>一番外側</p></li>
+<li><p>外界に接する：HTTPリクエスト、DB</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code> や <code class="docutils literal notranslate"><span class="pre">str</span></code> など、プログラミング言語プリミティブな型（ドメインの型ではない）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">rest</h3>
+<ul class="simple">
+<li><p>これもまた外界：Web APIにして外界に接する</p></li>
+<li><p>FastAPIのフレームワークの機能を活用</p></li>
+<li><p>実装では、Web APIとして動かすための依存を渡した</p></li>
+</ul>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>
