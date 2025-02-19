@@ -1,0 +1,61 @@
+SQLModel
+======================================================================
+
+SQLAlchemy + Pydantic
+
+https://sqlmodel.tiangolo.com/features/
+
+ここでもPydantic
+--------------------------------------------------
+
+* ``SQLModel`` を継承したクラスは、Pydanticの ``BaseModel`` でもあるので、FastAPIで使える
+* ORMを扱う際にもエディタで補完が効く
+
+SQLAlchemy
+--------------------------------------------------
+
+* https://github.com/sqlalchemy/sqlalchemy
+* 代表的なORM
+* **DBの非同期IO** をサポート！
+
+DBの非同期IO
+======================================================================
+
+* SQLAlchemyにSQLModelは乗っかる
+* PostgreSQLの例
+
+SQLModelとして
+--------------------------------------------------
+
+.. code-block:: python
+
+    from sqlalchemy.ext.asyncio import create_async_engine
+    from sqlmodel.ext.asyncio.session import AsyncSession
+
+    database_url = "postgresql+asyncpg://developer:mysecretpassword@127.0.0.1:5432/practice"
+    engine = create_async_engine(database_url)
+    async with AsyncSession(engine) as session:
+        ...
+
+IMO： ``async_sessionmaker`` といいとこ取り
+--------------------------------------------------
+
+.. code-block:: python
+
+    from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+    from sqlmodel.ext.asyncio.session import AsyncSession as SQLModelAsyncSession
+
+    database_url = "postgresql+asyncpg://developer:mysecretpassword@127.0.0.1:5432/practice"
+    engine = create_async_engine(database_url)
+    AsyncSession = async_sessionmaker(engine, class_=SQLModelAsyncSession)
+    async with AsyncSession() as session:  # AsyncSession.begin() もできる
+        ...
+
+IMO：SQLModel所感
+======================================================================
+
+* **SQLAlchemyの経験** がある方にだけ、オススメ
+* 経験ない我が身には、SQLModel + SQLAlchemyと学びが2倍（しんどい！）
+
+.. SQLModelは発展途上で、チュートリアルに実務レベルの例がない（空振ってSQLAlchemyを調べる）
+.. order by

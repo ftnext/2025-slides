@@ -135,6 +135,8 @@ XP（eXtreme Programming）
 
 .. include:: asynchronous-io/fastapi.rst.txt
 
+.. include:: asynchronous-io/sqlmodel.rst.txt
+
 クリーンなアーキテクチャを志向する
 ======================================================================
 
