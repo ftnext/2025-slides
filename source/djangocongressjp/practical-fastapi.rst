@@ -28,9 +28,82 @@ FastAPI、ご存知ですか？
 
 * チュートリアル修了レベルでスタート
 * PyConのトークいくつかを手がかりに
-* 見聞き -> 作る の中で得た、FastAPIの知見を共有します
+* 見聞き -> 作る の中で得た、 **FastAPIの知見を共有** します
 
 .. TODO 手がかり（先人の足跡）
+
+PythonコミュニティにおけるFastAPI
+======================================================================
+
+`Python Developers Survey 2023 <https://lp.jetbrains.com/python-developers-survey-2023/#frameworks-and-libraries>`__ より
+
+.. revealjs-break::
+    :notitle:
+
+.. TODO 図を持ってこよう
+
+* Flask 33%
+* Django 33%
+* **FastAPI 29%**
+* Django REST Framework 18%
+
+データサイエンスで使われる
+--------------------------------------------------
+
+.. TODO 図を持ってこよう
+
+* Flask 36%
+* **FastAPI 31%**
+* Django 26%
+
+FastAPI
+======================================================================
+
+.. code-block:: python
+    :caption: Tutorialの `First Steps <https://fastapi.tiangolo.com/tutorial/first-steps/>`__
+
+    from fastapi import FastAPI
+
+    app = FastAPI()
+
+    @app.get("/")
+    async def root():
+        return {"message": "Hello World"}
+
+この延長に機械学習モデルをサーブするAPI
+
+.. 単語としてResNetが登場 https://fastapi.tiangolo.com/tutorial/path-params/
+
+Django REST Framework
+--------------------------------------------------
+
+.. code-block:: txt
+    :caption: `Quickstart <https://www.django-rest-framework.org/tutorial/quickstart/>`__ にある認証付きAPI
+
+    bash: curl -u admin -H 'Accept: application/json; indent=4' http://127.0.0.1:8000/users/
+    Enter host password for user 'admin':
+    {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "url": "http://127.0.0.1:8000/users/1/",
+                "username": "admin",
+                "email": "admin@example.com",
+                "groups": []
+            }
+        ]
+    }
+
+.. _Django vs. FastAPI, An Honest Comparison: https://www.david-dahan.com/blog/comparing-fastapi-and-django
+
+記事 `Django vs. FastAPI, An Honest Comparison`_
+------------------------------------------------------------
+
+* Batteries includedか、 **自分で組み合わせる** 必要があるか
+* 非同期対応の度合い
+* IMO：それぞれ得意分野が異なる
 
 私の現場のFastAPI
 ======================================================================
