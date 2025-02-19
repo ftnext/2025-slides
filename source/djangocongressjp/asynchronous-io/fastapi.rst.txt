@@ -1,0 +1,64 @@
+FastAPI
+======================================================================
+
+Starlette + Pydantic + 作者tiangolo氏の工夫
+
+https://fastapi.tiangolo.com/features/
+
+encode/starlette
+--------------------------------------------------
+
+* https://github.com/encode/starlette
+* lightweight ASGI framework（非同期IOサポート）
+* **高いパフォーマンス**
+
+Pydantic
+--------------------------------------------------
+
+* https://github.com/pydantic/pydantic
+* 型ヒントに **パース** するライブラリ（『ロバストPython』）
+* エディタでの補完や、実行時バリデーション
+
+パスオペレーション関数の書き方
+======================================================================
+
+.. code-block:: python
+
+    @app.get("/sync")
+    def root():  # <- パスオペレーション関数
+        return {"message": "Hello World"}
+
+    @app.get("/async")
+    async def root():
+        return {"message": "どんなときにasync defにする？"}
+
+そもそも非同期IOが有効なのは
+--------------------------------------------------
+
+* **IOバウンド** な処理（CPUバウンドではない）
+
+    * 外部との通信（APIやDB）
+    * ファイルの読み書き
+
+* CPUをIO待ちにしないで他の処理を進める
+
+FastAPIのドキュメント曰く、IOバウンドな処理は
+--------------------------------------------------
+
+* 依存するライブラリが非同期IOをサポートしているなら ``await`` を使うために、パスオペレーション関数は ``async def``
+* サポートしていないなら ``def``
+
+https://fastapi.tiangolo.com/async/#in-a-hurry
+
+FastAPIのドキュメント曰く、CPUバウンドな処理は
+--------------------------------------------------
+
+* ``async def`` ‼️
+
+    it's better to use ``async def`` unless your path operation functions use code that performs blocking I/O.
+
+.. 「パスオペレーション関数がブロッキングIOをするコードを使わない場合、``async def`` がよい」
+    TL;DRにある、非同期IOをサポートしていない（＝ブロッキングIO） -> ``def``
+        「If your application (somehow) doesn't have to communicate with anything else and wait for it to respond, use async def.」
+
+https://fastapi.tiangolo.com/async/#path-operation-functions
