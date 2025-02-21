@@ -1,7 +1,7 @@
 SQLModel
 ======================================================================
 
-SQLAlchemy + Pydantic
+SQLAlchemy + Pydantic + 作者tiangolo氏の工夫
 
 https://sqlmodel.tiangolo.com/features/
 
@@ -51,6 +51,54 @@ IMO： ``async_sessionmaker`` といいとこ取り
     async with AsyncSession() as session:  # AsyncSession.begin() もできる
         ...
 
+SQLModelが提供するDBセッション
+--------------------------------------------------
+
+.. code-block:: python
+
+    from sqlmodel import Session
+    from sqlmodel.ext.asyncio.session import AsyncSession
+
+* SQLAlchemyの ``Session`` や ``AsyncSession`` を継承したクラス
+* DBとのやり取りはセッションを通して。セッションにオブジェクトが *浮いている* イメージ
+
+.. revealjs-break::
+
+* ``Session`` インスタンスに ``statement`` を渡して、 ``exec()`` メソッドを呼ぶ
+* 👉 **型が当たる** （SQLAlchemyのSessionの ``execute().scalars()`` メソッドを呼んでいるため）
+
+.. code-block:: python
+    :emphasize-lines: 3
+
+    statement = select(Hero)
+    async with AsyncSession(async_engine) as session:
+        results = await session.exec(statement)
+        for hero in results:
+            print(repr(hero))
+
+SQLAlchemyが提供するsessionmaker
+--------------------------------------------------
+
+* セッションの **ファクトリ** を返す。常に ``engine`` を渡して初期化しなくてよくなる
+* SQLModelは提供していない（`tiangolo氏 <https://github.com/fastapi/sqlmodel/issues/75#issuecomment-1311796665>`__ 「常に ``with Session(engine)`` すればよい」）
+* なお、sessionmakerが返すSQLAlchemyのセッションは ``exec()`` はなく、 ``execute()`` のみ（型が当たらない）
+
+sessionmakerを使いたい立場からの提案
+--------------------------------------------------
+
+.. code-block:: python
+    :emphasize-lines: 4
+
+    from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+    from sqlmodel.ext.asyncio.session import AsyncSession as SQLModelAsyncSession
+
+    AsyncSession = async_sessionmaker(engine, class_=SQLModelAsyncSession)
+
+.. https://docs.sqlalchemy.org/en/20/orm/session_basics.html#using-a-sessionmaker
+
+* SQLModelの ``AsyncSession`` インスタンスのファクトリを用意（ ``exec()`` が使える！）
+* 現状、世にはSQLAlchemyの例が多いので、DB接続部分は参考にできる
+
 IMO：SQLModel所感
 ======================================================================
 
@@ -59,3 +107,6 @@ IMO：SQLModel所感
 
 .. SQLModelは発展途上で、チュートリアルに実務レベルの例がない（空振ってSQLAlchemyを調べる）
 .. order by
+
+.. TODO マイグレーション sqldef
+    https://x.com/ftnext/status/1839544709045453293
