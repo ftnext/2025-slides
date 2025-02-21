@@ -10,12 +10,17 @@ FastAPIの現場から
 お前、誰よ
 ======================================================================
 
+* nikkie（にっきー） ※本発表は個人の見解です
 * 機械学習エンジニア
-* 専門は機械学習。プロダクトとして価値を届けるためにAPIの開発もします（今日の話）
+* プロダクトとして価値を届けるために **Web APIの開発も** します（今回FastAPIの知見を共有）
 
 .. image:: ../_static/uzabase-white-logo.png
 
-.. privateの自己紹介？
+.. revealjs-break::
+
+* :fab:`github` `@ftnext <https://github.com/ftnext>`__ ／ `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ 連続 **820** 日突破
+* 2023年発表 `Djangoアプリに作り込んで学ぶ脆弱性 <https://ftnext.github.io/2023-slides/djangocongressjp/learn-vulnerabilities.html>`__
+* このスライドで使ってる `ftnext/sphinx-new-tab-link <https://github.com/ftnext/sphinx-new-tab-link>`__
 
 FastAPI、ご存知ですか？
 ======================================================================
@@ -23,44 +28,65 @@ FastAPI、ご存知ですか？
 * 聞いたことがある🙋‍♂️
 * 使ったことがある🙋‍♀️
 
-私はチームでFastAPIを使っています
---------------------------------------------------
-
-* チュートリアル修了レベルでスタート
-* PyConのトークいくつかを手がかりに
-* 見聞き -> 作る の中で得た、 **FastAPIの知見を共有** します
-
-.. TODO 手がかり（先人の足跡）
-
 PythonコミュニティにおけるFastAPI
-======================================================================
+--------------------------------------------------
 
 `Python Developers Survey 2023 <https://lp.jetbrains.com/python-developers-survey-2023/#frameworks-and-libraries>`__ より
 
-.. revealjs-break::
-    :notitle:
-
-.. TODO 図を持ってこよう
-
-* Flask 33%
-* Django 33%
-* **FastAPI 29%**
-* Django REST Framework 18%
-
-データサイエンスで使われる
+Webフレームワーク 第3位
 --------------------------------------------------
 
-.. TODO 図を持ってこよう
+.. image:: ../_static/djangocongressjp/survey-2023-web-framewarks.drawio.png
 
-* Flask 36%
-* **FastAPI 31%**
-* Django 26%
+.. 注目
+    * Flask 33%
+    * Django 33%
+    * **FastAPI 29%**
+    * Django REST Framework 18%
+
+**データサイエンス** で使われる
+--------------------------------------------------
+
+.. image:: ../_static/djangocongressjp/survey-2023-data-science-web.drawio.png
+
+.. 注目
+    * Flask 36%
+    * **FastAPI 31%**
+    * Django 26%
 
 FastAPI
 ======================================================================
 
 .. code-block:: python
     :caption: Tutorialの `First Steps <https://fastapi.tiangolo.com/tutorial/first-steps/>`__
+
+    from fastapi import FastAPI
+
+    app = FastAPI()
+
+    @app.get("/")
+    async def root():
+        return {"message": "Hello World"}
+
+path ``/`` に GET ``operation`` が来たら
+--------------------------------------------------
+
+.. code-block:: python
+    :emphasize-lines: 5
+
+    from fastapi import FastAPI
+
+    app = FastAPI()
+
+    @app.get("/")
+    async def root():
+        return {"message": "Hello World"}
+
+``root`` 関数を実行してレスポンスを返す
+--------------------------------------------------
+
+.. code-block:: python
+    :emphasize-lines: 6-7
 
     from fastapi import FastAPI
 
@@ -105,27 +131,78 @@ Django REST Framework
 * 非同期対応の度合い
 * IMO：それぞれ得意分野が異なる
 
-私の現場のFastAPI
+FastAPIの現場から
 ======================================================================
 
 .. 技術や組織の前提を最初に紹介しておく
 
-* 社内向けの小さなAPI
-* 外部のLLMの **API** を使うアプリケーション
-* **非同期IO** が必要ということで、FastAPIを選択（+皆やってみたさ）
+* 社内向けの **小さなWeb API** をチームで開発
+* FastAPIのチュートリアルを皆で参照しながら
+* 見聞きしていたPyConのトークも手がかりに（👉今回の知見共有）
 
-XP（eXtreme Programming）
+手がかり🏃‍♂️
 --------------------------------------------------
 
-* アジャイル開発の1手法
-* 小さい価値でも届け、そこからの学びを活かすサイクルを何度も何度も回す（**3ヶ月** 経過）
-* 最初に全機能設計したわけではない。現場のアプリは小さく始まり、育てている最中（**現時点の最適解**）
+* 記事 `FastAPI+SQLAlchemyで非同期WebAPI <https://www.rhoboro.com/2021/06/12/async-fastapi-sqlalchemy.html>`__
+* `PyCon JP 2021: Python x DDD!! <https://2021.pycon.jp/time-table?id=272415>`__
+* `PyCon JP 2024: SQLModel入門 <https://2024.pycon.jp/ja/talk/MXKU77>`__
 
-デプロイ先はKubernetes
+外部のLLMの **API** を使うアプリケーション
 --------------------------------------------------
 
-* FastAPIをコンテナ化
+.. code-block:: python
+    :caption: `ChatGPTを非同期でPythonから利用する方法 <https://blog.hirokiky.org/entry/2023/03/14/163203>`__ (2023時点)
+
+    class GPTView(View):
+        async post(request):
+            res = await openai.ChatCompletion.acreate({...})
+
+* **非同期IO** が有効。皆やってみたさがあり、FastAPIを選択
+
+小さい単位で **都度設計** しながら進めています
+--------------------------------------------------
+
+* アジャイル開発の1手法、XP（eXtreme Programming）
+* 小さい価値でも届け、そこからの学びを活かす **サイクル** を何度も何度も回す（今回のAPIは3ヶ月経過）
+* 最初に全機能設計したわけではありません。 **その時点の最適解** を更新していく
+
+.. ストーリー -> 小さい開発（ATDD）
+
+開発の流れ
+--------------------------------------------------
+
+* 開発単位：ユーザストーリー
+* 完了条件となる受け入れテストを書く（**ATDD**）
+* 既存実装を拡張する設計を考え、テスト駆動開発（&ペアプログラミング）で実装
+
+同僚による🏃‍♂️
+--------------------------------------------------
+
+.. raw:: html
+
+    <iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/f4d5c3d15476469591749e0597f4fd36" title="受け入れテスト駆動開発で不確実性に段階的に対処する/Addressing Uncertainty Incrementally with Acceptance Test-Driven-Development" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+デプロイ先は **Kubernetes**
+--------------------------------------------------
+
+* マイクロサービスなAPI群
+* 今回のFastAPIアプリもコンテナ化
 * GKEにデプロイ
+
+私が暗黙の前提にしてるかも
+
+サンプルアプリケーション
+--------------------------------------------------
+
+* `iktakahiro/dddpy <https://github.com/iktakahiro/dddpy>`__ の一部を再実装
+* TODO URL（タグ付き）
+
+お品書き：FastAPIの現場から
+--------------------------------------------------
+
+1. **非同期IO**
+2. クリーンなアーキテクチャを志向する
+3. Twelve-Factor App
 
 非同期IO
 ======================================================================
@@ -137,10 +214,26 @@ XP（eXtreme Programming）
 
 .. include:: asynchronous-io/sqlmodel.rst.txt
 
+お品書き：FastAPIの現場から
+--------------------------------------------------
+
+1. 非同期IO
+2. **クリーンなアーキテクチャを志向する**
+3. Twelve-Factor App
+
 クリーンなアーキテクチャを志向する
 ======================================================================
 
 .. include:: clean-architecture/layers.rst.txt
+
+.. include:: clean-architecture/technique.rst.txt
+
+お品書き：FastAPIの現場から
+--------------------------------------------------
+
+1. 非同期IO
+2. クリーンなアーキテクチャを志向する
+3. **Twelve-Factor App**
 
 Twelve-Factor App
 ======================================================================
@@ -163,3 +256,13 @@ https://12factor.net/ja/
 
 * **pydantic-settings** による、環境変数での設定
 * ロギングは **logging.config に沿って uvicorn** を設定
+
+まとめ🌯 FastAPIの現場から
+======================================================================
+
+* FastAPI・SQLModel（SQLAlchemy）の非同期IO
+* レイヤ分けしてビジネスロジックとフレームワークやDBを切り離したアーキテクチャ
+* 環境変数から設定できる pydantic-settings。uvicornでのロギング
+
+ご清聴ありがとうございました
+--------------------------------------------------
