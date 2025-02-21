@@ -1,0 +1,67 @@
+1️⃣ III. 設定
+======================================================================
+
+    設定を環境変数に格納する
+
+https://12factor.net/ja/config
+
+設定を **環境変数** に
+--------------------------------------------------
+
+* 設定とは例えばデータベース接続
+* 設定をコードから厳密に分離したい
+* 環境変数を変えることで、 **コードは変更しない** が実現できる
+
+.. 🏃‍♂️k8sではPodの環境変数を設定
+
+pydantic-settings
+--------------------------------------------------
+
+* https://docs.pydantic.dev/latest/concepts/pydantic_settings/
+* 環境変数を読み込む + Pydanticによるパース
+* 環境変数だけでなく :file:`.env` もサポート
+
+pydantic-settingsでの設定例
+--------------------------------------------------
+
+.. code-block:: python
+
+    from pydantic import PostgresDsn
+    from pydantic_settings import BaseSettings
+
+
+    class Config(BaseSettings):
+        pg_dsn: PostgresDsn
+
+
+    config = Config()
+
+環境変数 ``PG_DSN`` で設定できる
+
+ネストも可能
+--------------------------------------------------
+
+DBの設定、LLM APIの設定と分けたい
+
+.. code-block:: python
+
+    class DB(BaseModel):
+        pg_dsn: PostgresDsn
+    
+    class LlmApi(BaseModel):
+        api_key: str
+
+    class Config(BaseSettings):
+        model_config = SettingsConfigDict(env_nested_delimiter="__")
+        db: DB
+        llm: LlmApi
+
+    config = Config()
+
+環境変数 ``DB__PG_DSN`` や ``LLM__API_KEY``
+
+🏃‍♂️脱線：pydantic-settingsでCLIも作れます！
+--------------------------------------------------
+
+* 個人的イチオシポイント（さよならargparse）
+* 拙ブログ `pydantic-settingsで環境変数からも指定できるオプション引数を持つCLIを作る <https://nikkie-ftnext.hatenablog.com/entry/pydantic-settings-cli-application-args-optional-environment-positional>`__
