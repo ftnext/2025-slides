@@ -5,6 +5,15 @@ SQLAlchemy + Pydantic + 作者tiangolo氏の工夫
 
 https://sqlmodel.tiangolo.com/features/
 
+速習SQLModel🏃‍♂️
+--------------------------------------------------
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/x7qCG9RP7u4?si=_cwx2RHSBf0CZkxL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+`チュートリアル <https://sqlmodel.tiangolo.com/tutorial/>`__ の内容を30分でカバーしてます
+
 ここでもPydantic
 --------------------------------------------------
 
@@ -102,10 +111,18 @@ sessionmakerを使いたい立場からの提案
 IMO：SQLModel所感
 ======================================================================
 
+* SQLModelは発展途上
 * **SQLAlchemyの経験** がある方にだけ、オススメ
 * 経験ない我が身には、SQLModel + SQLAlchemyと学びが2倍（しんどい！）
 
-.. SQLModelは発展途上で、チュートリアルに実務レベルの例がない（空振ってSQLAlchemyを調べる）
+現状はSQLModelはオススメしづらい
+--------------------------------------------------
+
+* チュートリアルはtoy exampleで実務レベルの例がない（プルリクチャンス！）
+* 先の比較記事より、シングルメンテナゆえに判断を誤ったのでは
+* FastAPIユーザが **分断** されてしまっている（SQLModel採用のアプリケーション例が見つかりにくい）
+
+.. 空振ってSQLAlchemyを調べる
 .. order by
 
 .. TODO マイグレーション sqldef
