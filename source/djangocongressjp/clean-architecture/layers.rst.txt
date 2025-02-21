@@ -29,7 +29,7 @@ The Dependency Rule
 --------------------------------------------------
 
 * 例えば、DjangoのModel-View-Template
-* アプリケーションの中心にあるのは、フレームワークDjangoや具体のDBになってませんか？
+* アプリケーションの中心にあるのは、フレームワーク（Django・FastAPI）や具体のDBになってませんか？
 * ユーザ価値を提供する **ビジネスルール** をアプリケーションの中心に置きたい！
 
 The Clean Architecture は
@@ -82,29 +82,45 @@ domain
 domain
 --------------------------------------------------
 
-.. TODO コード入れていこう（見出しも上位に上げられそう）
-
 * 同心円の一番内側（図ではEntities）
-* システムがなくても存在するビジネスロジック（例：銀行）
+* システムがなくても存在するビジネスルール（例：銀行）
 * 事業領域をコードで表現する
+
+モデリング 参考資料🏃‍♂️
+--------------------------------------------------
+
+* `クソコード動画「Userクラス」で考える技術的負債解消の観点 <https://speakerdeck.com/minodriven/kusokododong-hua-userkurasu-dekao-eruji-shu-de-fu-zhai-jie-xiao-falseguan-dian>`__
+* `概念投影によるオブジェクト指向設計の考え方とその方法 <https://www.youtube.com/live/2mfj_yjalqk?si=VGeuDgSataYyfjaA>`__
+* `ソフトウェアの実装と事業戦略を結びつける <https://speakerdeck.com/masuda220/aligning-software-architecture-and-business-strategy-2024-8-forkwill>`__
+
+Pydanticの ``BaseModel`` を使って実装
+--------------------------------------------------
+
+* ``frozen=True`` 変更できなくする
+* 同値性 （``__eq__()``）
+* **特殊メソッドを追加** （``__iter__`` でイテラブルに）
 
 usecase
 ======================================================================
 
-.. image:: ../_static/djangocongressjp/CleanArchitecture/domain.drawio.png
+.. image:: ../_static/djangocongressjp/CleanArchitecture/use-case.drawio.png
 
 usecase
 --------------------------------------------------
 
 * 同心円の内側から2番目
-* システムにするために必要なロジック
-* メモリ上で完璧に構築（IOなどないのでアプリケーションではない）
+* システムにするために必要なロジック。事業領域の課題解決（＝アプリケーション）
+* メモリ上では完璧に構築（IOなどはないので使えない）
 
 usecaseが知っているもの（内側のみ）
 --------------------------------------------------
 
 * usecaseは内側のdomainを知っている
 * usecaseは *port* も知っている
+
+.. code-block:: python
+
+    await self.fetch_books_port.fetch()
 
 port
 ======================================================================
@@ -115,13 +131,43 @@ port
 --------------------------------------------------
 
 * **インターフェース**
-* usecaseは
 
-    * 使い方を知っている
-    * 中身（どんな実装をされているか）は知らない
+.. code-block:: python
 
-.. 依存性の逆転（DIP）
-    「作ると使うを分ける」から至る
+    class FetchBooksPort(ABC):
+        @abstractmethod
+        async def fetch(self) -> Books:
+            raise NotImplementedError
+
+usecaseは
+--------------------------------------------------
+
+* portの **使い方を知っている** （例：``fetch()`` メソッドはある！）
+* 中身がどんな実装をされているか（例：ファイルからデータ取得）は知らない
+
+usecaseにportが渡る
+--------------------------------------------------
+
+.. code-block:: python
+
+    class ListBooksUseCase:
+        def __init__(self, fetch_books_port: FetchBooksPort) -> None:
+            self.fetch_books_port = fetch_books_port
+
+* 作ると使うを一緒にせずに **分ける**
+* usecaseは **使うだけ**
+
+依存性の逆転（DIP）
+--------------------------------------------------
+
+* 作ると使うを分けた先に
+* インターフェース（**使い方**）**に依存** する。詳細は知らなくても使える
+
+.. code-block:: python
+
+    class ListBooksUseCase:
+        async def execute(self) -> Books:
+            return await self.fetch_books_port.fetch()
 
 gateway
 ======================================================================
@@ -132,14 +178,41 @@ gateway
 --------------------------------------------------
 
 * portを実装する
+* usecaseには（portを実装した）gatewayを渡す
+
+.. code-block:: python
+    :caption: データベースと技術詳細が顔を出す
+
+    class FetchBooksFromDatabase(FetchBooksPort):
+
+gatewayでデータを **変換**
+--------------------------------------------------
+
+* ORM（SQLModel）をgatewayに置く
 * 外界（プログラミング言語プリミティブな型で表現）から、ドメインの型に変換する
-* システムレベルで見ると、usecaseには（portを実装した）gatewayを渡す
+
+.. code-block:: python
+    :caption: 外界（データベース）
+
+    class BookRecord(SQLModel, table=True):
+
+.. code-block:: python
+    :caption: ドメイン
+
+    class Book(BaseModel, frozen=True):
 
 さらにgatewayでもインターフェースを定義する
 ======================================================================
 
-* driverが実装するインターフェース
-* ORM（SQLModel）もgatewayに置いた（インターフェースの型に必要）
+* gateway自身はこのインターフェースを知っている
+* driverが実装する（再び登場、 **依存性の逆転**）
+
+.. code-block:: python
+
+    class DatabaseDriver(ABC):
+        @abstractmethod
+        async def select_books(self) -> list[BookRecord]:
+            raise NotImplementedError
 
 driver
 ======================================================================
@@ -151,7 +224,16 @@ driver
 
 * 一番外側
 * 外界に接する：HTTPリクエスト、DB
-* ``int`` や ``str`` など、プログラミング言語プリミティブな型（ドメインの型ではない）
+* ``int`` や ``str`` など、プログラミング言語プリミティブな型で扱う（ドメインの型ではない）
+
+gatewayのインターフェースを実装
+--------------------------------------------------
+
+.. code-block:: python
+
+    class PostgresqlDatabaseDriver(DatabaseDriver):
+        async def select_books(self) -> list[BookRecord]:
+            ...
 
 rest
 ======================================================================
@@ -162,5 +244,24 @@ rest
 --------------------------------------------------
 
 * これもまた外界：Web APIにして外界に接する
-* FastAPIのフレームワークの機能を活用
-* 実装では、Web APIとして動かすための依存を渡した
+* FastAPIのフレームワークの機能を活用（controllerも兼ねる）
+* 実装では、Web APIとして動かすための依存を渡した（実現したいのコード）
+
+APIのレスポンスの型を定義
+--------------------------------------------------
+
+* **ドメインの型を直接は返さない**
+* API利用者に見せるレスポンスの型を作る（ドメインの型と同じ属性になることもある）
+
+まとめ🥟 クリーンなアーキテクチャを志向したレイヤ分け
+======================================================================
+
+.. code-block::
+
+    src/api
+    ├── domain/    # システムによらないビジネスルールを表現
+    ├── use_case/  # domainを操作して課題解決
+    ├── port/      # インターフェース。use_caseが依存し、gatewayで実装
+    ├── gateway/   # portを実装。データの変換。driver向けにインターフェースを定義
+    ├── driver/    # gatewayのインターフェースを実装。DBやWeb APIと接する
+    └── rest/      # Webアプリ。今回はFastAPIの機能を使った
