@@ -1,0 +1,167 @@
+知識をレイヤに閉じ込めるために
+======================================================================
+
+工夫2つを共有（議論の種として）
+
+1️⃣FastAPIのDepends
+======================================================================
+
+rest層でこれがやりたい（再掲）
+--------------------------------------------------
+
+.. code-block:: python
+    :caption: path operation関数に ``use_case`` を注入
+
+    @app.get("/books", response_model=list[BookReadModel])
+    async def get_books(
+        use_case: Annotated[ListBooksUseCase, Depends(inject_list_books_use_case)],
+    ):
+        books = await use_case.execute()
+        return [BookReadModel.from_book(book) for book in books]
+
+rest層で依存からuse_caseを組み立てている
+--------------------------------------------------
+
+.. code-block:: python
+
+    def inject_list_books_use_case(
+        session: Annotated[type[SQLModelAsyncSession], Depends(get_session)],
+    ) -> ListBooksUseCase:
+        return ListBooksUseCase(FetchBooksFromDatabase(PostgresqlDatabaseDriver(session)))
+
+FastAPIの ``Depends``
+--------------------------------------------------
+
+https://fastapi.tiangolo.com/tutorial/dependencies/
+
+.. code-block:: python
+
+    async def common_parameters(q: str | None = None, skip: int = 0, limit: int = 100):
+        return {"q": q, "skip": skip, "limit": limit}
+
+    @app.get("/items/")
+    async def read_items(commons: Annotated[dict, Depends(common_parameters)]):
+        return commons
+
+``Annotated[..., Depends(...)]``
+--------------------------------------------------
+
+* ``typing.Annotated[<type>, <metadata>]`` メタデータを付与
+* メタデータの ``Depends(関数)`` は、関数を実行して返り値をこの型ヒントしてる変数に代入
+* IMO：動きがpytestのフィクスチャっぽい
+
+Dependsは **連鎖** する
+--------------------------------------------------
+
+https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/
+
+.. code-block:: python
+
+    def query_extractor(q: str | None = None):
+        # 省略
+
+    def query_or_cookie_extractor(
+        q: Annotated[str, Depends(query_extractor)],
+        last_query: Annotated[str | None, Cookie()] = None,
+    ):
+        # 省略
+
+    @app.get("/items/")
+    async def read_query(
+        query_or_default: Annotated[str, Depends(query_or_cookie_extractor)],
+    ):
+        # 省略
+
+``Depends`` の連鎖を使ってDBセッションを注入
+--------------------------------------------------
+
+.. code-block:: python
+
+    def inject_list_books_use_case(
+        session: Annotated[type[SQLModelAsyncSession], Depends(get_session)],
+    ) -> ListBooksUseCase:
+
+.. code-block:: python
+
+    async def get_session():
+        yield AsyncSession  # モジュールスコープでasync_sessionmakerしている
+
+.. _rhoboro/async-fastapi-sqlalchemy: https://scrapbox.io/nikkie-memos/rhoboro%2Fasync-fastapi-sqlalchemy
+
+出典は `rhoboro/async-fastapi-sqlalchemy`_
+------------------------------------------------------------
+
+* Sub-dependenciesに加えて `Classes as Dependencies <https://fastapi.tiangolo.com/tutorial/dependencies/classes-as-dependencies/>`__
+
+.. code-block:: python
+    :caption: :file:`views.py` 抜粋
+
+    @router.get("")
+    async def read_all(
+        use_case: ReadAllNote = Depends(ReadAllNote),
+    ) -> ReadAllNoteResponse:
+
+.. revealjs-break::
+    :notitle:
+
+.. code-block:: python
+    :caption: :file:`use_cases.py` 抜粋
+
+    class ReadAllNote:
+        def __init__(self, session: AsyncSession) -> None:
+            self.async_session = session
+
+.. code-block:: python
+    :caption: :file:`main.py` 抜粋
+
+    async def get_session() -> AsyncIterator[async_sessionmaker]:
+        ...
+
+    AsyncSession = Annotated[async_sessionmaker, Depends(get_session)]
+
+2️⃣拡張関数を志向する
+======================================================================
+
+拡張関数（例：Kotlin）
+--------------------------------------------------
+
+* 継承しなくてもクラスにメソッドを追加できる
+* https://kotlinlang.org/docs/extensions.html
+
+拡張する例
+--------------------------------------------------
+
+.. code-block:: kotlin
+    :caption: ``MutableList<Int>`` に ``swap`` メソッドを追加
+
+    fun MutableList<Int>.swap(index1: Int, index2: Int) {
+        val tmp = this[index1] // 'this' corresponds to the list
+        this[index1] = this[index2]
+        this[index2] = tmp
+    }
+
+``MutableList`` はcollectionの1つ
+
+レイヤ分けにおける拡張関数の出番
+------------------------------------------------
+
+* gateway層：ドメインの型と、外界の型（言語プリミティブな型）の変換
+* ドメインは、DBのレコードの型（同心円の外側）を知り得ない
+
+gatewayでドメインを拡張する案
+------------------------------------------------
+
+.. code-block:: python
+
+    def books_from_records(book_records: list[BookRecord]) -> Books:
+        return Books(...)
+    
+    Books.from_ = staticmethod(books_from_records)  # type: ignore[attr-defined]
+
+gatewayにおけるBooksドメインに ``from_()`` メソッドが生やした
+
+Python版 *拡張関数*
+------------------------------------------------
+
+* レイヤ間の関心の分離は達成！
+* 実質はメタプログラミング。型チェックで怒られ、コードジャンプに影響
