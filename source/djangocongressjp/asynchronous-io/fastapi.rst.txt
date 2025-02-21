@@ -10,7 +10,9 @@ encode/starlette
 
 * https://github.com/encode/starlette
 * lightweight ASGI framework（非同期IOサポート）
-* **高いパフォーマンス**
+* **高いパフォーマンス** （`Web Framework Benchmarks <https://www.techempower.com/benchmarks/#section=data-r17&hw=ph&test=fortune&l=zijzen-1>`__ 0.18.0時点）
+
+.. https://github.com/encode/starlette/tree/0.18.0?tab=readme-ov-file#performance
 
 Pydantic
 --------------------------------------------------
@@ -22,35 +24,66 @@ Pydantic
 パスオペレーション関数の書き方
 ======================================================================
 
+.. 用語 https://fastapi.tiangolo.com/tutorial/first-steps/#step-4-define-the-path-operation-function
+
 .. code-block:: python
 
     @app.get("/sync")
-    def root():  # <- パスオペレーション関数
+    def root():  # <- path operation function
         return {"message": "Hello World"}
 
     @app.get("/async")
     async def root():
         return {"message": "どんなときにasync defにする？"}
 
-そもそも非同期IOが有効なのは
+処理は2種類
 --------------------------------------------------
 
-* **IOバウンド** な処理（CPUバウンドではない）
+* IOバウンド
 
     * 外部との通信（APIやDB）
     * ファイルの読み書き
 
-* CPUをIO待ちにしないで他の処理を進める
+* CPUバウンド
 
-FastAPIのドキュメント曰く、IOバウンドな処理は
+    * 重い計算
+
+そもそも非同期IOが有効なのは
 --------------------------------------------------
 
-* 依存するライブラリが非同期IOをサポートしているなら ``await`` を使うために、パスオペレーション関数は ``async def``
-* サポートしていないなら ``def``
+* **IOバウンド** な処理（CPUバウンドではない）
+* CPUをIO待ちにしないで他の処理を進める
 
-https://fastapi.tiangolo.com/async/#in-a-hurry
+FastAPIのドキュメント曰く
+--------------------------------------------------
 
-FastAPIのドキュメント曰く、CPUバウンドな処理は
+.. https://fastapi.tiangolo.com/async/#in-a-hurry
+
+* 非同期IOをサポートするライブラリを使うなら、パスオペレーション関数は ``async def``
+* ``await`` が使えるのは ``async def`` の中だけ
+
+.. code-block:: python
+
+    client = AsyncOpenAI()
+
+    @app.get("/async")
+    async def use_async_support_library():
+        chat_completion = await client.chat.completions.create(...)
+
+.. https://github.com/openai/openai-python?tab=readme-ov-file#async-usage
+
+.. revealjs-break::
+
+* 非同期IOをサポートしないライブラリなら、パスオペレーション関数は ``def``
+* ブロッキングIOでは ``def``
+
+.. code-block:: python
+
+    @app.get("/sync")
+    async def use_blocking_io_library():
+        response = requests.get(...)
+
+CPUバウンドな処理は
 --------------------------------------------------
 
 * ``async def`` ‼️
@@ -62,3 +95,9 @@ FastAPIのドキュメント曰く、CPUバウンドな処理は
         「If your application (somehow) doesn't have to communicate with anything else and wait for it to respond, use async def.」
 
 https://fastapi.tiangolo.com/async/#path-operation-functions
+
+FastAPIでの非同期IO🥟
+--------------------------------------------------
+
+* **非同期IOをサポートしたライブラリを使って**、パスオペレーション関数を ``async def`` で書こう！
+* CPUバウンドな処理もFastAPIでは ``async def`` で書くとよいとのこと
