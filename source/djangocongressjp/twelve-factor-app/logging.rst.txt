@@ -1,0 +1,98 @@
+2️⃣ XI. ログ
+======================================================================
+
+    ログをイベントストリームとして扱う
+
+https://12factor.net/ja/logs
+
+ファイルではなく **ストリーム**
+--------------------------------------------------
+
+    それぞれの実行中のプロセスはイベントストリームをstdout（標準出力）にバッファリングせずに書きだす。
+
+k8s(GKE)のPodや、Google CloudのCloud Loggingで見ています
+
+uvicornによるロギング
+--------------------------------------------------
+
+* :command:`uvicorn app:app`
+* https://www.uvicorn.org/settings/#logging
+* ``--log-level`` や ``--log-config``
+
+Pythonのロギングの要素（抜粋）
+--------------------------------------------------
+
+* ロガー
+* ハンドラ
+* フォーマッタ
+
+デフォルトのlog config
+--------------------------------------------------
+
+* uvicornロガー（標準エラー出力）
+
+    * uvicorn.errorロガーからpropagate
+
+* uvicorn.accessロガー（標準出力）
+
+.. https://nikkie-ftnext.hatenablog.com/entry/uvicorn-practice-default-logging-equivalent-yaml
+
+色が付くのはuvicorn自前のフォーマッタによる
+--------------------------------------------------
+
+* uvicorn.logging.DefaultFormatter
+
+    * ログレコードの ``levelprefix`` に色を付ける
+
+* uvicorn.logging.AccessFormatter
+
+設定の仕方は標準ライブラリ logging.config より
+--------------------------------------------------
+
+.. code-block:: yaml
+    :caption: uvicornロガーの設定
+
+    version: 1
+    formatters:
+      default:
+        class: uvicorn.logging.DefaultFormatter
+        format: '%(levelprefix)s %(message)s'
+        use_colors: null
+    handlers:
+      default:
+        formatter: default
+        class: logging.StreamHandler
+        stream: ext://sys.stderr
+    loggers:
+      uvicorn:
+        handlers:
+          - default
+        level: INFO
+        propagate: false
+      uvicorn.error:
+        level: INFO
+    disable_existing_loggers: false
+
+設定例：発行されるSQLをログ出力
+--------------------------------------------------
+
+.. code-block:: yaml
+    :caption: sqlalchemy.engineロガーを設定
+
+    formatters:
+      default:
+        class: uvicorn.logging.DefaultFormatter
+        format: '%(asctime)s - %(name)s - %(levelprefix)s - %(message)s'
+        use_colors: null
+    handlers:
+      default_stdout:
+        formatter: default
+        class: logging.StreamHandler
+        stream: ext://sys.stdout
+    loggers:
+      sqlalchemy.engine:
+        handlers:
+          - default_stdout
+        level: INFO
+
+.. https://nikkie-ftnext.hatenablog.com/entry/sqlalchemy-echo-sql-in-uvicorn-colorized-logging?
