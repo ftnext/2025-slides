@@ -5,37 +5,93 @@ The Clean Architecture
 * https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
 * 氏による書籍『Clean Architecture』と区別してます
 
-ブログ中のイラスト
+XXXアーキテクチャに共通するもの
 --------------------------------------------------
 
-TODO
+* Hexagonal (=Ports and Adapters) / Onion
+* **レイヤ分け** による **関心の分離**
 
-同心円の図は **一例** を示したにすぎない
-
-次第に近づいていくもの（t-wadaさん）
+「共通するもの」の概要（schematic）
 --------------------------------------------------
 
-https://x.com/t_wada/status/1882578423094419522
+.. image:: ../_static/djangocongressjp/uncle-bob-CleanArchitecture.jpg
+
+注：この4層を導入すれば、クリーンアーキテクチャ **ではありません**
+
+The Dependency Rule
+--------------------------------------------------
+
+    source code dependencies can only point inwards.
+
+各レイヤは、自分より **内側にあるレイヤだけに依存** する
+
+なぜ登場したのか（私の理解）
+--------------------------------------------------
+
+* 例えば、DjangoのModel-View-Template
+* アプリケーションの中心にあるのは、フレームワークDjangoや具体のDBになってませんか？
+* ユーザ価値を提供する **ビジネスルール** をアプリケーションの中心に置きたい！
+
+The Clean Architecture は
+--------------------------------------------------
+
+* 中心にはビジネスルール
+* フレームワークやデータベースから **独立** （差し替え可能）
+* 詳細の決定を遅らせる
+
+.. 次第に近づいていくもの（t-wadaさん）
+    https://x.com/t_wada/status/1882578423094419522
 
 レイヤ分け
 ======================================================================
 
-domain / usecase / gateway(port) / driver / rest
+.. code-block::
 
-The Clean Architectureの黄金律
+    src/api
+    ├── domain/
+    ├── driver/
+    ├── gateway/
+    ├── port/
+    ├── rest/
+    └── use_case/
+
+このレイヤ分けで実現したいこと
 --------------------------------------------------
 
-* 自分より **内側にあるものだけ** に依存する
+.. code-block:: python
+    :caption: path operation関数に ``use_case`` を注入
+    :emphasize-lines: 3,5
 
-  * usecaseはdomainを知っている（依存する）
+    @app.get("/books", response_model=list[BookReadModel])
+    async def get_books(
+        use_case: Annotated[ListBooksUseCase, Depends(inject_list_books_use_case)],
+    ):
+        books = await use_case.execute()
+        return [BookReadModel.from_book(book) for book in books]
+
+同心円の内側 -> 外側の向きに見ていきます
+--------------------------------------------------
+
+.. image:: ../_static/djangocongressjp/uncle-bob-CleanArchitecture.jpg
+
+domain
+======================================================================
+
+.. image:: ../_static/djangocongressjp/CleanArchitecture/domain.drawio.png
 
 domain
 --------------------------------------------------
 
 .. TODO コード入れていこう（見出しも上位に上げられそう）
 
-* 同心円の一番内側
+* 同心円の一番内側（図ではEntities）
 * システムがなくても存在するビジネスロジック（例：銀行）
+* 事業領域をコードで表現する
+
+usecase
+======================================================================
+
+.. image:: ../_static/djangocongressjp/CleanArchitecture/domain.drawio.png
 
 usecase
 --------------------------------------------------
@@ -44,17 +100,33 @@ usecase
 * システムにするために必要なロジック
 * メモリ上で完璧に構築（IOなどないのでアプリケーションではない）
 
+usecaseが知っているもの（内側のみ）
+--------------------------------------------------
+
+* usecaseは内側のdomainを知っている
+* usecaseは *port* も知っている
+
+port
+======================================================================
+
+.. image:: ../_static/djangocongressjp/CleanArchitecture/port.drawio.png
+
 port
 --------------------------------------------------
 
-* インターフェース
-* usecaseはportを知っている
+* **インターフェース**
+* usecaseは
 
     * 使い方を知っている
     * 中身（どんな実装をされているか）は知らない
 
 .. 依存性の逆転（DIP）
     「作ると使うを分ける」から至る
+
+gateway
+======================================================================
+
+.. image:: ../_static/djangocongressjp/CleanArchitecture/gateway.drawio.png
 
 gateway
 --------------------------------------------------
@@ -64,10 +136,15 @@ gateway
 * システムレベルで見ると、usecaseには（portを実装した）gatewayを渡す
 
 さらにgatewayでもインターフェースを定義する
---------------------------------------------------
+======================================================================
 
 * driverが実装するインターフェース
 * ORM（SQLModel）もgatewayに置いた（インターフェースの型に必要）
+
+driver
+======================================================================
+
+.. image:: ../_static/djangocongressjp/CleanArchitecture/driver.drawio.png
 
 driver
 --------------------------------------------------
@@ -75,6 +152,11 @@ driver
 * 一番外側
 * 外界に接する：HTTPリクエスト、DB
 * ``int`` や ``str`` など、プログラミング言語プリミティブな型（ドメインの型ではない）
+
+rest
+======================================================================
+
+.. image:: ../_static/djangocongressjp/CleanArchitecture/rest.drawio.png
 
 rest
 --------------------------------------------------
