@@ -89,7 +89,7 @@ FastAPIのドキュメント曰く
 .. code-block:: python 
 
     @app.get("/sync")
-      def use_blocking_io_library():
+    def use_blocking_io_library():
         response = requests.get(...)
 
 質問：CPUバウンドな処理は、どっち？

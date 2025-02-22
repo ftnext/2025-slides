@@ -145,7 +145,7 @@ FastAPIの現場から
     :caption: `ChatGPTを非同期でPythonから利用する方法 <https://blog.hirokiky.org/entry/2023/03/14/163203>`__ (2023時点)
 
     class GPTView(View):
-        async post(request):
+        async def post(request):
             res = await openai.ChatCompletion.acreate({...})
 
 * **非同期IO** が有効。皆やってみたさがあり、FastAPIを選択
