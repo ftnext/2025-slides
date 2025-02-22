@@ -1,3 +1,9 @@
+:ogp_title: FastAPIの現場から
+:ogp_event_name: djangocongressjp
+:ogp_slide_name: practical-fastapi
+:ogp_description: DjangoCongress JP 2025
+:ogp_image_name: djangocongressjp
+
 ======================================================================
 **FastAPI** の現場から
 ======================================================================
