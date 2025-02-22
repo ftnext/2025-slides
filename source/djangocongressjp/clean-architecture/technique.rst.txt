@@ -6,11 +6,16 @@
 1️⃣FastAPIのDepends
 ======================================================================
 
-rest層でこれがやりたい（再掲）
+rest層でこれがやりたかった（再掲）
 --------------------------------------------------
 
 .. code-block:: python
     :caption: path operation関数に ``use_case`` を注入
+
+    def inject_list_books_use_case(
+        session: Annotated[type[SQLModelAsyncSession], Depends(get_session)],
+    ) -> ListBooksUseCase:
+        return ListBooksUseCase(FetchBooksFromDatabase(PostgresqlDatabaseDriver(session)))
 
     @app.get("/books", response_model=list[BookReadModel])
     async def get_books(
@@ -19,17 +24,7 @@ rest層でこれがやりたい（再掲）
         books = await use_case.execute()
         return [BookReadModel.from_book(book) for book in books]
 
-rest層で依存からuse_caseを組み立てている
---------------------------------------------------
-
-.. code-block:: python
-
-    def inject_list_books_use_case(
-        session: Annotated[type[SQLModelAsyncSession], Depends(get_session)],
-    ) -> ListBooksUseCase:
-        return ListBooksUseCase(FetchBooksFromDatabase(PostgresqlDatabaseDriver(session)))
-
-FastAPIの ``Depends``
+FastAPIの ``Depends`` 🌟
 --------------------------------------------------
 
 https://fastapi.tiangolo.com/tutorial/dependencies/
@@ -47,10 +42,10 @@ https://fastapi.tiangolo.com/tutorial/dependencies/
 --------------------------------------------------
 
 * ``typing.Annotated[<type>, <metadata>]`` メタデータを付与
-* メタデータの ``Depends(関数)`` は、関数を実行して返り値をこの型ヒントしてる変数に代入
-* IMO：動きがpytestのフィクスチャっぽい
+* メタデータの ``Depends(関数)`` は、 **関数を実行して返り値を型ヒントしてる変数に代入**
+* IMO：動きが `pytestのフィクスチャ <https://nikkie-ftnext.hatenablog.com/entry/sphinx-extension-e2e-app-status-warning-are-pytest-fixtures#pytest%E3%81%AE%E3%83%95%E3%82%A3%E3%82%AF%E3%82%B9%E3%83%81%E3%83%A3%E3%81%AF%E5%BC%95%E6%95%B0%E3%81%AB%E3%81%82%E3%82%8B%E5%88%A5%E3%81%AE%E3%83%95%E3%82%A3%E3%82%AF%E3%82%B9%E3%83%81%E3%83%A3%E3%82%92%E5%AE%9F%E8%A1%8C%E3%81%A7%E3%81%8D%E3%82%8B>`__ っぽい
 
-Dependsは **連鎖** する
+Dependsは **連鎖** する⛓️
 --------------------------------------------------
 
 https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/
@@ -76,17 +71,19 @@ https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/
 --------------------------------------------------
 
 .. code-block:: python
+    :caption: rest層
 
     def inject_list_books_use_case(
         session: Annotated[type[SQLModelAsyncSession], Depends(get_session)],
     ) -> ListBooksUseCase:
 
 .. code-block:: python
+    :caption: driver層
 
     async def get_session():
         yield AsyncSession  # モジュールスコープでasync_sessionmakerしている
 
-.. _rhoboro/async-fastapi-sqlalchemy: https://scrapbox.io/nikkie-memos/rhoboro%2Fasync-fastapi-sqlalchemy
+.. _rhoboro/async-fastapi-sqlalchemy: https://github.com/rhoboro/async-fastapi-sqlalchemy
 
 出典は `rhoboro/async-fastapi-sqlalchemy`_
 ------------------------------------------------------------
@@ -94,7 +91,7 @@ https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/
 * Sub-dependenciesに加えて `Classes as Dependencies <https://fastapi.tiangolo.com/tutorial/dependencies/classes-as-dependencies/>`__
 
 .. code-block:: python
-    :caption: :file:`views.py` 抜粋
+    :caption: `views.py <https://github.com/rhoboro/async-fastapi-sqlalchemy/blob/12683934b451c76af5eea7ee5bf4e6c8342ca165/app/api/notes/views.py#L27-L31>`__ 抜粋
 
     @router.get("")
     async def read_all(
@@ -105,19 +102,25 @@ https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/
     :notitle:
 
 .. code-block:: python
-    :caption: :file:`use_cases.py` 抜粋
+    :caption: `use_cases.py <https://github.com/rhoboro/async-fastapi-sqlalchemy/blob/12683934b451c76af5eea7ee5bf4e6c8342ca165/app/api/notes/use_cases.py#L22-L24>`__ 抜粋
 
     class ReadAllNote:
         def __init__(self, session: AsyncSession) -> None:
             self.async_session = session
 
 .. code-block:: python
-    :caption: :file:`main.py` 抜粋
+    :caption: `db.py <https://github.com/rhoboro/async-fastapi-sqlalchemy/blob/12683934b451c76af5eea7ee5bf4e6c8342ca165/app/db.py#L24-L31>`__ 抜粋
 
     async def get_session() -> AsyncIterator[async_sessionmaker]:
         ...
 
     AsyncSession = Annotated[async_sessionmaker, Depends(get_session)]
+
+FastAPIの ``Depends`` は積極的に活用できない
+--------------------------------------------------
+
+* **レイヤ分け** を優先すると、 ``Depends`` は domain や usecase には型ヒントできない（FastAPIはrest層の技術詳細）
+* FastAPIは ``Depends`` を使い倒した方が開発者は楽ができそう（差し替え可能より優先する判断もあり得る）
 
 2️⃣拡張関数を志向する
 ======================================================================
@@ -145,7 +148,7 @@ https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/
 レイヤ分けにおける拡張関数の出番
 ------------------------------------------------
 
-* gateway層：ドメインの型と、外界の型（言語プリミティブな型）の変換
+* gateway層：ドメインの型と、外界の型（言語プリミティブな型）の **変換**
 * ドメインは、DBのレコードの型（同心円の外側）を知り得ない
 
 gatewayでドメインを拡張する案
@@ -158,10 +161,12 @@ gatewayでドメインを拡張する案
     
     Books.from_ = staticmethod(books_from_records)  # type: ignore[attr-defined]
 
-gatewayにおけるBooksドメインに ``from_()`` メソッドが生やした
+gatewayにおけるBooksドメインに ``from_()`` メソッドを実行時に生やした
 
 Python版 *拡張関数*
 ------------------------------------------------
 
 * レイヤ間の関心の分離は達成！
-* 実質はメタプログラミング。型チェックで怒られ、コードジャンプに影響
+* **実質はメタプログラミング** 。型チェックで怒られ、コードジャンプに影響
+
+他の方法は今は浮かんでいません...

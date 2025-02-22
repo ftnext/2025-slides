@@ -17,7 +17,8 @@ uvicornによるロギング
 
 * :command:`uvicorn app:app`
 * https://www.uvicorn.org/settings/#logging
-* ``--log-level`` や ``--log-config``
+* ``--log-level`` や **--log-config**
+* ``fastapi`` コマンドより高機能なのでこちらを選択
 
 Pythonのロギングの要素（抜粋）
 --------------------------------------------------
@@ -25,6 +26,8 @@ Pythonのロギングの要素（抜粋）
 * ロガー
 * ハンドラ
 * フォーマッタ
+
+2週前のPyCon mini Shizuoka 2024 continueで `ロギングの話 <https://ftnext.github.io/2025-slides/pyconshizu/logging-with-nullhandler.html#/1>`__ をしました
 
 デフォルトのlog config
 --------------------------------------------------
@@ -50,7 +53,7 @@ Pythonのロギングの要素（抜粋）
 --------------------------------------------------
 
 .. code-block:: yaml
-    :caption: uvicornロガーの設定
+    :caption: uvicornロガーの設定（抜粋）
 
     version: 1
     formatters:

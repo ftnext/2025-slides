@@ -3,18 +3,19 @@ The Clean Architecture
 
 * Robert C. Martin (Uncle Bob) によるブログ
 * https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
-* 氏による書籍『Clean Architecture』と区別してます
+* 氏による書籍『`Clean Architecture <https://asciidwango.jp/post/176293765750/clean-architecture>`__』と区別してます
 
 XXXアーキテクチャに共通するもの
 --------------------------------------------------
 
-* Hexagonal (=Ports and Adapters) / Onion
+* Hexagonal (=Ports and Adapters) / Onion / e.t.c.
 * **レイヤ分け** による **関心の分離**
 
 「共通するもの」の概要（schematic）
 --------------------------------------------------
 
 .. image:: ../_static/djangocongressjp/uncle-bob-CleanArchitecture.jpg
+    :scale: 80%
 
 注：この4層を導入すれば、クリーンアーキテクチャ **ではありません**
 
@@ -23,9 +24,9 @@ The Dependency Rule
 
     source code dependencies can only point inwards.
 
-各レイヤは、自分より **内側にあるレイヤだけに依存** する
+各レイヤは、自分より **内側のレイヤだけに依存** する
 
-なぜ登場したのか（私の理解）
+なぜ提唱されたのか（私の理解）
 --------------------------------------------------
 
 * 例えば、DjangoのModel-View-Template
@@ -35,17 +36,23 @@ The Dependency Rule
 The Clean Architecture は
 --------------------------------------------------
 
-* 中心にはビジネスルール
+* **中心にはビジネスルール**
 * フレームワークやデータベースから **独立** （差し替え可能）
 * 詳細の決定を遅らせる
 
 .. 次第に近づいていくもの（t-wadaさん）
     https://x.com/t_wada/status/1882578423094419522
 
+Clean Architectureを学んできた道🏃‍♂️
+--------------------------------------------------
+
+* `Software Design 2023年6月号 <https://gihyo.jp/magazine/SD/archive/2023/202306>`__ 第1特集
+* 『`ちょうぜつソフトウェア設計入門 <https://gihyo.jp/book/2022/978-4-297-13234-7>`__』
+
 レイヤ分け
 ======================================================================
 
-.. code-block::
+.. code-block:: txt
 
     src/api
     ├── domain/
@@ -59,7 +66,7 @@ The Clean Architecture は
 --------------------------------------------------
 
 .. code-block:: python
-    :caption: path operation関数に ``use_case`` を注入
+    :caption: FastAPIのpath operation関数に ``use_case`` を注入
     :emphasize-lines: 3,5
 
     @app.get("/books", response_model=list[BookReadModel])
@@ -83,10 +90,10 @@ domain
 --------------------------------------------------
 
 * 同心円の一番内側（図ではEntities）
-* システムがなくても存在するビジネスルール（例：銀行）
-* 事業領域をコードで表現する
+* **システムがなくても存在** するビジネスルール（例：銀行）
+* 事業領域をコードで表現する（*ドメインモデリング* 。ここに時間を使えています）
 
-モデリング 参考資料🏃‍♂️
+ドメインモデリング 参考資料🏃‍♂️
 --------------------------------------------------
 
 * `クソコード動画「Userクラス」で考える技術的負債解消の観点 <https://speakerdeck.com/minodriven/kusokododong-hua-userkurasu-dekao-eruji-shu-de-fu-zhai-jie-xiao-falseguan-dian>`__
@@ -97,8 +104,27 @@ Pydanticの ``BaseModel`` を使って実装
 --------------------------------------------------
 
 * ``frozen=True`` 変更できなくする
+
+.. code-block:: python
+
+    class Book(BaseModel, frozen=True):
+        id: str
+        isbn: ISBN
+        title: str
+        page: int
+
+.. revealjs-break::
+
 * 同値性 （``__eq__()``）
-* **特殊メソッドを追加** （``__iter__`` でイテラブルに）
+* **特殊メソッドを追加** （コレクションの例： ``__iter__()`` でイテラブルに）
+
+.. code-block:: python
+
+    class Books(BaseModel, frozen=True):
+        values: list[Book]
+
+        def __iter__(self) -> Generator[Book, None, None]:  # type: ignore[override]
+            yield from self.values
 
 usecase
 ======================================================================
@@ -109,14 +135,14 @@ usecase
 --------------------------------------------------
 
 * 同心円の内側から2番目
-* システムにするために必要なロジック。事業領域の課題解決（＝アプリケーション）
+* システムで **事業領域の課題を解決するロジック** （＝アプリケーション）
 * メモリ上では完璧に構築（IOなどはないので使えない）
 
 usecaseが知っているもの（内側のみ）
 --------------------------------------------------
 
 * usecaseは内側のdomainを知っている
-* usecaseは *port* も知っている
+* usecaseは *port* も知っている（メソッドは呼び出せる）
 
 .. code-block:: python
 
@@ -143,7 +169,7 @@ usecaseは
 --------------------------------------------------
 
 * portの **使い方を知っている** （例：``fetch()`` メソッドはある！）
-* 中身がどんな実装をされているか（例：ファイルからデータ取得）は知らない
+* 中身がどんな実装をされているか（例：データ取得がファイルからかデータベースからか）は知らない
 
 usecaseにportが渡る
 --------------------------------------------------
@@ -155,19 +181,7 @@ usecaseにportが渡る
             self.fetch_books_port = fetch_books_port
 
 * 作ると使うを一緒にせずに **分ける**
-* usecaseは **使うだけ**
-
-依存性の逆転（DIP）
---------------------------------------------------
-
-* 作ると使うを分けた先に
-* インターフェース（**使い方**）**に依存** する。詳細は知らなくても使える
-
-.. code-block:: python
-
-    class ListBooksUseCase:
-        async def execute(self) -> Books:
-            return await self.fetch_books_port.fetch()
+* usecaseは **使うだけ** （*依存性の逆転*）
 
 gateway
 ======================================================================
@@ -181,12 +195,51 @@ gateway
 * usecaseには（portを実装した）gatewayを渡す
 
 .. code-block:: python
-    :caption: データベースと技術詳細が顔を出す
+    :caption: 「データベース」と技術詳細が顔を出す
 
     class FetchBooksFromDatabase(FetchBooksPort):
 
-gatewayでデータを **変換**
+usecaseはgatewayに依存する
 --------------------------------------------------
+
+.. code-block:: python
+    :caption: 作って使えたらな...
+
+    class ListBooksUseCase:
+        def execute(self) -> Books:
+            fetch_books = FetchBooksFromDatabase()
+            return await fetch_books.fetch()
+
+作ると使うを分ける
+--------------------------------------------------
+
+.. code-block:: python
+    :caption: 外からgatewayが渡ってくる。 **使うだけ**
+
+    class ListBooksUseCase:
+        def __init__(self, fetch_books: FetchBooksFromDatabase) -> None:
+            self.fetch_books = fetch_books
+
+        def execute(self) -> Books:
+            return await self.fetch_books.fetch()
+
+依存性の逆転（DIP）
+--------------------------------------------------
+
+* 具体のgatewayではなく、port＝インターフェース（**使い方**） **に依存** する
+* usecaseは詳細は知らなくても使える
+
+.. code-block:: python
+
+    class ListBooksUseCase:
+        def __init__(self, fetch_books_port: FetchBooksPort) -> None:
+            self.fetch_books_port = fetch_books_port
+
+        async def execute(self) -> Books:
+            return await self.fetch_books_port.fetch()
+
+gatewayでデータを **変換**
+======================================================================
 
 * ORM（SQLModel）をgatewayに置く
 * 外界（プログラミング言語プリミティブな型で表現）から、ドメインの型に変換する
@@ -224,16 +277,17 @@ driver
 
 * 一番外側
 * 外界に接する：HTTPリクエスト、DB
-* ``int`` や ``str`` など、プログラミング言語プリミティブな型で扱う（ドメインの型ではない）
+* ``int``, ``str``, ``list``, ``dict`` など、プログラミング言語プリミティブな型で扱う（ドメインの型ではない）
 
 gatewayのインターフェースを実装
 --------------------------------------------------
 
 .. code-block:: python
+    :caption: 具体的な技術詳細が登場（PostgreSQL）
 
     class PostgresqlDatabaseDriver(DatabaseDriver):
         async def select_books(self) -> list[BookRecord]:
-            ...
+            # 初期化で渡されるセッションを使って、DBとやり取り
 
 rest
 ======================================================================
@@ -244,19 +298,31 @@ rest
 --------------------------------------------------
 
 * これもまた外界：Web APIにして外界に接する
-* FastAPIのフレームワークの機能を活用（controllerも兼ねる）
-* 実装では、Web APIとして動かすための依存を渡した（実現したいのコード）
+* **FastAPIのフレームワークの機能を活用** （HTTPリクエストを処理するcontrollerも兼ねる）
+* 実装では、Web APIとして動かすための依存を渡した
+
+usecaseを組み立てる
+--------------------------------------------------
+
+.. code-block:: python
+
+    def inject_list_books_use_case(
+        session: Annotated[type[SQLModelAsyncSession], Depends(get_session)],
+    ) -> ListBooksUseCase:
+        return ListBooksUseCase(FetchBooksFromDatabase(PostgresqlDatabaseDriver(session)))
+
+これをpath operation関数で実行
 
 APIのレスポンスの型を定義
 --------------------------------------------------
 
 * **ドメインの型を直接は返さない**
-* API利用者に見せるレスポンスの型を作る（ドメインの型と同じ属性になることもある）
+* API利用者に見せるレスポンスの型を作る（たまたまドメインの型と同じ属性になることもある）
 
 まとめ🥟 クリーンなアーキテクチャを志向したレイヤ分け
 ======================================================================
 
-.. code-block::
+.. code-block:: txt
 
     src/api
     ├── domain/    # システムによらないビジネスルールを表現
@@ -265,3 +331,5 @@ APIのレスポンスの型を定義
     ├── gateway/   # portを実装。データの変換。driver向けにインターフェースを定義
     ├── driver/    # gatewayのインターフェースを実装。DBやWeb APIと接する
     └── rest/      # Webアプリ。今回はFastAPIの機能を使った
+
+上ほど同心円の内側

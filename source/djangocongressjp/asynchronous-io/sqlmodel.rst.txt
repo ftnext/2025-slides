@@ -5,7 +5,7 @@ SQLAlchemy + Pydantic + 作者tiangolo氏の工夫
 
 https://sqlmodel.tiangolo.com/features/
 
-速習SQLModel🏃‍♂️
+速習SQLModel🏃‍♂️ (PyCon JP 2024)
 --------------------------------------------------
 
 .. raw:: html
@@ -17,7 +17,7 @@ https://sqlmodel.tiangolo.com/features/
 ここでもPydantic
 --------------------------------------------------
 
-* ``SQLModel`` を継承したクラスは、Pydanticの ``BaseModel`` でもあるので、FastAPIで使える
+* ``SQLModel`` を継承したクラスは、Pydanticの ``BaseModel`` でもあるので、 **FastAPIで使える**
 * ORMを扱う際にもエディタで補完が効く
 
 SQLAlchemy
@@ -25,12 +25,12 @@ SQLAlchemy
 
 * https://github.com/sqlalchemy/sqlalchemy
 * 代表的なORM
-* **DBの非同期IO** をサポート！
+* **DBの非同期IO** をサポート！（ありがとう！！）
 
 DBの非同期IO
 ======================================================================
 
-* SQLAlchemyにSQLModelは乗っかる
+* **SQLAlchemy** にSQLModelは乗っかる（SQLAlchemyの話になります）
 * PostgreSQLの例
 
 SQLModelとして
@@ -68,13 +68,28 @@ SQLModelが提供するDBセッション
     from sqlmodel import Session
     from sqlmodel.ext.asyncio.session import AsyncSession
 
+* **DBとのやり取り** はセッションを通して
 * SQLAlchemyの ``Session`` や ``AsyncSession`` を継承したクラス
-* DBとのやり取りはセッションを通して。セッションにオブジェクトが *浮いている* イメージ
 
-.. revealjs-break::
+DBセッション比較
+--------------------------------------------------
+
+.. list-table::
+
+    * - ライブラリ
+      - ``execute()`` 
+      - ``exec()``
+    * - SQLAlchemy
+      - **ある**
+      - ない
+    * - SQLModel
+      - ある
+      - **ある** （推奨）
+
+SQLModelのDBセッションは **型が当たる**
+--------------------------------------------------
 
 * ``Session`` インスタンスに ``statement`` を渡して、 ``exec()`` メソッドを呼ぶ
-* 👉 **型が当たる** （SQLAlchemyのSessionの ``execute().scalars()`` メソッドを呼んでいるため）
 
 .. code-block:: python
     :emphasize-lines: 3
@@ -85,15 +100,16 @@ SQLModelが提供するDBセッション
         for hero in results:
             print(repr(hero))
 
-SQLAlchemyが提供するsessionmaker
+* SQLAlchemyのSessionの ``execute().scalars()`` メソッドを呼んで実現🏃‍♂️
+
+``sessionmaker`` の提供
 --------------------------------------------------
 
-* セッションの **ファクトリ** を返す。常に ``engine`` を渡して初期化しなくてよくなる
-* SQLModelは提供していない（`tiangolo氏 <https://github.com/fastapi/sqlmodel/issues/75#issuecomment-1311796665>`__ 「常に ``with Session(engine)`` すればよい」）
-* なお、sessionmakerが返すSQLAlchemyのセッションは ``exec()`` はなく、 ``execute()`` のみ（型が当たらない）
+:SQLAlchemy: ある。セッションの **ファクトリ** クラスを返すため、常に ``engine`` を渡して初期化しなくてよくなる
+:SQLModel: ない。`tiangolo氏 <https://github.com/fastapi/sqlmodel/issues/75#issuecomment-1311796665>`__ 「常に ``with Session(engine)`` すればよい」（IMO：せやろか？）
 
-sessionmakerを使いたい立場からの提案
---------------------------------------------------
+提案：sessionmakerでSQLModelのセッションを返させる
+------------------------------------------------------------
 
 .. code-block:: python
     :emphasize-lines: 4
@@ -105,21 +121,21 @@ sessionmakerを使いたい立場からの提案
 
 .. https://docs.sqlalchemy.org/en/20/orm/session_basics.html#using-a-sessionmaker
 
-* SQLModelの ``AsyncSession`` インスタンスのファクトリを用意（ ``exec()`` が使える！）
+* SQLModelのセッションのファクトリなので ``exec()`` が使える！
 * 現状、世にはSQLAlchemyの例が多いので、DB接続部分は参考にできる
 
 IMO：SQLModel所感
 ======================================================================
 
-* SQLModelは発展途上
-* **SQLAlchemyの経験** がある方にだけ、オススメ
-* 経験ない我が身には、SQLModel + SQLAlchemyと学びが2倍（しんどい！）
+* SQLModelでFastAPIアプリは ``async def`` で書けるが、まだまだ発展途上（0.0.22）
+* **SQLAlchemyの経験** がある方にだけ、オススメします
+* 経験ない我が身には、SQLModel + SQLAlchemyと *学びが2倍* だった🙌
 
-現状はSQLModelはオススメしづらい
+IMO：SQLModelの現状🏃‍♂️
 --------------------------------------------------
 
 * チュートリアルはtoy exampleで実務レベルの例がない（プルリクチャンス！）
-* 先の比較記事より、シングルメンテナゆえに判断を誤ったのでは
+* `先の比較記事 <https://www.david-dahan.com/blog/comparing-fastapi-and-django>`__ より、シングルメンテナゆえに判断を誤ったのでは
 * FastAPIユーザが **分断** されてしまっている（SQLModel採用のアプリケーション例が見つかりにくい）
 
 .. 空振ってSQLAlchemyを調べる

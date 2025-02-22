@@ -1,8 +1,6 @@
 ======================================================================
-FastAPIの現場から
+**FastAPI** の現場から
 ======================================================================
-
-ドラフト版
 
 :Event: DjangoCongress JP 2025
 :Presented: 2025/02/22🐈 nikkie
@@ -11,22 +9,24 @@ FastAPIの現場から
 ======================================================================
 
 * nikkie（にっきー） ※本発表は個人の見解です
-* 機械学習エンジニア
+* **機械学習** エンジニア
 * プロダクトとして価値を届けるために **Web APIの開発も** します（今回FastAPIの知見を共有）
 
 .. image:: ../_static/uzabase-white-logo.png
 
 .. revealjs-break::
 
-* :fab:`github` `@ftnext <https://github.com/ftnext>`__ ／ `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ 連続 **820** 日突破
-* 2023年発表 `Djangoアプリに作り込んで学ぶ脆弱性 <https://ftnext.github.io/2023-slides/djangocongressjp/learn-vulnerabilities.html>`__
-* このスライドで使ってる `ftnext/sphinx-new-tab-link <https://github.com/ftnext/sphinx-new-tab-link>`__
+* `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ 連続 **820** 日突破
+* :fab:`github` `@ftnext <https://github.com/ftnext>`__ このスライドで使ってる `ftnext/sphinx-new-tab-link <https://github.com/ftnext/sphinx-new-tab-link>`__ など
+* 2023年に悪いことしました `Djangoアプリに作り込んで学ぶ脆弱性 <https://ftnext.github.io/2023-slides/djangocongressjp/learn-vulnerabilities.html>`__
 
 FastAPI、ご存知ですか？
 ======================================================================
 
 * 聞いたことがある🙋‍♂️
 * 使ったことがある🙋‍♀️
+
+トーク14本中FastAPIが登場しそうなのは他に1本
 
 PythonコミュニティにおけるFastAPI
 --------------------------------------------------
@@ -48,6 +48,7 @@ Webフレームワーク 第3位
 --------------------------------------------------
 
 .. image:: ../_static/djangocongressjp/survey-2023-data-science-web.drawio.png
+    :scale: 80%
 
 .. 注目
     * Flask 36%
@@ -57,54 +58,38 @@ Webフレームワーク 第3位
 FastAPI
 ======================================================================
 
-.. code-block:: python
+.. literalinclude:: ../../samplecode/fastapi/first_steps_app.py
+    :language: python
+    :lines: 3-10
     :caption: Tutorialの `First Steps <https://fastapi.tiangolo.com/tutorial/first-steps/>`__
 
-    from fastapi import FastAPI
-
-    app = FastAPI()
-
-    @app.get("/")
-    async def root():
-        return {"message": "Hello World"}
+Djangoの :file:`urls.py` のところの話
 
 path ``/`` に GET ``operation`` が来たら
 --------------------------------------------------
 
-.. code-block:: python
-    :emphasize-lines: 5
-
-    from fastapi import FastAPI
-
-    app = FastAPI()
-
-    @app.get("/")
-    async def root():
-        return {"message": "Hello World"}
+.. literalinclude:: ../../samplecode/fastapi/first_steps_app.py
+    :language: python
+    :lines: 3-10
+    :emphasize-lines: 6
 
 ``root`` 関数を実行してレスポンスを返す
 --------------------------------------------------
 
-.. code-block:: python
-    :emphasize-lines: 6-7
-
-    from fastapi import FastAPI
-
-    app = FastAPI()
-
-    @app.get("/")
-    async def root():
-        return {"message": "Hello World"}
+.. literalinclude:: ../../samplecode/fastapi/first_steps_app.py
+    :language: python
+    :lines: 3-10
+    :emphasize-lines: 7-8
 
 この延長に機械学習モデルをサーブするAPI
 
 .. 単語としてResNetが登場 https://fastapi.tiangolo.com/tutorial/path-params/
 
-Django REST Framework
+他方 Django REST Framework
 --------------------------------------------------
 
 .. code-block:: txt
-    :caption: `Quickstart <https://www.django-rest-framework.org/tutorial/quickstart/>`__ にある認証付きAPI
+    :caption: `Quickstart <https://www.django-rest-framework.org/tutorial/quickstart/>`__ にある **認証付きAPI**
 
     bash: curl -u admin -H 'Accept: application/json; indent=4' http://127.0.0.1:8000/users/
     Enter host password for user 'admin':
@@ -128,7 +113,7 @@ Django REST Framework
 ------------------------------------------------------------
 
 * Batteries includedか、 **自分で組み合わせる** 必要があるか
-* 非同期対応の度合い
+* 非同期対応の度合い（部分的か、fullyか）
 * IMO：それぞれ得意分野が異なる
 
 FastAPIの現場から
@@ -136,11 +121,11 @@ FastAPIの現場から
 
 .. 技術や組織の前提を最初に紹介しておく
 
-* 社内向けの **小さなWeb API** をチームで開発
+* 社内向けの **小さなWeb API** をチームで開発（認証機能はなし）
 * FastAPIのチュートリアルを皆で参照しながら
-* 見聞きしていたPyConのトークも手がかりに（👉今回の知見共有）
+* 見聞きしていたPyConのトークも手がかりに（👉今回の知見共有。熟知はしてないです）
 
-手がかり🏃‍♂️
+手がかり（個々に取り上げます）🏃‍♂️
 --------------------------------------------------
 
 * 記事 `FastAPI+SQLAlchemyで非同期WebAPI <https://www.rhoboro.com/2021/06/12/async-fastapi-sqlalchemy.html>`__
@@ -162,11 +147,16 @@ FastAPIの現場から
 小さい単位で **都度設計** しながら進めています
 --------------------------------------------------
 
-* アジャイル開発の1手法、XP（eXtreme Programming）
-* 小さい価値でも届け、そこからの学びを活かす **サイクル** を何度も何度も回す（今回のAPIは3ヶ月経過）
-* 最初に全機能設計したわけではありません。 **その時点の最適解** を更新していく
+* 最初に全機能設計したわけではありません
+* **path 1つ、operation 1つ** に絞って（既存を拡張するよう）設計し、実装
+* これを繰り返す。 **その時点の最適解** を更新していく
 
-.. ストーリー -> 小さい開発（ATDD）
+XP（eXtreme Programming）🏃‍♂️
+--------------------------------------------------
+
+* アジャイル開発の1手法
+* 小さい価値でも届け、そこからの学びを活かす **サイクル** を何度も何度も回す（今回のAPIは3ヶ月経過）
+* 対象の *ドメイン* や使っている技術の理解が少しずつ増えていく
 
 開発の流れ
 --------------------------------------------------
@@ -180,7 +170,7 @@ FastAPIの現場から
 
 .. raw:: html
 
-    <iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/f4d5c3d15476469591749e0597f4fd36" title="受け入れテスト駆動開発で不確実性に段階的に対処する/Addressing Uncertainty Incrementally with Acceptance Test-Driven-Development" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+    <iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/f4d5c3d15476469591749e0597f4fd36?slide=16" title="受け入れテスト駆動開発で不確実性に段階的に対処する/Addressing Uncertainty Incrementally with Acceptance Test-Driven-Development" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
 
 デプロイ先は **Kubernetes**
 --------------------------------------------------
@@ -194,8 +184,9 @@ FastAPIの現場から
 サンプルアプリケーション
 --------------------------------------------------
 
-* `iktakahiro/dddpy <https://github.com/iktakahiro/dddpy>`__ の一部を再実装
-* TODO URL（タグ付き）
+* 書籍アプリ
+* `iktakahiro/dddpy <https://github.com/iktakahiro/dddpy>`__ の一部を再実装（一覧と作成のみ）
+* https://github.com/ftnext/fastapi-playground/tree/djangocongressjp-2025-v1/book-app/api
 
 お品書き：FastAPIの現場から
 --------------------------------------------------
@@ -215,37 +206,29 @@ FastAPIの現場から
 .. include:: asynchronous-io/sqlmodel.rst.txt
 
 お品書き：FastAPIの現場から
---------------------------------------------------
+======================================================================
 
 1. 非同期IO
 2. **クリーンなアーキテクチャを志向する**
 3. Twelve-Factor App
-
-クリーンなアーキテクチャを志向する
-======================================================================
 
 .. include:: clean-architecture/layers.rst.txt
 
 .. include:: clean-architecture/technique.rst.txt
 
 お品書き：FastAPIの現場から
---------------------------------------------------
+======================================================================
 
 1. 非同期IO
 2. クリーンなアーキテクチャを志向する
 3. **Twelve-Factor App**
 
-Twelve-Factor App
-======================================================================
-
-環境変数とロギングの2つについて取り上げます
-
-Twelve-Factor App
---------------------------------------------------
+`Twelve-Factor App <https://12factor.net/ja/>`__
+------------------------------------------------------------
 
     このドキュメントは、多種多様なSaaSアプリケーション開発現場での私たちの経験と観察をすべてまとめたものである。
 
-https://12factor.net/ja/
+環境変数とロギングの2つについて取り上げます
 
 .. include:: twelve-factor-app/environment-variables.rst.txt
 
@@ -260,8 +243,8 @@ https://12factor.net/ja/
 まとめ🌯 FastAPIの現場から
 ======================================================================
 
-* FastAPI・SQLModel（SQLAlchemy）の非同期IO
-* レイヤ分けしてビジネスロジックとフレームワークやDBを切り離したアーキテクチャ
+* SQLModel（SQLAlchemy）で **全部 async def で書ける** FastAPIアプリ！
+* **レイヤ分け** してビジネスロジックとフレームワークやDBを切り離したアーキテクチャ
 * 環境変数から設定できる pydantic-settings。uvicornでのロギング
 
 ご清聴ありがとうございました
