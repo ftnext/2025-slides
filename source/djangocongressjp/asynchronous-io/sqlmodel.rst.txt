@@ -124,6 +124,13 @@ SQLModelのDBセッションは **型が当たる**
 * SQLModelのセッションのファクトリなので ``exec()`` が使える！
 * 現状、世にはSQLAlchemyの例が多いので、DB接続部分は参考にできる
 
+提案の参考🏃‍♂️
+------------------------------------------------------------
+
+* 大元 `Add sessionmaker #75 <https://github.com/fastapi/sqlmodel/issues/75#issuecomment-2109911909>`__
+* 拙ブログ `SQLModel素振りの記：PostgreSQLに同期接続 〜selectして見えた、SQLAlchemyのsessionmakerのclass_引数によるいいとこ取り案〜 <https://nikkie-ftnext.hatenablog.com/entry/sqlmodel-postgres-sync-connection-sqlalchemy-sessionmaker-integration>`__
+* 拙ブログ `SQLModelでPostgreSQLに非同期接続する実装を考える <https://nikkie-ftnext.hatenablog.com/entry/sqlmodel-postgres-async-connection-proposal-sqlalchemy-sessionmaker-integration>`__
+
 IMO：SQLModel所感
 ======================================================================
 
