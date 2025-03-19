@@ -1,3 +1,9 @@
+:ogp_title: med@listはいいぞ
+:ogp_event_name: engineers-anime
+:ogp_slide_name: medalist-is-idolmaster
+:ogp_description: アニメから得た学びを発表会 (2025/03)
+:ogp_image_name: engineers-anime-march
+
 ======================================================================
 メダリストはいいぞ
 ======================================================================
