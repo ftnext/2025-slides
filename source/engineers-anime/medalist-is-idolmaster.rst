@@ -19,13 +19,13 @@
 
 * nikkie（にっきー）
 * Pythonとアニメが好き
-* プロデューサー（仕掛け人）。emi-re・flake8-kotoha
+* プロデューサー（仕掛け人）。`emi-re <https://pypi.org/project/emi-re/>`__・`flake8-kotoha <https://pypi.org/project/flake8-kotoha/>`__
 
 定期的にアニメから得た学びを発表
 --------------------------------------------------
 
-* アイの歌声を聴かせて、SHIROBAKO、e.t.c.
-* 櫻木真乃さんかわいいLT
+* `アイの歌声を聴かせて <https://ftnext.github.io/2024-slides/engineers-anime/sing-a-bit-of-harmony.html#/1>`__、`SHIROBAKO <https://ftnext.github.io/2024-slides/engineers-anime/shirobako-speed-and-technique.html#/1>`__、e.t.c.
+* `櫻木真乃さんかわいいLT <https://ftnext.github.io/2024-slides/engineers-anime/sakuragi-mano-san.html>`__
 
 ⚠️CAUTION⚠️
 --------------------------------------------------
@@ -63,7 +63,7 @@
 --------------------------------------------------
 
 * つるまいかだ先生は春瀬なつみさん（龍崎薫さん演者）ファン
-* **春瀬なつみさんはフィギュアスケートがお好き**
+* **春瀬なつみさんはフィギュアスケートがお好き** （`スケオタのご様子 <https://youtu.be/vT2UmomCt4E?si=WLoY-DbC73t3pXjM>`__）
 * このたびメダリストがアニメ化（リアルプロデューサーじゃん👏
 
 「春瀬なつみをアニメの主役にするため」
