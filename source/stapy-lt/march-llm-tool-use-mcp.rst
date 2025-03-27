@@ -90,10 +90,39 @@ MCP
 * 使えるツール： **Brave Search（検索）** 、Webページ取得
 * 「PyCon JP 2025のテーマやコンセプトについて調査してください」
 
-.. 発表後に追加する
-    * gpt-4o
-    * claude-3-5-sonnet-latest
-    * gemini-2.0-flash
+gemini-2.0-flash
+--------------------------------------------------
+
+検索の様子 https://gist.github.com/ftnext/cf974195c3d8257ee73d0724eaf8033c
+
+.. code-block:: markdown
+
+    PyCon JP 2025は、2025年9月26-27日に広島国際会議場で開催される予定です。現在、主催メンバーが中心となって、全体的なコンセプトとテーマを決定するための作業が進められています。具体的なテーマやコンセプトはまだ発表されていません。
+
+gpt-4o
+--------------------------------------------------
+
+検索の様子 https://gist.github.com/ftnext/43685381d8ac331f9216e141b5f0710c
+
+.. code-block:: markdown
+
+    PyCon JP 2025 is scheduled to take place on September 26-27, 2025, at the International Conference Center Hiroshima. The event is organized by volunteers, and they are currently preparing for ticket sales, speaker recruitment, and sponsorship opportunities. However, specific details about the theme or concept for PyCon JP 2025 have not been disclosed yet. For the latest updates, you might want to keep an eye on their [official website](https://2025.pycon.jp/).
+
+claude-3-5-sonnet-latest
+--------------------------------------------------
+
+検索の様子 https://gist.github.com/ftnext/113e8e6a7077b14adb7558004b3fbf17
+
+.. code-block:: markdown
+
+    公式サイトを確認しましたが、現時点ではまだテーマやコンセプトは公開されていないことが確認できました。サイトは基本的な開催情報（日時・場所）のみが掲載されており、現在も準備段階であることが分かります。
+
+    まとめると：
+    - PyCon JP 2025は広島で初めて開催される大規模なPythonカンファレンスです
+    - 開催日時と場所は決定していますが、テーマやコンセプトについては現在も運営チームによって検討が進められている段階です
+    - 正式なテーマやコンセプトは、今後の運営チームのミーティングを経て発表される予定です
+
+    テーマやコンセプトについての最新情報は、PyCon JP 2025の公式サイト（https://2025.pycon.jp/）や公式SNSアカウントで随時発表されると思われます。
 
 実は **座長日報** があります
 --------------------------------------------------
@@ -125,3 +154,8 @@ IMO：Anthropic、したたかすぎでは？
 * `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ 連続 **860** 日突破
 
 .. image:: ../_static/uzabase-white-logo.png
+
+Appendix：ブログ版
+--------------------------------------------------
+
+`GPT・Claude・Geminiのうち、Brave Search toolの使い方が一番うまいのは誰でしょう？クイズ〜〜！！ <https://nikkie-ftnext.hatenablog.com/entry/comparison-llms-with-mcp-servers-brave-search-and-fetch>`__
