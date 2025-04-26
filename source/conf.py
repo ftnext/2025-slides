@@ -56,10 +56,6 @@ revealjs_script_plugins = [
         "name": "RevealNotes",
         "src": "revealjs/plugin/notes/notes.js",
     },
-    {
-        "name": "CopyCode",
-        "src": "revealjs/plugin/copycode/copycode.js",
-    },
 ]
 
 revealjs_css_files = [
