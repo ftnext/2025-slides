@@ -1,3 +1,9 @@
+:ogp_title: Pythonの組み込み例外の小話
+:ogp_event_name: stapy-april-agent
+:ogp_slide_name: devin-demo
+:ogp_description: みんなのPython勉強会 in 長野 #4
+:ogp_image_name: stapy-april-agent
+
 ================================================================================
 Devinに触れてみよう
 ================================================================================
