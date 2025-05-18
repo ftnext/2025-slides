@@ -1,3 +1,9 @@
+:ogp_title: NotebookLMにYouTubeのアニメを入れるのは、いいぞ
+:ogp_event_name: engineers-anime
+:ogp_slide_name: notebooklm-audio-overview
+:ogp_description: アニメから得た学びを発表会 (2025/05)
+:ogp_image_name: engineers-anime-may
+
 ======================================================================
 NotebookLMにYouTubeのアニメを入れるのは、いいぞ
 ======================================================================
