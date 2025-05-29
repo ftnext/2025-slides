@@ -42,17 +42,22 @@
 
 鉛筆コロコロ🎲Pythonスクリプトも用意しました
 
+:fab:`github` `quiz/app.py <https://github.com/ftnext/2025-slides/blob/main/samplecode/quiz/app.py>`__
+
 本トークわずかのPython要素
 ---------------------------------------------------
 
-.. TODO コメント抜き出し
+.. literalinclude:: ../../samplecode/quiz/app.py
+    :language: python
+    :lines: 1-6
+    :caption: quiz/app.py
 
 Inline script metadata (PEP 723)
 ---------------------------------------------------
 
-* :command:`uv run script.py` や :command:`pipx run script.py`
-* Pythonスクリプトに必要な仮想環境をツールにおまかせできるんです！（PyCon JP 2024で話しました）
-* 超便利なので、全人類使ってくれ〜
+* :command:`uv run app.py` や :command:`pipx run app.py`
+* Pythonスクリプトに必要な仮想環境をツールにおまかせできるんです！（`PyCon JP 2024 <https://2024.pycon.jp/ja/talk/89F3RQ>`__ で話しました）
+* 10年前と比べて **超便利** になってます。全人類使ってくれ〜📣
 
 それではクイズを始めます！
 ================================================================================
