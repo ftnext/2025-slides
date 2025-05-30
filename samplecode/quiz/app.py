@@ -14,29 +14,17 @@ from rich.panel import Panel
 def main():
     console = Console()
     choices = ["A", "B", "C", "D"]
-    console.rule("[bold green]Random Choice Generator")
-    console.print(
-        "Each iteration, enter a seed (integer) to reseed, or press Enter to keep the previous state."
-    )
+    console.rule("[bold green]4択クイズランダム回答アプリ")
+
     console.print("Press Ctrl+C or Ctrl+D to exit.\n")
 
     try:
         while True:
-            seed_input = Prompt.ask("[cyan]Seed[/cyan]", default="")
-            if seed_input:
-                try:
-                    seed = int(seed_input)
-                except ValueError:
-                    console.print(
-                        "[red]Invalid seed.[/red] Please enter a valid integer.\n"
-                    )
-                    continue
-                random.seed(seed)
-
+            _ = Prompt.ask("[cyan]Enterで鉛筆を転がす[/cyan]", default="")
             choice = random.choice(choices)
             panel = Panel(
                 f"[bold yellow]{choice}[/bold yellow]",
-                title="Your Choice",
+                title="鉛筆で出たのは",
                 border_style="magenta",
             )
             console.print(panel)
