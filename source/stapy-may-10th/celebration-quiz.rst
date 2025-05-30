@@ -59,6 +59,17 @@ Inline script metadata (PEP 723)
 * Pythonスクリプトに必要な仮想環境をツールにおまかせできるんです！（`PyCon JP 2024 <https://2024.pycon.jp/ja/talk/89F3RQ>`__ で話しました）
 * 10年前と比べて **超便利** になってます。全人類使ってくれ〜📣
 
+手元で鉛筆転がしたい方へ
+---------------------------------------------------
+
+.. code-block:: bash
+
+    uv run https://raw.githubusercontent.com/ftnext/2025-slides/refs/heads/main/samplecode/quiz/app.py
+
+.. code-block:: bash
+
+    pipx run https://raw.githubusercontent.com/ftnext/2025-slides/refs/heads/main/samplecode/quiz/app.py    
+
 それではクイズを始めます！
 ================================================================================
 
@@ -217,9 +228,15 @@ D. 推し
 
 * 「出題者の人間性を疑う」（並べ替えとか「かけた」とか）
 * 「あの回がクイズに入っていないなんて」
-* **みなさんの神回** ぜひ教えてください
+* 「**わたしはこれが神回**」ぜひ教えてください
 
 クイズでお祝い！ みんなのPython勉強会10周年
 ================================================================================
 
 クイズならびに本勉強会にご参加いただき、ありがとうございました
+
+stapy アーカイブ
+---------------------------------------------------
+
+* 最近 `Start Python Club <https://www.youtube.com/@startpythonclub9441/>`__
+* 過去 `リーディング・エッジ社 <https://www.youtube.com/@%E3%83%AA%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%A8%E3%83%83%E3%82%B8%E7%A4%BE>`__
