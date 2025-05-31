@@ -1,3 +1,9 @@
+:ogp_title: クイズでお祝い！ みんなのPython勉強会10周年
+:ogp_event_name: stapy-may-10th
+:ogp_slide_name: celebration-quiz
+:ogp_description: みんなのPython勉強会#114
+:ogp_image_name: stapy-may-10th
+
 .. raw:: html
 
     <style>
