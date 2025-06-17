@@ -1,3 +1,9 @@
+:ogp_title: コマンドラインからDevinを呼び出してみないか？
+:ogp_event_name: aid-devin2
+:ogp_slide_name: llm-devin
+:ogp_description: AI駆動開発勉強会 【Devin Meetup Japan #2】
+:ogp_image_name: aid-devin2
+
 ================================================================================
 コマンドラインからDevinを呼び出してみないか？
 ================================================================================
