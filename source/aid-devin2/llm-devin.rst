@@ -17,15 +17,17 @@
 ================================================================================
 
 * nikkie（にっきー）
-* `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ 連続 940日突破
-* @ftnext 私が欲しい小さなライブラリをおすそ分け感覚でOSS
+* 機械学習エンジニア・LLM・自然言語処理（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
+* :fab:`github` @ftnext 私が欲しい小さなライブラリをおすそ分けでOSS
+
+.. image:: ../_static/uzabase-white-logo.png
 
 Devin歴
 ---------------------------------------------------
 
 * 自腹で月$500数回（後述）
 * Devin飯（`入門 DevinでUber Eats注文 <https://nikkie-ftnext.hatenablog.com/entry/devin-order-uber-eats-101>`__）
-* Devin Open Source Initiative、メンテナしてる `SpeechRecognition <https://github.com/Uberi/speech_recognition>`__ に補助ありがとう
+* `Devin Open Source Initiative <https://x.com/cognition_labs/status/1924535625723871681>`__、メンテナしてる `SpeechRecognition <https://github.com/Uberi/speech_recognition>`__ に補助ありがとう
 
 Devinには **API** がある
 ================================================================================
@@ -37,7 +39,7 @@ DevinはDevinをテストする
 ---------------------------------------------------
 
 * CognitionのDevin APIの使い方：`Devin 101: Automatic PR Reviews with the Devin API <https://cognition.ai/blog/devin-101-automatic-pr-reviews-with-the-devin-api>`__
-* https://github.com/CognitionAI/qa-devin （画像引用元）
+* :fab:`github` https://github.com/CognitionAI/qa-devin （画像引用元）
 
 .. qa-devinのスクリーンショット
     https://github.com/CognitionAI/qa-devin/blob/86b769b0dcf14b18e4685b3e3248d29bc289fc51/README.md?plain=1#L4-L9
@@ -58,7 +60,7 @@ DevinはDevinをテストする
 
 .. image:: ../_static/aid-devin2/qa-devin-open-slack-new-devin-session.png
 
-コマンドラインからDevinを呼び出してみないか？ 完
+コマンドラインからDevinを呼び出してみないか？ _完_
 ---------------------------------------------------
 
 .. code-block:: bash
@@ -73,18 +75,18 @@ DevinはDevinをテストする
 
 https://docs.devin.ai/api-reference/sessions/create-a-new-devin-session
 
-完ではなく、今回のこだわりポイント
+完ではなく、今回の **こだわり** ポイント
 ================================================================================
 
 * コマンドラインからDevin APIをただ叩くのではなく
 * *simonw/llmのプラグイン* として
 
-Simon Willison
+Simon Willisonさん
 ---------------------------------------------------
 
 * DjangoのCo-creatorにして（勝手に） *我がヨーダ*
 * プロンプトインジェクションのブログ（`Prompt injection and jailbreaking are not the same thing <https://simonwillison.net/2024/Mar/5/prompt-injection-jailbreaking/>`__）読んだ方🙋
-* `Andrej Karpathyとなかよしさん <https://x.com/karpathy/status/1933582359347278246>`__ に見える
+* `Andrej Karpathyとなかよしさん <https://x.com/karpathy/status/1933582359347278246>`__ （に見える）
 
 simonw/llm
 ---------------------------------------------------
@@ -93,16 +95,26 @@ simonw/llm
 
 .. code-block:: bash
 
+    $ uvx llm models
+    Default: gpt-4o-mini
+
+.. code-block:: bash
+
     # OPENAI_API_KEY
     uvx llm "Ten fun names for a pet pelican"
-
-.. uvx llm models
 
 プラグインでサポートするモデルを拡張
 ---------------------------------------------------
 
 .. code-block:: bash
 
+    $ uvx --with llm-gemini llm models
+    GeminiPro: gemini/gemini-2.0-flash (aliases: gemini-2.0-flash)
+    GeminiPro: gemini/gemini-2.5-pro-preview-06-05 (aliases: gemini-2.5-pro-preview-06-05)
+
+.. code-block:: bash
+
+    # LLM_GEMINI_KEY
     uvx --with llm-gemini \
       llm -m gemini-2.0-flash 'Tell me fun facts about Mountain View'
 
@@ -111,8 +123,9 @@ simonw/llmの推しポイント
 
 * Unixコマンドと **パイプ** で繋げられる！
 * 自動ロギング（拙ブログ `simonwさんのllmは天才！ LLM APIへの入出力が全部ロギングされてました <https://nikkie-ftnext.hatenablog.com/entry/2025/04/11/224643>`__）
+* `fragments <https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-v0.24-awesome-update-fragments-and-plugins>`__！ 直近でtools！！
 
-プラグインは誰でも開発できる！
+プラグインは **誰でも** 開発できる！
 ---------------------------------------------------
 
 * cookiecutterテンプレート https://github.com/simonw/llm-plugin から始める
@@ -125,6 +138,7 @@ llm-devin
 
 .. code-block:: bash
 
+    # LLM_DEVIN_KEY
     uvx --with llm-devin \
       llm -m devin "Hello, Devin"
 
@@ -132,7 +146,7 @@ llm-devin
 ---------------------------------------------------
 
 * コマンドラインから叩けたが、私はそこまで熱狂しなかった（次の興味へ）
-* 別に **ブラウザで見たい** かも（ブラウザで見られる情報、いろいろ便利）
+* 別に **ブラウザで見たい** かも（ブラウザで🟢🟡🔴感想戦（`Devin 2.1 <https://cognition.ai/blog/devin-2-1>`__）など便利）
 
 もう1つ：DeepWiki、超便利🫶
 ================================================================================
@@ -142,7 +156,7 @@ llm-devin
 
 .. https://docs.devin.ai/work-with-devin/deepwiki
 
-**MCPサーバ** があるのを知ってますか？
+**MCPサーバ** があるのをご存知ですか？
 ---------------------------------------------------
 
 .. raw:: html
