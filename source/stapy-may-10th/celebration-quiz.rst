@@ -34,6 +34,8 @@
 * 機械学習エンジニア・LLM・自然言語処理（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
 * `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ 連続 920日突破
 
+.. image:: ../_static/uzabase-white-logo.png
+
 私とstapy
 ---------------------------------------------------
 
