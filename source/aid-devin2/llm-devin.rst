@@ -11,7 +11,13 @@
 :Event: AI駆動開発勉強会 【Devin Meetup Japan #2】
 :Presented: 2025/06/17 nikkie
 
-.. （デモでたたいておく？）
+デモ（発表の裏でDevinが開発）
+================================================================================
+
+.. code-block:: bash
+
+    uvx --with llm-devin llm -m devin \
+      'このissue https://github.com/ftnext/playtest2-python/issues/4 に取り組んでみてください'
 
 お前、誰よ？（**Python使い** の自己紹介）
 ================================================================================
@@ -60,7 +66,7 @@ DevinはDevinをテストする
 
 .. image:: ../_static/aid-devin2/qa-devin-open-slack-new-devin-session.png
 
-コマンドラインからDevinを呼び出してみないか？ _完_
+コマンドラインからDevinを呼び出してみないか？ *完*
 ---------------------------------------------------
 
 .. code-block:: bash
@@ -129,6 +135,7 @@ simonw/llmの推しポイント
 ---------------------------------------------------
 
 * cookiecutterテンプレート https://github.com/simonw/llm-plugin から始める
+* ドキュメント `Developing a model plugin <https://llm.datasette.io/en/stable/plugins/tutorial-model-plugin.html>`__
 * 拙ブログ `simonw/llmのプラグイン作成 素振りの記：GeminiにYouTubeのURLを渡して要約／文字起こしするプラグインをGistで配布 <https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-plugin-practice-youtube-url-support-gemini>`__
 
 llm-devin
@@ -141,6 +148,20 @@ llm-devin
     # LLM_DEVIN_KEY
     uvx --with llm-devin \
       llm -m devin "Hello, Devin"
+
+冒頭のデモの結果
+---------------------------------------------------
+
+.. code-block:: txt
+
+    Devin URL: https://app.devin.ai/sessions/fbe7ea1fff2f4137883c0cb85182a76e
+    はわわ... お兄ちゃん、そのissueを調べてみるね！
+
+    (略)
+
+    お兄ちゃんがGitHubでコメントを残してくれれば、私がそれを見て対応できるからね～
+
+https://gist.github.com/ftnext/0765322b58e5c4a5ebee989b5ac5254e
 
 アイデア実現するも
 ---------------------------------------------------
@@ -186,7 +207,17 @@ DeepWikiをブラウザを開く代わりに **コマンドラインでask_quest
       llm -m deepwiki -o repository simonw/llm \
       "llmの主要な機能を教えて"
 
-.. デモ
+デモ：コマンドラインからask_question
+---------------------------------------------------
+
+.. code-block:: txt
+
+    LLMは、大規模言語モデル（LLM）と対話するためのコマンドラインユーティリティおよびPythonライブラリです。
+    主な機能として、プロンプトの実行、モデルの管理、ログの記録、埋め込みの生成、テンプレートとフラグメントの使用、スキーマによる出力構造化、そしてプラグインによる機能拡張があります。
+
+    (略)
+
+    View this search on DeepWiki: https://deepwiki.com/search/llm_36a4aaae-8ea3-4960-8115-85cec3129938
 
 :command:`llm -m deepwiki` 自画自賛ポイント
 ---------------------------------------------------
@@ -207,3 +238,22 @@ DeepWikiをブラウザを開く代わりに **コマンドラインでask_quest
 Enjoy llm-devin!
 
 https://github.com/ftnext/llm-devin
+
+Appendix：:command:`uvx`
+--------------------------------------------------
+
+* `uvをインストール <https://docs.astral.sh/uv/getting-started/installation/>`__ すると入ります（:command:`uv tool run` の短縮版）
+* ドキュメント `Using tools <https://docs.astral.sh/uv/guides/tools/>`__
+* PyPIにあるパッケージを、uvが管理する一時的な仮想環境で実行しています
+
+Appendix：うちのDevinの秘密🤫（*Knowledge*）
+--------------------------------------------------
+
+.. raw:: html
+
+    <blockquote class="twitter-tweet" data-lang="ja" data-align="center" data-dnt="true"><p lang="ja" dir="ltr">Cursor、今日のコーディングスタイルはこれで行きます<br><br>* 口調はツンデレ<br>* 困った時には「はわわ...」<br>* 質問者を「お兄ちゃん」と呼ぶ<br>* 思春期かつ親密度高め<br><br>お借りしたRulesのベースはこちら↓↓<br>私のシンプルCursor活用方法｜ニケちゃん<a href="https://t.co/2N82t7Jc0m">https://t.co/2N82t7Jc0m</a> <a href="https://t.co/0tTFjWNutm">pic.twitter.com/0tTFjWNutm</a></p>&mdash; オナカユル (@onaka_yuruyuri) <a href="https://twitter.com/onaka_yuruyuri/status/1926432493462229031?ref_src=twsrc%5Etfw">2025年5月25日</a></blockquote>
+
+.. https://x.com/ftnext/status/1931190558007148956
+
+EOF
+===
