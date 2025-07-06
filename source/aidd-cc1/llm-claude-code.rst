@@ -1,3 +1,9 @@
+:ogp_title: Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン
+:ogp_event_name: aidd-cc1
+:ogp_slide_name: llm-claude-code
+:ogp_description: Claude Code Meetup Japan #1（Claude Code祭り！）
+:ogp_image_name: aidd-cc1
+
 ====================================================================================================
 Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン
 ====================================================================================================
