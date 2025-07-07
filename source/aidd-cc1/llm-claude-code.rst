@@ -68,14 +68,14 @@ Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイ�
 .. code-block:: bash
 
     uvx --with llm-claude-code llm -m cc \
-      '今日が3月18日から何日目かを数えるPythonスクリプトを書いてください'
+      '3月18日を1日目として今日が何日目かを数えるPythonスクリプトを書いてください'
 
 結論：「それってClaude Codeでよくない？」
 ---------------------------------------------------
 
 .. code-block:: bash
 
-    claude -p '今日が3月18日から何日目かを数えるPythonスクリプトを書いてください'
+    claude -p '3月18日を1日目として今日が何日目かを数えるPythonスクリプトを書いてください'
 
 * 反論のしようがございません！🎯🎯🎯
 * simonw/llmの多くの機能は **Claude Codeにもある** （他のコマンドとパイプ、自動ロギング）
@@ -122,7 +122,7 @@ E2Eテストを用意する
 人間の経験と噛み合った
 ---------------------------------------------------
 
-* simonw/llmの **prompt** 変数の型が分かっていない様子のClaude Code
+* simonw/llmの ``prompt`` 変数が `Prompt <https://github.com/simonw/llm/blob/0.26/llm/models.py#L271>`__ 型と分かっていない様子のClaude Code
 * プラグイン開発経験から「``prompt.prompt`` が文字列」と伝えたことで完成！
 
 機能拡張には私がボトルネック
