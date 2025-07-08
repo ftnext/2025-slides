@@ -31,7 +31,7 @@ Simon Willison-sanによる :command:`llm` が好き
     uvx --with llm-gemini \
       llm -m gemini-2.0-flash 'Tell me fun facts about Mountain View'
 
-* :command:`llm` を他のUnixコマンドと **パイプ** で繋げられる！
+* :command:`llm` コマンドを他のUnixコマンドと **パイプ** で繋げられる！
 * 自動ロギング（など）
 
 simonw/llmのプラグインを **自作**
@@ -92,7 +92,7 @@ Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイ�
 ---------------------------------------------------
 
 * 大いに参考にした `Claude Codeで実用的なWebサービスを作る <https://note.com/himaratsu/n/nddf0efa67d42>`__
-* Claude 4 Opusに用意してもらう
+* Claude 4 **Opus** に用意してもらう
 * vibe coding中はきりがよいところで更新をお願い
 
 🏃‍♂️Claude 4 Opusへのプロンプト
@@ -116,11 +116,15 @@ E2Eテストを用意する
 便利だったコマンド
 ---------------------------------------------------
 
-* ``!``: E2Eのコマンド実行。シェルのコマンド打てる！！
-* :kbd:`Ctrl + R`：出力展開。エラーの確認など
+* ``!``: シェルの **コマンド打てる**！！ E2Eのコマンド実行に使用
+* :kbd:`Ctrl + R`： **出力展開**。エラーの確認など
 
 人間の経験と噛み合った
 ---------------------------------------------------
+
+.. code-block:: python
+
+    def execute(self, prompt, stream, response, conversation=None):
 
 * simonw/llmの ``prompt`` 変数が `Prompt <https://github.com/simonw/llm/blob/0.26/llm/models.py#L271>`__ 型と分かっていない様子のClaude Code
 * プラグイン開発経験から「``prompt.prompt`` が文字列」と伝えたことで完成！
@@ -135,8 +139,8 @@ E2Eテストを用意する
 ---------------------------------------------------
 
 * :file:`CLAUDE.md`
-* E2Eテスト :command:`uv run llm -m cc こんにちは`
 * ``!`` と :kbd:`Ctrl + R` を体得
+* E2Eテスト :command:`!uv run llm -m cc こんにちは`
 
 ご清聴ありがとうございました
 --------------------------------------------------
