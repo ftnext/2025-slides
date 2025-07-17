@@ -19,6 +19,7 @@ A2A、ご存知ですか？🙋
 
 * この **4月** のGoogle Cloud Next ‘25で発表
 * `Announcing the Agent2Agent Protocol (A2A)`_
+* 🏃‍♂️6月 `Google Cloud donates A2A to Linux Foundation <https://developers.googleblog.com/en/google-cloud-donates-a2a-to-linux-foundation/>`__
 
 .. https://cloud.google.com/blog/products/ai-machine-learning/build-and-manage-multi-system-agents-with-vertex-ai
 
@@ -29,7 +30,7 @@ A2A、ご存知ですか？🙋
 
     Build with ADK (or any framework), equip with MCP (or any tool), and communicate with A2A, to remote agents, local agents, and humans.
 
-A2Aのコンセプト🏃‍♂️
+A2Aのコンセプト
 ------------------------------------------------------------
 
 * フレームワーク（`ADK <https://google.github.io/adk-docs/>`__ など）を使って、エージェントを構築
@@ -63,6 +64,39 @@ A2Aサーバの実装
 
     * JSON RPCでクライアントから呼び出す
 
+:file:`agent.json` （抜粋）
+------------------------------------------------------------
+
+.. code-block:: json
+
+    {
+      "name": "Hello World Agent",
+      "description": "Just a hello world agent",
+      "url": "http://localhost:9999/",
+      "skills": [
+        {
+          "description": "just returns hello world",
+          "examples": [
+            "hi",
+            "hello world"
+          ],
+          "id": "hello_world",
+          "name": "Returns hello world",
+          "tags": [
+            "hello world"
+          ]
+        }
+      ]
+    }
+
+JSON RPC
+------------------------------------------------------------
+
+.. code-block:: bash
+
+    % curl http://0.0.0.0:9999/ --json '{"id": 1, "jsonrpc": "2.0", "method": "message/send", "params": {"message": {"role": "user", "parts": [{"kind": "text", "text": "Hi"}], "messageId": "abc"}}}'
+    {"id":1,"jsonrpc":"2.0","result":{"kind":"message","messageId":"13c44c32-1fcf-4d27-a3c5-d5fd46583390","parts":[{"kind":"text","text":"Hello World"}],"role":"agent"}}
+
 a2a-sdk
 ======================================================================
 
@@ -70,7 +104,13 @@ a2a-sdk
 * PythonでA2Aサーバ・クライアントの実装例（フレームワーク非依存）
 * Hello World サンプル：https://github.com/a2aproject/a2a-samples/tree/main/samples/python/agents/helloworld
 
-Agent Development Kitを例に
+Hello World エージェントとA2A
+------------------------------------------------------------
+
+* リモート：Hello World （a2a-sdk実装）
+* ローカル：*人* （ADKでつなぎこみ）
+
+ADK: Agent Development Kit
 ------------------------------------------------------------
 
     Add A2A support as experimental features (`1.6.1 <https://github.com/google/adk-python/releases/tag/v1.6.1>`__)
@@ -85,7 +125,8 @@ Agent Development Kitを例に
 デモ：ローカル（人）からリモートにメッセージを送信
 ------------------------------------------------------------
 
-* 注：発表の範囲外ですが、*タスク* という概念があります（時間のかかる処理。たぶんメッセージよりも大事）
+* 今回はメッセージに絞ってますが、*タスク* という概念があります（時間のかかる処理らしい）
+* 積ん読リストより `AI エージェントの連携を標準化する A2A プロトコルを試してみる <https://azukiazusa.dev/blog/ai-a2a-protocol/>`__
 
 **プロトコル** ということは
 ======================================================================
@@ -93,10 +134,19 @@ Agent Development Kitを例に
 * フレームワークによらない
 * プログラミング言語によらない（Python以外）
 
-a2a-sdkを使わない例（**FastAPI** 実装）
+a2a-sdkを使わない例
 ------------------------------------------------------------
 
-これでもメッセージをやり取りできます！
+* リモート：オウム返し（**FastAPI** 実装）
+* ローカル：人（ADKでつなぎこみ）
+
+A2Aに則るので、メッセージをやり取りできます！
+------------------------------------------------------------
+
+.. code-block:: bash
+
+    % curl http://0.0.0.0:9999/ --json '{"id": 1, "jsonrpc": "2.0", "method": "message/send", "params": {"message": {"role": "user", "parts": [{"kind": "text", "text": "Hi"}], "messageId": "abc"}}}'
+    {"id":1,"jsonrpc":"2.0","result":{"kind":"message","messageId":"4d1dfebee3af46c8b2c726074de3b536","parts":[{"kind":"text","text":"Hi"}],"role":"agent"}}
 
 まとめ🌯：Pythonで Agent2Agent Protocol
 ======================================================================
