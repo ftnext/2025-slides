@@ -1,3 +1,9 @@
+:ogp_title: Pythonで Agent2Agent Protocol
+:ogp_event_name: stapy-lt
+:ogp_slide_name: july-agent2agent
+:ogp_description: みんなのPython勉強会#116
+:ogp_image_name: stapy-lt-july
+
 ======================================================================
 Pythonで Agent2Agent Protocol
 ======================================================================
