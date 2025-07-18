@@ -131,6 +131,15 @@ ADK: Agent Development Kit
 デモ：ローカル（人）からリモートにメッセージを送信
 ------------------------------------------------------------
 
+.. image:: ../_static/stapy-july/A2A-hello-world.png
+
+.. revealjs-break::
+
+:A2Aサーバ: :command:`uv run .` (`a2a-samples の Hello World <https://github.com/a2aproject/a2a-samples/tree/72e5fff85524e8af1f44cbf1c87b9a2424a7c3da/samples/python/agents/helloworld>`__)
+:A2Aクライアント: :command:`uvx --from 'google-adk[a2a]' adk web` (`call_from_adk <https://github.com/ftnext/a2a-practice/tree/d73447b8b5fad7194596bf3c0f02d42dc33ca7f2/a2a-samples/helloworld/call_from_adk>`__ agent)
+
+.. revealjs-break::
+
 * 今回はメッセージに絞ってますが、*タスク* という概念があります（時間のかかる処理らしい）
 * 積ん読リストより `AI エージェントの連携を標準化する A2A プロトコルを試してみる <https://azukiazusa.dev/blog/ai-a2a-protocol/>`__
 
@@ -153,6 +162,16 @@ A2Aに則るので、メッセージをやり取りできます！
 
     % curl http://0.0.0.0:9999/ --json '{"id": 1, "jsonrpc": "2.0", "method": "message/send", "params": {"message": {"role": "user", "parts": [{"kind": "text", "text": "Hi"}], "messageId": "abc"}}}'
     {"id":1,"jsonrpc":"2.0","result":{"kind":"message","messageId":"4d1dfebee3af46c8b2c726074de3b536","parts":[{"kind":"text","text":"Hi"}],"role":"agent"}}
+
+デモ：a2a-sdkを使わない例
+------------------------------------------------------------
+
+.. image:: ../_static/stapy-july/A2A-parrot.png
+
+.. revealjs-break::
+
+:A2Aサーバ: uv run `minimum_server.py <https://github.com/ftnext/a2a-practice/blob/d73447b8b5fad7194596bf3c0f02d42dc33ca7f2/a2a-samples/helloworld/minimum_server.py>`__
+:A2Aクライアント: :command:`uvx --from 'google-adk[a2a]' adk web` (`call_from_adk <https://github.com/ftnext/a2a-practice/tree/d73447b8b5fad7194596bf3c0f02d42dc33ca7f2/a2a-samples/helloworld/call_from_adk>`__)（再掲）
 
 まとめ🌯：Pythonで Agent2Agent Protocol
 ======================================================================
