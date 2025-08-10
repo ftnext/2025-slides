@@ -1,3 +1,9 @@
+:ogp_title: アニメ「ラーメン赤猫」からの学びクイズ！ プロが出す力は、何%？
+:ogp_event_name: engineers-anime
+:ogp_slide_name: conf-ramen-akaneko-quiz
+:ogp_description: 【劇場版】アニメから得た学びを発表会2025 LT (2025/08)
+:ogp_image_name: engineers-anime-conf
+
 ======================================================================
 プロが出す力は、何%？
 ======================================================================
