@@ -1,5 +1,6 @@
 # 2025-slides
 
+* [2025年のPython環境はここまで簡単になりました！ 環境構築ツールパビリオン クイックツアー](https://ftnext.github.io/2025-slides/kichijojipm/python-pavilion-tour) @[大吉祥寺.pm 2025 (2025/09)](https://kichijojipm.connpass.com/event/361631/)
 * [アニメ「ラーメン赤猫」からの学びクイズ！ プロが出す力は、何%？](https://ftnext.github.io/2025-slides/engineers-anime/conf-ramen-akaneko-quiz.html#/1) @[【劇場版】アニメから得た学びを発表会2025 (2025/08)](https://engineers-anime-2025-lp.pages.dev/)
 * [Pythonで Agent2Agent Protocol](https://ftnext.github.io/2025-slides/stapy-lt/july-agent2agent) @[みんなのPython勉強会#116 (2025/07)](https://startpython.connpass.com/event/361667/)
 * [Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン](https://ftnext.github.io/2025-slides/aidd-cc1/llm-claude-code.html#1) @[Claude Code Meetup Japan #1（Claude Code祭り！）(2025/07)](https://aid.connpass.com/event/360017/)
