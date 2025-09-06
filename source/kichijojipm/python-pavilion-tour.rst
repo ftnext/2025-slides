@@ -140,8 +140,6 @@ https://docs.astral.sh/uv/getting-started/installation/
     (openai-env) $ python -m pip install openai
     (openai-env) $ openai api chat.completions.create -g user 'Python環境構築ツールパビリオンを訪れた感想は？' -m gpt-5
 
-.. 先行ツールとして ``pipx run`` もある
-
 🆕 :command:`uvx`
 --------------------------------------------------
 
@@ -192,10 +190,6 @@ https://docs.astral.sh/uv/getting-started/installation/
 
 metadataを書いたスクリプトは、別環境でもはるかに動かしやすくなったってこと！
 
-.. さらに進んだ例 marimo
-
-.. ブログ書きました https://tech.uzabase.com/entry/2024/06/07/180442
-
 展示3️⃣ uvで楽々Pythonプロジェクト管理
 ======================================================================
 
@@ -245,8 +239,6 @@ uvでPythonプロジェクトを始める
 * `uv init <https://docs.astral.sh/uv/reference/cli/#uv-init>`__
 * `uv add <https://docs.astral.sh/uv/reference/cli/#uv-add>`__ (uv remove)
 
-.. uvで管理していないPythonプロジェクト
-
 まとめ🌯：2025年のPython環境はここまで簡単になりました！
 ======================================================================
 
@@ -270,6 +262,48 @@ uvで Python環境 自由✌️（ぶい）
 
 📣「"仮想環境"を人間が管理する時代は、もう終わりました。ツールに任せて楽してこーぜ！」
 
-.. TODO 本LTのスコープ外
+Appendix
+======================================================================
 
-.. uvはRust実装（バイナリ提供）なので、Python処理系で動かすpipより速い
+* 参考文献
+* 本LT（5分）のスコープ外とした事項への補足
+
+.. GPT-5 https://gist.github.com/ftnext/2a44fdaa8c773e08ba318f19a6f47eb9
+
+補足：uvに至る流れ
+--------------------------------------------------
+
+* TechRAMEN 2024で発表 `one obvious wayを志向するPythonに依存ライブラリ管理ツールがたっくさんある話 <https://ftnext.github.io/2024-slides/techramen/python-package-management-tools.html#/1>`__
+* 『`ハイパーモダンPython <https://www.oreilly.co.jp/books/9784814400928/>`__』Ⅰ部・Ⅱ部
+* 例えば ``uvx`` には ``pipx run`` が先行します
+
+uvx（拙ブログ記事）
+--------------------------------------------------
+
+* `uvx（やpipx）により、Python製CLIツールも開発者による仮想環境管理が不要になってるじゃん！ Sphinxを例に <https://nikkie-ftnext.hatenablog.com/entry/welcome-uvx-world-developers-not-need-to-manage-virtual-environments-for-cli-python-packages>`__
+* `pipxやuvで、開発者がPython仮想環境を作らない開発 〜Streamlitを例に〜 <https://nikkie-ftnext.hatenablog.com/entry/pipx-uv-managed-virtual-envirionment-streamlit-example>`__
+
+inline script metadata
+--------------------------------------------------
+
+* PyCon JP 2024で発表：`PEP 723（Inline script metadata）が拓く世界。Pythonスクリプトに必要な仮想環境をツールにおまかせできるんです！ <https://2024.pycon.jp/ja/talk/89F3RQ>`__
+* 所属先のブログにも書きました：`Pythonスクリプトのモジュラリティとポータビリティを高めていく <https://tech.uzabase.com/entry/2024/06/07/180442>`__
+* 補足：さらに進んだ例 :command:`marimo edit --sandbox` （`拙ブログ <https://nikkie-ftnext.hatenablog.com/entry/marimo-awesome-support-inline-script-metadata-as-notebook>`__）
+
+既存のPythonプロジェクトにuvを入れる
+--------------------------------------------------
+
+* uvx `migrate-to-uv <https://github.com/mkniewallner/migrate-to-uv>`__
+* :file:`pyproject.toml` がなく動かない場合は、:command:`uv venv` して :command:`uv pip install` のようなworkaround
+
+.. https://x.com/ftnext/status/1944221013681877105
+
+uvは速い（拙ブログ記事）
+--------------------------------------------------
+
+* uvはRust実装（バイナリ提供）なので、Python処理系で動かすpipより速い
+* `Rustプログラムから作ったバイナリは、maturinでPythonパッケージにできる！！ <https://nikkie-ftnext.hatenablog.com/entry/maturin-bindings-bin-python-package-from-rust-binary>`__
+* `パッケージを pip install して生えるコマンドの実体は、シバンでPythonを指定したテキストファイルでした <https://nikkie-ftnext.hatenablog.com/entry/python-project-scripts-command-secret-shebang>`__
+
+EOF
+===
