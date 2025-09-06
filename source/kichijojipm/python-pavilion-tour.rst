@@ -1,3 +1,9 @@
+:ogp_title: 2025年のPython環境はここまで簡単になりました！ 環境構築ツールパビリオン クイックツアー
+:ogp_event_name: kichijojipm
+:ogp_slide_name: python-pavilion-tour
+:ogp_description: 大吉祥寺.pm 2025 LT (2025/09)
+:ogp_image_name: kichijojipm
+
 ======================================================================
 2025年のPython環境はここまで **簡単** になりました！
 ======================================================================
