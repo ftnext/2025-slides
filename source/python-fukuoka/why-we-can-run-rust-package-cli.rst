@@ -53,16 +53,17 @@ metadata の project.scripts
     -rwxr-xr-x  1 user  group  211 Sep 12 11:23 .venv/bin/sample
     $ file .venv/bin/sample
     .venv/bin/sample: a /.../.venv/bin/python script text executable, ASCII text
+    $ # .venv/bin は仮想環境の有効化で PATH に入っている
 
-「エントリポイントスクリプト」（『ハイパーモダンPython』）
-
-.. 仮想環境は有効化でPATHに入る
+「エントリポイントスクリプト」（『`ハイパーモダンPython <https://www.oreilly.co.jp/books/9784814400928/>`__』2章）
 
 エントリポイントスクリプトの中身
 --------------------------------------------------
 
 .. literalinclude:: sample-command
     :language: python
+
+*distlib* によるらしい (`pip 24.3.1 実装 <https://github.com/pypa/pip/blob/24.3.1/src/pip/_vendor/distlib/scripts.py#L40-L49>`__)
 
 シバンにPythonのパス
 --------------------------------------------------
@@ -72,8 +73,14 @@ metadata の project.scripts
     :lines: 1
 
 * **Python処理系で実行**！
+* https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%90%E3%83%B3_(Unix)
 
-.. distlibによる
+仮想環境のPython処理系が実行
+--------------------------------------------------
+
+.. literalinclude:: sample-command
+    :language: python
+    :lines: 2-
 
 🥟Python製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？
 ================================================================================
@@ -91,7 +98,7 @@ metadata の project.scripts
     (.venv) $ python -m pip install ruff
     (.venv) $ ruff check --fix --extend-select I
 
-仮想環境下にバイナリ
+仮想環境下に **バイナリ**
 --------------------------------------------------
 
 .. code-block:: shell
@@ -107,7 +114,7 @@ metadata の project.scripts
 * https://www.maturin.rs/#maturin
 * **Rustバイナリ** はもちろん、pyo3などバインディングを使ったクレートをPythonパッケージとしてビルド・公開できるツール
 
-Rust版 sampleproject
+Rust版 sampleproject を今回自作
 --------------------------------------------------
 
 .. code-block:: rust
@@ -193,5 +200,18 @@ https://github.com/astral-sh/ruff/blob/0.13.0/pyproject.toml#L46-L55
 * テキストファイルではなく、バイナリが置かれる
 * ビルドバックエンドに maturin を使うと、**Rustで作ったバイナリがPythonパッケージになる**
 
+お前、誰だったのよ？
+--------------------------------------------------
+
+* nikkie（にっきー）・ **1000日** `ブログ <https://nikkie-ftnext.hatenablog.com/>`__ を書きました！（更新中）
+* 機械学習エンジニア・LLM・自然言語処理（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
+* `Speeda AI Agent <https://www.uzabase.com/jp/info/20250630/>`__ 開発
+
+.. image:: ../_static/uzabase-white-logo.png
+
 ご清聴ありがとうございました
 --------------------------------------------------
+
+* `パッケージを pip install して生えるコマンドの実体は、シバンでPythonを指定したテキストファイルでした <https://nikkie-ftnext.hatenablog.com/entry/python-project-scripts-command-secret-shebang>`__
+* `Rustプログラムから作ったバイナリは、maturinでPythonパッケージにできる！！ <https://nikkie-ftnext.hatenablog.com/entry/maturin-bindings-bin-python-package-from-rust-binary>`__
+* `Rust プログラムから作ったバイナリを PyPI にアップロードしてみて <https://nikkie-ftnext.hatenablog.com/entry/try-maturin-pypi-upload-confuse-binary-each-environment>`__
