@@ -1,3 +1,9 @@
+:ogp_title: Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？
+:ogp_event_name: python-fukuoka
+:ogp_slide_name: why-we-can-run-rust-package-cli
+:ogp_description: Python Meetup Fukuoka #4 LT (2025/09)
+:ogp_image_name: python-fukuoka
+
 ================================================================================
 Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？
 ================================================================================
