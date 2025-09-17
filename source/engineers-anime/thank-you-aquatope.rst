@@ -1,3 +1,9 @@
+:ogp_title: 私、DMMさんに伝えたい想いがある 〜白い砂のアクアトープをありがとう〜
+:ogp_event_name: engineers-anime
+:ogp_slide_name: thank-you-aquatope
+:ogp_description: アニメから得た学びを発表会 (2025/09)
+:ogp_image_name: engineers-anime-sep
+
 ======================================================================
 私、DMMさんに **伝えたい想い** がある
 ======================================================================
