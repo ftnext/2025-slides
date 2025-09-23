@@ -1,6 +1,6 @@
 .. _propagate: https://docs.python.org/ja/3/library/logging.html#logging.Logger.propagate
 
-ルートロガーでロギングしよう - propagate（伝播）
+Chapter 3: ルートロガーでロギングしよう - propagate（伝播）
 ======================================================================
 
 ロガーの親子関係で重要なものは、``NOTSET`` レベルの他にもう1つ
