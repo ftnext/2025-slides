@@ -13,7 +13,7 @@ HTTPXを例に、実際のログを見ながら構成要素を紹介
 
 .. 補注 PEP 723 スクリプトで
 
-.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+.. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 10-12,23-25
 
@@ -57,7 +57,7 @@ INFOレベルでHTTPリクエストを記録
 HTTPXに仕込まれたログを見るためのコード
 ======================================================================
 
-.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+.. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 13-21
 
@@ -68,7 +68,7 @@ HTTPXに仕込まれたログを見るためのコード
 
 .. https://docs.python.org/ja/3/howto/logging-cookbook.html#using-loggers-as-attributes-in-a-class-or-passing-them-as-parameters
 
-.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+.. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 13-14
     :emphasize-lines: 1
@@ -79,7 +79,7 @@ HTTPXに仕込まれたログを見るためのコード
 
 .. https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel
 
-.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+.. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 13-14
     :emphasize-lines: 2
@@ -103,7 +103,7 @@ HTTPXに仕込まれたログを見るためのコード
 ストリームに出力
 --------------------------------------------------
 
-.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+.. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 16,21
 
@@ -122,14 +122,14 @@ HTTPXに仕込まれたログを見るためのコード
 
 * ハンドラが出力するログレコードに適用される **書式の設定**
 
-.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+.. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 17-20
 
 書式はログレコードの属性名を指定
 --------------------------------------------------
 
-.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+.. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 18
 
