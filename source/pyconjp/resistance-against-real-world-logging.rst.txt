@@ -1,0 +1,73 @@
+事例紹介：伸びしろのあるロギング実装と、対処術
+======================================================================
+
+📣「ライブラリユーザにこんなハックが必要ないように、ロギングを実装してくださいね」
+
+事例1：``print`` するものはロギングではありません
+======================================================================
+
+色付きでストリームに出力するロガーの実装
+
+.. code-block:: python
+
+    class AsyncLogger:
+        def _log(
+            self,
+            level: LogLevel,
+            message: str,
+        ):
+            if self.verbose or kwargs.get("force_verbose", False):
+                print(log_line)
+
+.. https://nikkie-ftnext.hatenablog.com/entry/use-logger-instead-of-print-in-python-libraries
+
+ログにはprintでなくloggerを使う
+--------------------------------------------------
+
+『`自走プログラマー <https://gihyo.jp/book/2020/978-4-297-11197-7>`__』 `72:ログにはprintでなくloggerを使う <https://jisou-programmer.beproud.jp/%E3%83%AD%E3%82%AE%E3%83%B3%E3%82%B0/72-%E3%83%AD%E3%82%B0%E3%81%AB%E3%81%AFprint%E3%81%A7%E3%81%AA%E3%81%8Flogger%E3%82%92%E4%BD%BF%E3%81%86.html>`__
+
+    ロギングを使えば、表示をやめたり、ファイルに出力したり、ログを残した日時を残したりできます。
+
+色付きロギングの選択肢
+--------------------------------------------------
+
+* richの ``RichHandler``
+* uvicorn のロギングはなぜ色がつくか（自作Formatter）
+
+事例2：ライブラリでルートロガーを触ってはいけません
+======================================================================
+
+DON'T🙅‍♂️ ライブラリで ``basicConfig()``
+
+``basicConfig()`` がルートロガーを設定するのは「一度だけ」
+----------------------------------------------------------------------
+
+    (略) ルートロガーに設定されたハンドラがあれば何もしません。(`logging.basicConfig() <https://docs.python.org/ja/3/library/logging.html#logging.basicConfig>`__ 📄)
+
+ライブラリがルートロガーにハンドラを設定してしまうと、 **アプリケーションコードで呼び出しても何も起こらない** 😭
+
+``logging.warning()`` なども全部 ``basicConfig()`` を呼んでます
+----------------------------------------------------------------------
+
+    （補足：ルートロガーがハンドラを持たない場合は）ルートロガーの debug メソッドを呼び出す前に basicConfig() が呼ばれます。 (📄 `logging.debug() <https://docs.python.org/ja/3/library/logging.html#logging.debug>`__)
+
+``basicConfig()`` 同様にライブラリで使ってはいけません
+
+Googleのライブラリでもやってる
+--------------------------------------------------
+
+* google-genai（修正済み）
+* google-adk
+
+``basicConfig()`` の ``force`` 引数
+--------------------------------------------------
+
+.. forceで解呪 https://nikkie-ftnext.hatenablog.com/entry/python-logging-basicconfig-configure-root-logger-without-handler
+    直接ルートロガーのハンドラを修正する例？
+
+**ライブラリではルートロガーは触らない**
+--------------------------------------------------
+
+    あなたのライブラリから *ルートロガーへ直接ログを記録しない* ことを強く推奨します。
+
+`ライブラリのためのロギングの設定 <https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library>`__ の注釈
