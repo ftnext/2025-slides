@@ -1,0 +1,146 @@
+loggingモジュールの構成要素
+======================================================================
+
+* ロガー
+* ハンドラ
+* フォーマッタ
+* フィルタ
+
+HTTPXを例に、実際のログを見ながら構成要素を紹介
+--------------------------------------------------
+
+.. ref: https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger
+
+.. 補注 PEP 723 スクリプトで
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+    :language: python
+    :lines: 10-12,23-25
+
+ロガー
+======================================================================
+
+* 開発者はロガーを触って **プログラム実行中のイベントを記録** する
+* イベントの重要性（レベル） + メッセージ
+
+``logging.getLogger()`` でロガーを取得
+--------------------------------------------------
+
+.. code-block:: python
+    :caption: httpxロガーを取得
+
+    logger = logging.getLogger("httpx")
+
+https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
+
+INFOレベルでHTTPリクエストを記録
+--------------------------------------------------
+
+.. https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
+
+.. code-block:: python
+
+    class Client(BaseClient):
+        def _send_single_request(self, request: Request) -> Response:
+            logger.info(
+                'HTTP Request: %s %s "%s %d %s"',
+                request.method,
+                request.url,
+                response.http_version,
+                response.status_code,
+                response.reason_phrase,
+            )
+
+.. レベルの表 https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging
+    INFOは「想定された通りのことが起こったことの確認。」
+
+HTTPXに仕込まれたログを見るためのコード
+======================================================================
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+    :language: python
+    :lines: 13-21
+
+ロガーのレベルを設定
+--------------------------------------------------
+
+* ライブラリユーザも都度 ``getLogger`` （ロガーはシングルトン）
+
+.. https://docs.python.org/ja/3/howto/logging-cookbook.html#using-loggers-as-attributes-in-a-class-or-passing-them-as-parameters
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+    :language: python
+    :lines: 13-14
+    :emphasize-lines: 1
+
+.. revealjs-break::
+
+* DEBUGレベル **以上のログ** を見る（``setLevel`` したレベル未満は無視）
+
+.. https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+    :language: python
+    :lines: 13-14
+    :emphasize-lines: 2
+
+ロガーのレベルとログの記録
+--------------------------------------------------
+
+``WARNING`` レベルのロガー ``logger`` は
+
+* ``logger.warning()`` は記録する（**ログレコード** を生成）
+* ``logger.info()`` は記録しない
+
+出力先を設定 - ハンドラ
+--------------------------------------------------
+
+* ハンドラがログレコードを **出力先に振り分ける**
+
+    * ストリーム
+    * ファイル
+
+ストリームに出力
+--------------------------------------------------
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+    :language: python
+    :lines: 16,21
+
+.. code-block:: txt
+    :caption: httpxロガーによるログが見えます！
+
+    % uv run example.py
+    HTTP Request: GET https://peps.python.org/api/peps.json "HTTP/1.1 200 OK"
+
+.. デフォルトの書式設定が %(message)s
+    _defaultFormatter = Formatter() https://github.com/python/cpython/blob/3.13/Lib/logging/__init__.py#L734
+    https://github.com/python/cpython/blob/3.13/Lib/logging/__init__.py#L446
+
+書式の設定 - フォーマッタ
+--------------------------------------------------
+
+* ハンドラが出力するログレコードに適用される **書式の設定**
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+    :language: python
+    :lines: 17-20
+
+書式はログレコードの属性名を指定
+--------------------------------------------------
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/example.py
+    :language: python
+    :lines: 18
+
+`LogRecord 属性 <https://docs.python.org/ja/3/library/logging.html#logrecord-attributes>`__
+
+フィルタ（名前だけ紹介）
+--------------------------------------------------
+
+* ロガーやハンドラに取り付ける
+* フィルタにロガーの名前を指定し、指定したロガーと *子のロガー* のログレコードだけを通す
+
+.. ``__name__`` をロガーの名前にする話
+
+TODO まとめの図？
