@@ -3,7 +3,7 @@
 ルートロガーでロギングしよう - propagate（伝播）
 ======================================================================
 
-ロガーの親子関係で重要なものは、レベルの他にもう1つ
+ロガーの親子関係で重要なものは、``NOTSET`` レベルの他にもう1つ
 
 ロガーの `propagate`_ 属性
 ======================================================================
@@ -64,13 +64,38 @@ propagate（伝播）
 ルートロガーでロギングの例
 ======================================================================
 
-ルートロガーに複数ハンドラ
+例1️⃣ ルートロガーに複数ハンドラ
 --------------------------------------------------
 
-「INFO以上はファイルにロギング、ERROR以上はコンソールにもログ出力」
+「``INFO`` 以上はファイルにロギング、``ERROR`` 以上はコンソールにも出力」
 
-JSONフォーマッタ
+* ``ERROR`` レベルの ``StreamHandler``
+* ``INFO`` レベルの ``FileHandler``
+
+``DEBUG`` 以上をファイルに、``INFO`` 以上をコンソールに
+------------------------------------------------------------
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_multi_handlers.py
+    :language: python
+    :lines: 14-31
+
+例2️⃣ JSONフォーマッタ
 --------------------------------------------------
+
+* ルートロガーのハンドラのフォーマッタを **JSON出力する** ものに差し替えるだけ
+* `python-json-logger <https://github.com/nhairs/python-json-logger>`__ の ``JsonFormatter``
+
+.. https://nikkie-ftnext.hatenablog.com/entry/python-json-logger-formatter-for-json-logging-quickstart
+
+``JsonFormatter`` に差し替え
+--------------------------------------------------
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_jsonformat.py
+    :language: python
+    :lines: 12,14-24
+    :emphasize-lines: 7
+
+.. TODO 出力例？
 
 全てアプリケーションコードの話
 --------------------------------------------------
