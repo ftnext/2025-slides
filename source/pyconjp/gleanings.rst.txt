@@ -1,0 +1,108 @@
+落穂拾い
+======================================================================
+
+1. 最終手段ハンドラ
+2. 設定方法の選択肢（ファイルでの設定含む）
+3. 標準ライブラリ logging 以外の選択肢（loguruなど）
+
+1️⃣ 最終手段ハンドラ
+======================================================================
+
+.. literalinclude:: ../../samplecode/python-logging/last_resort_example/mylib.py
+    :language: python
+    :lines: 1-6,8
+    :caption: ライブラリでwarningのロギング
+
+``basicConfig()`` なしでロギングできます
+--------------------------------------------------
+
+.. literalinclude:: ../../samplecode/python-logging/last_resort_example/app.py
+    :language: python
+    :caption: ルートロガーを設定しないアプリケーションコード
+
+.. code-block:: txt
+
+    ちょっとヤバいよ
+
+ロガーにハンドラを指定しないとき
+--------------------------------------------------
+
+    イベントは、 ``lastResort`` に格納された「最終手段ハンドラ」を使用して出力されます。
+
+`環境設定が与えられないとどうなるか <https://docs.python.org/ja/3/howto/logging.html#what-happens-if-no-configuration-is-provided>`__
+
+最終手段ハンドラを使わないなら ``NullHandler``
+--------------------------------------------------
+
+    何らかの理由でロギング設定がなされていないときにメッセージを表示 *させたくない* のであれば、ライブラリのトップレベルのロガーに何もしないハンドラを取り付けられます。
+
+`ライブラリのためのロギングの設定 <https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library>`__
+
+``NullHandler`` 以外を取り付けてはいけません🙅‍♂️
+--------------------------------------------------
+
+* ライブラリロガーのハンドラで出力
+* 親のルートロガーに伝播（propagate）し、 ルートロガーのハンドラでも処理して **2重** 出力
+
+2️⃣ 設定方法の選択肢
+======================================================================
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_hard.py
+    :language: python
+    :lines: 13-22
+
+.. _dictConfig: https://docs.python.org/ja/3/library/logging.config.html#logging.config.dictConfig
+
+`dictConfig`_
+--------------------------------------------------
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_dictconfig.py
+    :language: python
+    :lines: 8,13-39
+
+.. _fileConfig: https://docs.python.org/ja/3/library/logging.config.html#logging.config.fileConfig
+
+コードの代わりに `fileConfig`_
+--------------------------------------------------
+
+* `configparser <https://docs.python.org/ja/3/library/configparser.html>`__ 形式ファイルで設定
+
+    ファイルには、 [loggers], [handlers], [formatters] といったセクションが入っていなければならず、（`環境設定ファイルの書式 <https://docs.python.org/ja/3/library/logging.config.html#configuration-file-format>`__）
+
+YAMLファイル + ``dictConfig``
+--------------------------------------------------
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_yamlconfig.py
+    :language: python
+    :lines: 16-19
+
+.. https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger-logging-config-dict-or-yaml
+
+3️⃣ 標準ライブラリ logging 以外の選択肢
+======================================================================
+
+* `vinta/awesome-pythonのLogging <https://github.com/vinta/awesome-python?tab=readme-ov-file#logging>`__ にリスト
+* loguru
+* structlog
+
+.. _loguru: https://github.com/Delgan/loguru
+
+`loguru`_
+--------------------------------------------------
+
+    Python logging made (stupidly) simple
+
+* IMO：simple というより easy 志向
+* `互換ではある <https://github.com/Delgan/loguru/tree/0.7.3?tab=readme-ov-file#entirely-compatible-with-standard-logging>`_ が、差し替えるのが大変という感触
+
+.. _structlog: https://github.com/hynek/structlog
+
+`structlog`_
+--------------------------------------------------
+
+    Simple, powerful, and fast logging for Python.
+
+* 標準ライブラリ logging から置き換えられるが、`互換でもある <https://www.structlog.org/en/stable/standard-library.html#suggested-configurations>`__
+* PyCon JP 2024「`実践structlog <https://2024.pycon.jp/en/talk/RRRAAT>`__」
+
+.. One more thing として python-happy-logging を
