@@ -69,7 +69,7 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
 .. revealjs-break::
 
-.. image:: ../_static/pyconjp/logger-ancestors.drawio.png
+.. image:: ../_static/pyconjp/pyconjp-logger-ancestors.drawio.png
     :scale: 120%
 
 .. TODO ``__name__`` をロガーの名前にする話

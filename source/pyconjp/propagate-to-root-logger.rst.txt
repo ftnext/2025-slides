@@ -13,7 +13,7 @@ Chapter 3: ルートロガーでロギングしよう - propagate（伝播）
 ロガーの親子関係（再び）
 --------------------------------------------------
 
-.. image:: ../_static/pyconjp/logger-ancestors-part.drawio.png
+.. image:: ../_static/pyconjp/pyconjp-logger-ancestors-part.drawio.png
     :scale: 120%
 
 propagate（伝播）
