@@ -13,21 +13,26 @@ from rich.pretty import pprint
 logging.config.dictConfig(
     {
         "version": 1,
-        "loggers": {
-            "httpx": {
-                "level": "DEBUG",
-                "handlers": ["console"],
-            },
+        "disable_existing_loggers": False,
+        "root": {
+            "level": "DEBUG",
+            "handlers": ["console"],
         },
         "handlers": {
             "console": {
                 "class": "logging.StreamHandler",
                 "formatter": "detailed",
+                "filters": ["httpx"],
             },
         },
         "formatters": {
             "detailed": {
                 "format": "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+            },
+        },
+        "filters": {
+            "httpx": {
+                "name": "httpx",
             },
         },
     }
