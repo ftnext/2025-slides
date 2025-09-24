@@ -11,34 +11,24 @@ HTTPXを例に、実際のログを見ながら構成要素を紹介
 
 .. ref: https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger
 
-.. 補注 PEP 723 スクリプトで
-
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 10-12,23-25
+    :caption: サンプルスクリプト [#pep723]_
+
+.. [#pep723] `PyCon JP 2024 で話した inline script metadata <https://2024.pycon.jp/ja/talk/89F3RQ>`__ を使っています
 
 ロガー
 ======================================================================
 
-* 開発者はロガーを触って **プログラム実行中のイベントを記録** する
+* ライブラリ作者はロガーを使って **プログラム実行中のイベントを記録** する
 * イベントの重要性（レベル） + メッセージ
 
-``logging.getLogger()`` でロガーを取得
+HTTPXの中にあるロギング
 --------------------------------------------------
 
 .. code-block:: python
-    :caption: httpxロガーを取得
-
-    logger = logging.getLogger("httpx")
-
-https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
-
-INFOレベルでHTTPリクエストを記録
---------------------------------------------------
-
-.. https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
-
-.. code-block:: python
+    :caption: INFOレベルでHTTPリクエストを記録
 
     class Client(BaseClient):
         def _send_single_request(self, request: Request) -> Response:
@@ -51,51 +41,107 @@ INFOレベルでHTTPリクエストを記録
                 response.reason_phrase,
             )
 
-.. レベルの表 https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging
-    INFOは「想定された通りのことが起こったことの確認。」
+https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
+
+ログのレベル [#level-table-ref]_
+--------------------------------------------------
+
+.. [#level-table-ref] `logging を使うとき（基本 logging チュートリアル） <https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging>`__
+
+.. list-table::
+
+    * - レベル
+      - いつ使うか
+    * - DEBUG
+      - おもに問題を診断するときにのみ関心があるような、詳細な情報。
+    * - INFO
+      - 想定された通りのことが起こったことの確認。
+
+.. revealjs-break::
+    :notitle:
+
+.. list-table::
+
+    * - WARNING
+      - 想定外のことが起こった、または問題が近く起こりそうであることの表示。
+    * - ERROR
+      - より重大な問題により、ソフトウェアがある機能を実行できないこと。
+    * - CRITICAL
+      - プログラム自体が実行を続けられないことを表す、重大なエラー。
+
+ロガーの取得に ``logging.getLogger()``
+--------------------------------------------------
+
+.. code-block:: python
+    :caption: httpxロガーを取得
+
+    logger = logging.getLogger("httpx")
+
+https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
+
+ライブラリユーザがログを見るには
+======================================================================
+
+.. code-block:: python
+    :caption: このINFOレベルのログを見たい
+
+    logger = logging.getLogger("httpx")
+
+    class Client(BaseClient):
+        def _send_single_request(self, request: Request) -> Response:
+            logger.info(
+                'HTTP Request: %s %s "%s %d %s"',
+                request.method,
+                request.url,
+                response.http_version,
+                response.status_code,
+                response.reason_phrase,
+            )
 
 HTTPXに仕込まれたログを見るためのコード
-======================================================================
+--------------------------------------------------
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 13-21
 
-ロガーのレベルを設定
+ユーザもロガーを取得
 --------------------------------------------------
 
-* ライブラリユーザも都度 ``getLogger`` （ロガーはシングルトン）
+* ライブラリユーザも都度 ``getLogger`` [#singleton]_
 
-.. https://docs.python.org/ja/3/howto/logging-cookbook.html#using-loggers-as-attributes-in-a-class-or-passing-them-as-parameters
+.. [#singleton] ロガーはシングルトン（`「避けるべきパターン」の「ロガーをクラスの属性にするか、パラメータで渡す」 <https://docs.python.org/ja/3/howto/logging-cookbook.html#using-loggers-as-attributes-in-a-class-or-passing-them-as-parameters>`__）
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 13-14
     :emphasize-lines: 1
 
-.. revealjs-break::
+ロガーの **レベルを設定**
+--------------------------------------------------
 
-* DEBUGレベル **以上のログ** を見る（``setLevel`` したレベル未満は無視）
-
-.. https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel
+* `setLevel <https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel>`__ したレベル以上のメッセージを記録、未満は無視
+* 今回は ``DEBUG`` レベル以上のログを見る（``INFO`` 含む）
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 13-14
     :emphasize-lines: 2
 
-ロガーのレベルとログの記録
+📌ロガーはレベル以上のメッセージを記録
 --------------------------------------------------
 
-``WARNING`` レベルのロガー ``logger`` は
+.. list-table:: ``WARNING`` レベルのロガー ``logger``
 
-* ``logger.warning()`` は記録する（**ログレコード** を生成）
-* ``logger.info()`` は記録しない
+    * - ``logger.warning("メッセージ")``
+      - 記録する（**ログレコード** を生成）
+    * - ``logger.info("メッセージ")``
+      - 無視
 
-出力先を設定 - ハンドラ
+**出力先** を設定 - ハンドラ
 --------------------------------------------------
 
-* ハンドラがログレコードを **出力先に振り分ける**
+* ハンドラがログレコードを出力先に振り分ける
 
     * ストリーム
     * ファイル
@@ -106,6 +152,7 @@ HTTPXに仕込まれたログを見るためのコード
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 16,21
+    :caption: ロガーにハンドラを取り付ける
 
 .. code-block:: txt
     :caption: httpxロガーによるログが見えます！
@@ -117,28 +164,49 @@ HTTPXに仕込まれたログを見るためのコード
     _defaultFormatter = Formatter() https://github.com/python/cpython/blob/3.13/Lib/logging/__init__.py#L734
     https://github.com/python/cpython/blob/3.13/Lib/logging/__init__.py#L446
 
-書式の設定 - フォーマッタ
+**書式の設定** - フォーマッタ
 --------------------------------------------------
 
-* ハンドラが出力するログレコードに適用される **書式の設定**
+* ハンドラが出力するログレコードに適用される書式の設定
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 17-20
 
-書式はログレコードの属性名を指定
+書式は **ログレコードの属性名** を指定
 --------------------------------------------------
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 18
 
+.. code-block:: txt
+
+    2025-09-24 23:38:25,370 | INFO (httpx) | _client.py:_send_single_request:1025 - HTTP Request: GET https://peps.python.org/api/peps.json "HTTP/1.1 200 OK"
+
 `LogRecord 属性 <https://docs.python.org/ja/3/library/logging.html#logrecord-attributes>`__
 
-フィルタ（名前だけ紹介）
+.. TODO 属性名を取り上げる
+
+フィルタ（ここでは名前だけ紹介）
 --------------------------------------------------
 
 * ロガーやハンドラに取り付ける
 * フィルタにロガーの名前を指定し、指定したロガーと *子のロガー* のログレコードだけを通す
 
-TODO まとめの図？
+まとめ🥟 loggingモジュールの構成要素
+======================================================================
+
+* ライブラリ **作者** がロガーでイベントを **記録** （レベル + メッセージ）
+* ライブラリ **ユーザ** は、ロガー・ハンドラ・フォーマッタ（・フィルタ）を使って **ログを見る**
+
+ライブラリに仕込まれたログを見るには🥟
+--------------------------------------------------
+
+.. TODO まとめの図？
+
+* **ロガー** を取得し、レベルを設定（``getLogger``・``setLevel``）
+* ロガーに **ハンドラ** を取り付ける
+* ハンドラに **フォーマッタ** を取り付ける
+
+.. TODO ロガーとハンドラにフィルタ、またレベル
