@@ -1,0 +1,17 @@
+2025-09-25 00:21:51,724 | DEBUG (httpcore.connection) | _trace.py:trace:47 - connect_tcp.started host='peps.python.org' port=443 local_address=None timeout=5.0 socket_options=None
+2025-09-25 00:21:51,775 | DEBUG (httpcore.connection) | _trace.py:trace:47 - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x104ed2c50>
+2025-09-25 00:21:51,775 | DEBUG (httpcore.connection) | _trace.py:trace:47 - start_tls.started ssl_context=<ssl.SSLContext object at 0x105433020> server_hostname='peps.python.org' timeout=5.0
+2025-09-25 00:21:51,795 | DEBUG (httpcore.connection) | _trace.py:trace:47 - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x1056354d0>
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - send_request_headers.started request=<Request [b'GET']>
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - send_request_headers.complete
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - send_request_body.started request=<Request [b'GET']>
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - send_request_body.complete
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - receive_response_headers.started request=<Request [b'GET']>
+2025-09-25 00:21:51,984 | DEBUG (httpcore.http11) | _trace.py:trace:47 - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Connection', b'keep-alive'), (b'Content-Length', b'55103'), (b'Server', b'GitHub.com'), (b'Content-Type', b'application/json; charset=utf-8'), (b'Last-Modified', b'Wed, 24 Sep 2025 07:35:56 GMT'), (b'Access-Control-Allow-Origin', b'*'), (b'ETag', b'W/"68d39f5c-608b4"'), (b'expires', b'Wed, 24 Sep 2025 14:48:25 GMT'), (b'Cache-Control', b'max-age=600'), (b'Content-Encoding', b'gzip'), (b'x-proxy-cache', b'MISS'), (b'X-GitHub-Request-Id', b'2DE8:A7B6E:48D19B:4D3D5F:68D40260'), (b'Via', b'1.1 varnish, 1.1 varnish'), (b'X-Fastly-Request-ID', b'f2e5f538ee8eb9b0521c0076beb66f992dee747e'), (b'Fastly-Debug-States', b'DELIVER'), (b'Accept-Ranges', b'bytes'), (b'Age', b'0'), (b'Date', b'Wed, 24 Sep 2025 15:21:51 GMT'), (b'X-Served-By', b'cache-tyo11951-TYO, cache-tyo11950-TYO'), (b'X-Cache', b'MISS, HIT'), (b'X-Cache-Hits', b'0, 0'), (b'X-Timer', b'S1758727312.797979,VS0,VE173'), (b'Vary', b'Accept-Encoding'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload')])
+2025-09-25 00:21:51,984 | INFO (httpx) | _client.py:_send_single_request:1025 - HTTP Request: GET https://peps.python.org/api/peps.json "HTTP/1.1 200 OK"
+2025-09-25 00:21:51,984 | DEBUG (httpcore.http11) | _trace.py:trace:47 - receive_response_body.started request=<Request [b'GET']>
+2025-09-25 00:21:52,006 | DEBUG (httpcore.http11) | _trace.py:trace:47 - receive_response_body.complete
+2025-09-25 00:21:52,006 | DEBUG (httpcore.http11) | _trace.py:trace:47 - response_closed.started
+2025-09-25 00:21:52,006 | DEBUG (httpcore.http11) | _trace.py:trace:47 - response_closed.complete
+2025-09-25 00:21:52,006 | DEBUG (httpcore.connection) | _trace.py:trace:47 - close.started
+2025-09-25 00:21:52,006 | DEBUG (httpcore.connection) | _trace.py:trace:47 - close.complete
