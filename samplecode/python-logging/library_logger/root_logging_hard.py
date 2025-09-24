@@ -14,10 +14,10 @@ root_logger = logging.getLogger()
 root_logger.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()
-console_formatter = logging.Formatter(
+detailed_formatter = logging.Formatter(
     "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
 )
-console_handler.setFormatter(console_formatter)
+console_handler.setFormatter(detailed_formatter)
 root_logger.addHandler(console_handler)
 console_handler.addFilter(logging.Filter("httpx"))
 
