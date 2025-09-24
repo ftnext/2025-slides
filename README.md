@@ -1,5 +1,6 @@
 # 2025-slides
 
+* [標準ライブラリのlogging、レゴブロックのように組合せてロギングできることを理解しよう！](https://ftnext.github.io/2025-slides/pyconjp/stdlib-logging-kata.html#/1) @[PyCon JP 2025 (2025/09)](https://2025.pycon.jp/ja)
 * [Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？](https://ftnext.github.io/2025-slides/python-fukuoka/why-we-can-run-rust-package-cli#/1) @[Python Meetup Fukuoka #4 (2025/09)](https://lycorptech-fukuoka.connpass.com/event/365202/)
 * [2025年のPython環境はここまで簡単になりました！ 環境構築ツールパビリオン クイックツアー](https://ftnext.github.io/2025-slides/kichijojipm/python-pavilion-tour) @[大吉祥寺.pm 2025 (2025/09)](https://kichijojipm.connpass.com/event/361631/)
 * [アニメ「ラーメン赤猫」からの学びクイズ！ プロが出す力は、何%？](https://ftnext.github.io/2025-slides/engineers-anime/conf-ramen-akaneko-quiz.html#/1) @[【劇場版】アニメから得た学びを発表会2025 (2025/08)](https://engineers-anime-2025-lp.pages.dev/)
