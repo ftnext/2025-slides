@@ -4,11 +4,14 @@ Chapter 2: ロガーのレベルはどう決まる？
 復習：ロガーのレベル以上の呼び出しでログレコードが作られる
 ------------------------------------------------------------
 
-``INFO`` レベルのロガー ``logger``
+.. list-table:: ``INFO`` レベルのロガー ``logger``
 
-* ``logger.warning()`` は記録
-* ``logger.info()`` は記録
-* ``logger.debug()`` は記録しない
+    * - ``logger.warning()``
+      - 記録
+    * - ``logger.info()``
+      - 記録
+    * - ``logger.debug()``
+      - 無視
 
 ❓ ``httpx`` ロガーのレベルは？
 --------------------------------------------------
@@ -29,11 +32,11 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 .. code-block:: pycon
 
     >>> import logging
-    >>> logger = logging.getLogger("httpx")
-    >>> logger.level  # 0 は NOTSET
-    0
+    >>> httpx_logger = logging.getLogger("httpx")
+    >>> logging.getLevelName(httpx_logger.level)
+    'NOTSET'
 
-.. TODO getLevelName https://github.com/python/cpython/blob/3.13/Lib/logging/__init__.py#L129
+.. getLevelName https://github.com/python/cpython/blob/3.13/Lib/logging/__init__.py#L129
 
 ``NOTSET`` とは
 --------------------------------------------------
@@ -47,7 +50,7 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
 ロガーには **名前で決まる親子関係** があります
 
-ドット（ピリオド）区切り
+名前は **ドット（ピリオド）区切り** にもできる
 --------------------------------------------------
 
     ロガー名は、何でも望むものにでき、ロギングされたメッセージが発生した場所を指し示します。（`上級ロギングチュートリアル <https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial>`__）
@@ -55,7 +58,7 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 .. code-block:: python
 
     logging.getLogger("spam")
-    logging.getLogger("spam.ham")  # 名前には . も使えます
+    logging.getLogger("spam.ham")
 
 ロガーの親子関係
 --------------------------------------------------
@@ -66,6 +69,9 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
 * ``spam.ham`` ロガーの **親** にあたるのが ``spam`` ロガー
 * すべてのロガーの親 *ルートロガー* （引数渡さず ``logging.getLogger()``）
+
+.. https://docs.python.org/ja/3/library/logging.html#logging.Logger.parent
+    spam.ham ロガーの parent は RootLogger
 
 .. revealjs-break::
 
@@ -79,17 +85,19 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 ルートロガーのレベルを変える
 ======================================================================
 
-一番親のロガーのレベルを変えると、子のロガーのレベルも変わる
+一番親のロガーのレベルを変えると、子のロガーの ``NOTSET`` レベルも変わる
 
 ルートロガーのレベルは ``WARNING``
 --------------------------------------------------
 
 .. code-block:: pycon
 
-    >>> logging.getLogger().level
-    30
-    >>> logging.getLogger("httpx").getEffectiveLevel()
-    30
+    >>> root_logger = logging.getLogger()
+    >>> logging.getLevelName(root_logger.level)
+    'WARNING'
+    >>> httpx_logger = logging.getLogger("httpx")
+    >>> logging.getLevelName(httpx_logger.getEffectiveLevel())
+    'WARNING'
 
 ルートロガーのレベルを変えると （``basicConfig()``）
 ------------------------------------------------------------
@@ -98,14 +106,15 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
     :caption: 別セッションで実行
 
     >>> logging.basicConfig(level=logging.DEBUG)
-    >>> logging.getLogger().level
-    10
-    >>> logging.getLogger("httpx").getEffectiveLevel()
-    10
+    >>> root_logger = logging.getLogger()
+    >>> logging.getLevelName(root_logger.level)
+    'DEBUG'
+    >>> httpx_logger = logging.getLogger("httpx")
+    >>> logging.getLevelName(httpx_logger.getEffectiveLevel())
+    'DEBUG'
 
-ロガーのレベルはどう決まる？
+まとめ🥟 ロガーのレベルはどう決まる？
 ======================================================================
 
-* ロガーのレベル以上の呼び出しでログレコードが作られる
 * ライブラリのロガーのレベルは ``NOTSET`` （何もしなければ、ルートロガーと同じ ``WARNING``）
-* **ルートロガーのレベルを変えると、子のロガーのレベルも変わる**
+* **ルートロガーのレベルを変えると、子のロガーのレベルも変わる** （これを利用💡）

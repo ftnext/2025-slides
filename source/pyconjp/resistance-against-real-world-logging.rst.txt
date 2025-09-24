@@ -28,6 +28,27 @@ Chapter 4: 伸びしろのあるロギング実装と、対処術
 
     ロギングを使えば、表示をやめたり、ファイルに出力したり、ログを残した日時を残したりできます。
 
+print と logger [#when-to-use-logging]_
+--------------------------------------------------
+
+.. [#when-to-use-logging] `logging を使うとき（基本 logging チュートリアル） <https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging>`__
+
+.. list-table::
+
+    * - タスク
+      - 最適なツール
+    * - コマンドラインスクリプトやプログラムで普通に使う、コンソール出力の表示
+      - ``print()``
+    * - プログラムの通常の操作中に発生したイベントの報告
+      - ``logger.info()`` （や ``logger.debug()``）
+
+``logger.info("メッセージ")`` は ``print`` と違って
+------------------------------------------------------------
+
+* ログレベルの指定で、出力なしにできる
+* ハンドラを変えて、ファイルに出力できる
+* ログレコードの ``asctime`` で日時を記録できる（フォーマッタ）
+
 色付きロギングの選択肢
 --------------------------------------------------
 
@@ -39,21 +60,60 @@ Chapter 4: 伸びしろのあるロギング実装と、対処術
 
 DON'T🙅‍♂️ ライブラリで ``basicConfig()``
 
-``basicConfig()`` がルートロガーを設定するのは「一度だけ」
+``basicConfig()`` のヒミツ
 ----------------------------------------------------------------------
 
-    (略) ルートロガーに設定されたハンドラがあれば何もしません。(`logging.basicConfig() <https://docs.python.org/ja/3/library/logging.html#logging.basicConfig>`__ 📄)
+    (略) ルートロガーに設定されたハンドラがあれば何もしません。
+
+`logging.basicConfig() <https://docs.python.org/ja/3/library/logging.html#logging.basicConfig>`__
+
+実験スクリプト
+--------------------------------------------------
+
+.. code-block:: python
+
+    import logging
+
+    logging.basicConfig(level=logging.INFO)
+    logging.info("想定通り")
+    logging.warning("ちょっとヤバいよ")
+
+    logging.basicConfig(level=logging.WARNING)  # 効きません
+    logging.info("想定通り")
+    logging.warning("ちょっとヤバいよ")
+
+ルートロガーを設定するのは「一度だけ」
+--------------------------------------------------
+
+.. code-block:: python
+    :caption: https://github.com/python/cpython/blob/v3.13.7/Lib/logging/__init__.py#L2082
+
+    def basicConfig(**kwargs):
+
+        if len(root.handlers) == 0:
+            ...
 
 ライブラリがルートロガーにハンドラを設定してしまうと、 **アプリケーションコードで呼び出しても何も起こらない** 😭
 
 ``logging.warning()`` なども全部 ``basicConfig()`` を呼んでます
 ----------------------------------------------------------------------
 
-    （補足：ルートロガーがハンドラを持たない場合は）ルートロガーの debug メソッドを呼び出す前に basicConfig() が呼ばれます。 (📄 `logging.debug() <https://docs.python.org/ja/3/library/logging.html#logging.debug>`__)
+    （補足：ルートロガーがハンドラを持たない場合は）ルートロガーの ``debug`` メソッドを呼び出す前に ``basicConfig()`` が呼ばれます。
+
+`logging.debug() <https://docs.python.org/ja/3/library/logging.html#logging.debug>`__
 
 ``basicConfig()`` 同様にライブラリで使ってはいけません
+------------------------------------------------------------
 
-Googleのライブラリでもやってる
+.. code-block:: python
+    :caption: `logging.debug() の実装 <https://github.com/python/cpython/blob/v3.13.7/Lib/logging/__init__.py#L2198>`__
+
+    def debug(msg, *args, **kwargs):
+        if len(root.handlers) == 0:
+            basicConfig()
+        root.debug(msg, *args, **kwargs)
+
+あのGoogleのライブラリでもやってる😭
 --------------------------------------------------
 
 * google-genai（修正済み）
@@ -62,10 +122,23 @@ Googleのライブラリでもやってる
 ``basicConfig()`` の ``force`` 引数
 --------------------------------------------------
 
+.. code-block:: python
+    :emphasize-lines: 7
+
+    import logging
+
+    logging.basicConfig(level=logging.INFO)
+    logging.info("想定通り")
+    logging.warning("ちょっとヤバいよ")
+
+    logging.basicConfig(level=logging.WARNING, force=True)
+    logging.info("想定通り")
+    logging.warning("ちょっとヤバいよ")
+
 .. forceで解呪 https://nikkie-ftnext.hatenablog.com/entry/python-logging-basicconfig-configure-root-logger-without-handler
     直接ルートロガーのハンドラを修正する例？
 
-**ライブラリではルートロガーは触らない**
+📣 **ライブラリではルートロガーは触らない**
 --------------------------------------------------
 
     あなたのライブラリから *ルートロガーへ直接ログを記録しない* ことを強く推奨します。

@@ -13,7 +13,7 @@ Chapter 5: 落穂拾い
     :lines: 1-6,8
     :caption: ライブラリでwarningのロギング
 
-``basicConfig()`` なしでロギングできます
+実は ``basicConfig()`` なしでロギングできます
 --------------------------------------------------
 
 .. literalinclude:: ../../samplecode/python-logging/last_resort_example/app.py
@@ -69,7 +69,7 @@ Chapter 5: 落穂拾い
 
     ファイルには、 [loggers], [handlers], [formatters] といったセクションが入っていなければならず、（`環境設定ファイルの書式 <https://docs.python.org/ja/3/library/logging.config.html#configuration-file-format>`__）
 
-YAMLファイル + ``dictConfig``
+💡YAMLファイル + ``dictConfig``
 --------------------------------------------------
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_yamlconfig.py
