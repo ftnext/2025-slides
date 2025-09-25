@@ -37,19 +37,11 @@ class InterceptHandler(logging.Handler):
         )
 
 
-# logging.basicConfig(
-#     handlers=[InterceptHandler()],
-#     format="%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s",
-#     level=logging.DEBUG,
-# )
+# logging.basicConfig(handlers=[InterceptHandler()], level=logging.DEBUG)
 # logging.getLogger().handlers[0].addFilter(logging.Filter("httpx"))
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.DEBUG)
 intercept_handler = InterceptHandler()
-detailed_formatter = logging.Formatter(
-    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
-)
-intercept_handler.setFormatter(detailed_formatter)
 root_logger.addHandler(intercept_handler)
 intercept_handler.addFilter(logging.Filter("httpx"))
 
