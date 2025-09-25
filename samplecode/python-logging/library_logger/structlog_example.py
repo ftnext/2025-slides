@@ -12,15 +12,26 @@ import httpx
 import structlog
 from rich.pretty import pprint
 
+shared_processors = [
+    structlog.stdlib.add_log_level,
+    structlog.processors.TimeStamper(fmt="iso"),
+]
+
 structlog.configure(
-    processors=[
+    processors=shared_processors
+    + [
         structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
     ],
     logger_factory=structlog.stdlib.LoggerFactory(),
+    cache_logger_on_first_use=True,
 )
 
 formatter = structlog.stdlib.ProcessorFormatter(
-    processors=[structlog.dev.ConsoleRenderer()]
+    foreign_pre_chain=shared_processors,
+    processors=[
+        structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+        structlog.dev.ConsoleRenderer(),
+    ],
 )
 
 handler = logging.StreamHandler()
@@ -28,6 +39,7 @@ handler.setFormatter(formatter)
 root_logger = logging.getLogger()
 root_logger.addHandler(handler)
 root_logger.setLevel(logging.DEBUG)
+handler.addFilter(logging.Filter("httpx"))
 
 resp = httpx.get("https://peps.python.org/api/peps.json")
 data = resp.json()
