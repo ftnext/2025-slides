@@ -21,14 +21,14 @@ HTTPXを例に、実際のログを見ながら構成要素を紹介
 ロガー
 ======================================================================
 
-* ライブラリ作者はロガーを使って **プログラム実行中のイベントを記録** する
+* ライブラリ **作者** はロガーを使って **プログラム実行中のイベントを記録** する
 * イベントの重要性（レベル） + メッセージ
 
 HTTPXの中にあるロギング
 --------------------------------------------------
 
 .. code-block:: python
-    :caption: INFOレベルでHTTPリクエストを記録
+    :caption: INFOレベルでHTTPリクエストを記録 [#httpx-guide-logging]_
 
     class Client(BaseClient):
         def _send_single_request(self, request: Request) -> Response:
@@ -43,6 +43,8 @@ HTTPXの中にあるロギング
 
 https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
 
+.. [#httpx-guide-logging] https://www.python-httpx.org/logging/
+
 ログのレベル [#level-table-ref]_
 --------------------------------------------------
 
@@ -51,10 +53,13 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
 .. list-table::
 
     * - レベル
+      - メソッド
       - いつ使うか
     * - DEBUG
+      - ``debug()``
       - おもに問題を診断するときにのみ関心があるような、詳細な情報。
     * - INFO
+      - ``info()``
       - 想定された通りのことが起こったことの確認。
 
 .. revealjs-break::
@@ -63,11 +68,17 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
 .. list-table::
 
     * - WARNING
+      - ``warning()``
       - 想定外のことが起こった、または問題が近く起こりそうであることの表示。
     * - ERROR
+      - ``error()``
       - より重大な問題により、ソフトウェアがある機能を実行できないこと。
     * - CRITICAL
+      - ``critical()``
       - プログラム自体が実行を続けられないことを表す、重大なエラー。
+
+.. ロギングレベル https://docs.python.org/ja/3/library/logging.html#logging-levels
+    レベルを追加する人向け？
 
 ロガーの取得に ``logging.getLogger()``
 --------------------------------------------------
@@ -79,7 +90,7 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
 
 https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
-ライブラリユーザがログを見るには
+ライブラリ **ユーザ** がログを **見る** には
 ======================================================================
 
 .. code-block:: python
@@ -97,6 +108,8 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
                 response.status_code,
                 response.reason_phrase,
             )
+
+.. TODO ログメッセージは %s で変数名が埋められる話（実はf-stringは使わない）
 
 HTTPXに仕込まれたログを見るためのコード
 --------------------------------------------------
@@ -128,31 +141,23 @@ HTTPXに仕込まれたログを見るためのコード
     :lines: 13-14
     :emphasize-lines: 2
 
-📌ロガーはレベル以上のメッセージを記録
+📌ロガーは **レベル以上** のメッセージを **記録**
 --------------------------------------------------
 
 .. list-table:: ``WARNING`` レベルのロガー ``logger``
 
     * - ``logger.warning("メッセージ")``
-      - 記録する（**ログレコード** を生成）
+      - 記録する（ログレコード生成）
     * - ``logger.info("メッセージ")``
       - 無視
 
 **出力先** を設定 - ハンドラ
 --------------------------------------------------
 
-* ハンドラがログレコードを出力先に振り分ける
-
-    * ストリーム
-    * ファイル
-
-ストリームに出力
---------------------------------------------------
-
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 16,21
-    :caption: ロガーにハンドラを取り付ける
+    :caption: ストリームに出力するハンドラをロガーに取り付け
 
 .. code-block:: txt
     :caption: httpxロガーによるログが見えます！
@@ -164,10 +169,17 @@ HTTPXに仕込まれたログを見るためのコード
     _defaultFormatter = Formatter() https://github.com/python/cpython/blob/3.13/Lib/logging/__init__.py#L734
     https://github.com/python/cpython/blob/3.13/Lib/logging/__init__.py#L446
 
-**書式の設定** - フォーマッタ
+ハンドラがログレコードを出力先に振り分ける
 --------------------------------------------------
 
-* ハンドラが出力するログレコードに適用される書式の設定
+* ストリーム
+* ファイル
+* などなど
+
+**見た目の設定** - フォーマッタ
+--------------------------------------------------
+
+* フォーマッタがログレコードに書式を適用し、それをハンドラが出力
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
@@ -186,9 +198,27 @@ HTTPXに仕込まれたログを見るためのコード
 
 `LogRecord 属性 <https://docs.python.org/ja/3/library/logging.html#logrecord-attributes>`__
 
-.. TODO 属性名を取り上げる
+.. revealjs-break::
+    :notitle:
 
-フィルタ（ここでは名前だけ紹介）
+.. list-table:: 属性名
+
+    * - asctime
+      - ログレコード生成時刻
+    * - levelname
+      - 文字のロギングレベル
+    * - name
+      - ロガーの名前
+    * - filename
+      - ファイル名
+    * - funcName
+      - 関数名
+    * - lineno
+      - 行番号
+    * - message
+      - ログメッセージ
+
+フィルタ（ここでは名前だけ。3章で登場）
 --------------------------------------------------
 
 * ロガーやハンドラに取り付ける
@@ -197,15 +227,25 @@ HTTPXに仕込まれたログを見るためのコード
 まとめ🥟 loggingモジュールの構成要素
 ======================================================================
 
-* ライブラリ **作者** がロガーでイベントを **記録** （レベル + メッセージ）
-* ライブラリ **ユーザ** は、ロガー・ハンドラ・フォーマッタ（・フィルタ）を使って **ログを見る**
+* HTTPXのログを見た
+* ライブラリ **作者** がイベントを **記録**
+* ライブラリ **ユーザ** が **ログを見る**
 
-ライブラリに仕込まれたログを見るには🥟
+ライブラリ作者がイベントを記録🥟
 --------------------------------------------------
 
-.. TODO まとめの図？
+.. image:: ../_static/pyconjp/pyconjp-library-creator-logger.drawio.png
+    :scale: 150%
 
-* **ロガー** を取得し、レベルを設定（``getLogger``・``setLevel``）
+* イベントの **レベル** と **メッセージ** を指定して、ロガーを操作
+
+ライブラリユーザがログを見る🥟
+--------------------------------------------------
+
+.. image:: ../_static/pyconjp/pyconjp-library-user-logger.drawio.png
+    :scale: 150%
+
+* ロガーにレベルを設定
 * ロガーに **ハンドラ** を取り付ける
 * ハンドラに **フォーマッタ** を取り付ける
 
