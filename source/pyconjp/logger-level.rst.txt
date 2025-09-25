@@ -1,8 +1,8 @@
 Chapter 2: ロガーのレベルはどう決まる？
 ======================================================================
 
-復習：ロガーのレベル以上の呼び出しでログレコードが作られる
-------------------------------------------------------------
+復習：ロガーの **レベル以上** の呼び出しでログレコードが作られる
+----------------------------------------------------------------------
 
 .. list-table:: ``INFO`` レベルのロガー ``logger``
 
@@ -22,7 +22,16 @@ Chapter 2: ロガーのレベルはどう決まる？
 
 https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
-``NOTSET``
+❓ ``httpx`` ロガーのレベル
+--------------------------------------------------
+
+* ``DEBUG``?
+* ``INFO``?
+* ``WARNING``?
+* ``ERROR``?
+* ``CRITICAL``?
+
+**NOTSET**
 --------------------------------------------------
 
     ロガーが生成された際、レベルは ``NOTSET`` (略) に設定されます。
@@ -45,7 +54,7 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
 祖先ロガー？
 
-ロガーの階層構造
+📌ロガーの階層構造
 ======================================================================
 
 ロガーには **名前で決まる親子関係** があります
@@ -82,10 +91,17 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
     https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial
     https://jisou-programmer.beproud.jp/%E3%83%AD%E3%82%AE%E3%83%B3%E3%82%B0/70-%E5%80%8B%E5%88%A5%E3%81%AE%E5%90%8D%E5%89%8D%E3%81%A7%E3%83%AD%E3%82%AC%E3%83%BC%E3%82%92%E4%BD%9C%E3%82%89%E3%81%AA%E3%81%84.html
 
-ルートロガーのレベルを変える
+💡ルートロガーのレベルを変える
 ======================================================================
 
-一番親のロガーのレベルを変えると、子のロガーの ``NOTSET`` レベルも変わる
+一番親のロガーのレベルを変えると、子のロガーの *レベル* も変わる
+
+.. _getEffectiveLevel(): https://docs.python.org/ja/3/library/logging.html#logging.Logger.getEffectiveLevel
+
+実効レベル `getEffectiveLevel()`_
+--------------------------------------------------
+
+    そうでない場合（＝ ``NOTSET`` レベルが設定されていた場合）、 ``NOTSET`` 以外の値が見つかるまでロガーの階層をルートロガーの方向に追跡します。
 
 ルートロガーのレベルは ``WARNING``
 --------------------------------------------------
@@ -95,12 +111,23 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
     >>> root_logger = logging.getLogger()
     >>> logging.getLevelName(root_logger.level)
     'WARNING'
+
+ルートロガーのレベルと同じ ``WARNING``
+--------------------------------------------------
+
+.. image:: ../_static/pyconjp/pyconjp-root-default-warning.drawio.png
+    :scale: 120%
+
+.. code-block:: pycon
+
     >>> httpx_logger = logging.getLogger("httpx")
     >>> logging.getLevelName(httpx_logger.getEffectiveLevel())
     'WARNING'
 
 ルートロガーのレベルを変えると （``basicConfig()``）
 ------------------------------------------------------------
+
+.. TODO basicConfig() はここが初出？ 説明必要
 
 .. code-block:: pycon
     :caption: 別セッションで実行
@@ -109,6 +136,15 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
     >>> root_logger = logging.getLogger()
     >>> logging.getLevelName(root_logger.level)
     'DEBUG'
+
+子のロガーの **実効レベルを切り替え** られている
+--------------------------------------------------
+
+.. image:: ../_static/pyconjp/pyconjp-root-default-warning.drawio.png
+    :scale: 120%
+
+.. code-block:: pycon
+
     >>> httpx_logger = logging.getLogger("httpx")
     >>> logging.getLevelName(httpx_logger.getEffectiveLevel())
     'DEBUG'
@@ -117,4 +153,4 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 ======================================================================
 
 * ライブラリのロガーのレベルは ``NOTSET`` （何もしなければ、ルートロガーと同じ ``WARNING``）
-* **ルートロガーのレベルを変えると、子のロガーのレベルも変わる** （これを利用💡）
+* **ルートロガーのレベルを変えると、子のロガーの実効レベルも変わる** （これを利用💡）
