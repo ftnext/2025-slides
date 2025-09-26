@@ -6,17 +6,19 @@ Chapter 1: loggingモジュールの構成要素
 * フォーマッタ
 * フィルタ
 
-HTTPXを例に、実際のログを見ながら構成要素を紹介
---------------------------------------------------
+HTTPXを例に **実際のログを見ながら** [#pep723]_ 構成要素を紹介
+----------------------------------------------------------------------
 
 .. ref: https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 10-12,23-25
-    :caption: サンプルスクリプト [#pep723]_
+    :caption: `サンプルスクリプト <https://github.com/ftnext/2025-slides/blob/9a87155e4d4923ba0e957a7e2e9e1c9cdd91cd73/samplecode/python-logging/library_logger/httpx_logging.py>`__ [#logging-percent-format]_
 
 .. [#pep723] `PyCon JP 2024 で話した inline script metadata <https://2024.pycon.jp/ja/talk/89F3RQ>`__ を使っています
+
+.. [#logging-percent-format] ログメッセージに限っては、f-stringよりも ``%s`` で変数を埋めるのが推奨です（t-stringは話が違うっぽい？）
 
 ロガー
 ======================================================================
@@ -108,8 +110,6 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
                 response.status_code,
                 response.reason_phrase,
             )
-
-.. TODO ログメッセージは %s で変数名が埋められる話（実はf-stringは使わない）
 
 HTTPXに仕込まれたログを見るためのコード
 --------------------------------------------------

@@ -87,9 +87,17 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 .. image:: ../_static/pyconjp/pyconjp-logger-ancestors.drawio.png
     :scale: 120%
 
-.. TODO ``__name__`` をロガーの名前にする話
-    https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial
-    https://jisou-programmer.beproud.jp/%E3%83%AD%E3%82%AE%E3%83%B3%E3%82%B0/70-%E5%80%8B%E5%88%A5%E3%81%AE%E5%90%8D%E5%89%8D%E3%81%A7%E3%83%AD%E3%82%AC%E3%83%BC%E3%82%92%E4%BD%9C%E3%82%89%E3%81%AA%E3%81%84.html
+ロガーの名前に ``__name__``
+--------------------------------------------------
+
+.. code-block:: python
+
+    logger = logging.getLogger(__name__)
+
+* 「ロガーに名前をつけるときの良い習慣」（`上級ロギングチュートリアル <https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial>`__） [#why-name-good]_
+* `70:個別の名前でロガーを作らない <https://jisou-programmer.beproud.jp/%E3%83%AD%E3%82%AE%E3%83%B3%E3%82%B0/70-%E5%80%8B%E5%88%A5%E3%81%AE%E5%90%8D%E5%89%8D%E3%81%A7%E3%83%AD%E3%82%AC%E3%83%BC%E3%82%92%E4%BD%9C%E3%82%89%E3%81%AA%E3%81%84.html>`__　（『自走プログラマー』）
+
+.. [#why-name-good] 上位のモジュールのロガーを触ってロギングを設定できるためです
 
 💡ルートロガーのレベルを変える
 ======================================================================
@@ -108,6 +116,7 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
 .. code-block:: pycon
 
+    >>> import logging
     >>> root_logger = logging.getLogger()
     >>> logging.getLevelName(root_logger.level)
     'WARNING'
@@ -124,16 +133,12 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
     >>> logging.getLevelName(httpx_logger.getEffectiveLevel())
     'WARNING'
 
-ルートロガーのレベルを変えると （``basicConfig()``）
+ルートロガーのレベルを変えると
 ------------------------------------------------------------
 
-.. TODO basicConfig() はここが初出？ 説明必要
-
 .. code-block:: pycon
-    :caption: 別セッションで実行
 
-    >>> logging.basicConfig(level=logging.DEBUG)
-    >>> root_logger = logging.getLogger()
+    >>> root_logger.setLevel(logging.DEBUG)
     >>> logging.getLevelName(root_logger.level)
     'DEBUG'
 
@@ -145,7 +150,6 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
 .. code-block:: pycon
 
-    >>> httpx_logger = logging.getLogger("httpx")
     >>> logging.getLevelName(httpx_logger.getEffectiveLevel())
     'DEBUG'
 
