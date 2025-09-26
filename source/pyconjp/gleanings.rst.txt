@@ -29,7 +29,11 @@ Chapter 5: 落穂拾い
 
     イベントは、 ``lastResort`` に格納された「最終手段ハンドラ」を使用して出力されます。
 
+    ハンドラのレベルは ``WARNING`` にセットされ、(略)
+
 `環境設定が与えられないとどうなるか <https://docs.python.org/ja/3/howto/logging.html#what-happens-if-no-configuration-is-provided>`__
+
+.. 上記ドキュメントより「最終手段ハンドラはWARNINGレベル」なので、rootロガーのレベルをDEBUGに下げてもログ出力はない
 
 最終手段ハンドラを使わないなら ``NullHandler``
 --------------------------------------------------
@@ -65,9 +69,11 @@ Chapter 5: 落穂拾い
 コードの代わりに `fileConfig`_
 --------------------------------------------------
 
-* `configparser <https://docs.python.org/ja/3/library/configparser.html>`__ 形式ファイルで設定
+* `configparser <https://docs.python.org/ja/3/library/configparser.html>`__ 形式ファイルで設定 [#configparser-file]_
 
     ファイルには、 [loggers], [handlers], [formatters] といったセクションが入っていなければならず、（`環境設定ファイルの書式 <https://docs.python.org/ja/3/library/logging.config.html#configuration-file-format>`__）
+
+.. [#configparser-file] `ロギングの環境設定 <https://docs.python.org/ja/3/howto/logging.html#configuring-logging>`__ で見られます
 
 💡YAMLファイル + ``dictConfig``
 --------------------------------------------------
@@ -81,9 +87,12 @@ Chapter 5: 落穂拾い
 3️⃣ 標準ライブラリ logging 以外の選択肢
 ======================================================================
 
-* `vinta/awesome-pythonのLogging <https://github.com/vinta/awesome-python?tab=readme-ov-file#logging>`__ にリスト
+`vinta/awesome-pythonのLogging <https://github.com/vinta/awesome-python?tab=readme-ov-file#logging>`__ にリスト
+
 * loguru
 * structlog
+
+IMO：それぞれ我の強い世界観を持っている
 
 .. _loguru: https://github.com/Delgan/loguru
 
@@ -92,8 +101,18 @@ Chapter 5: 落穂拾い
 
     Python logging made (stupidly) simple
 
-* IMO：simple というより easy 志向
-* `互換ではある <https://github.com/Delgan/loguru/tree/0.7.3?tab=readme-ov-file#entirely-compatible-with-standard-logging>`_ が、差し替えるのが大変という感触
+* HTTPX の logging を使ったログを loguru で出力できます
+* `Entirely compatible with standard logging <https://github.com/Delgan/loguru/tree/0.7.3?tab=readme-ov-file#entirely-compatible-with-standard-logging>`__ より、*InterceptHandler* を実装して、ルートロガーのハンドラに設定（次頁）
+
+.. revealjs-break::
+    :notitle:
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/loguru_example.py
+    :language: python
+    :lines: 18-37
+    :caption: `loguru でロギングする例 <https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/loguru_example.py>`__
+
+.. https://nikkie-ftnext.hatenablog.com/entry/loguru-compatibility-with-stdlib-logging-example-httpx
 
 .. _structlog: https://github.com/hynek/structlog
 
@@ -102,7 +121,24 @@ Chapter 5: 落穂拾い
 
     Simple, powerful, and fast logging for Python.
 
-* 標準ライブラリ logging から置き換えられるが、`互換でもある <https://www.structlog.org/en/stable/standard-library.html#suggested-configurations>`__
+* 標準ライブラリ logging から置き換えられるが、`互換でもある <https://www.structlog.org/en/stable/standard-library.html#suggested-configurations>`__ （*structlog.stdlib.ProcessorFormatter*）
 * PyCon JP 2024「`実践structlog <https://2024.pycon.jp/en/talk/RRRAAT>`__」
 
-.. One more thing として python-happy-logging を
+.. revealjs-break::
+    :notitle:
+
+.. literalinclude:: ../../samplecode/python-logging/library_logger/structlog_example.py
+    :language: python
+    :lines: 23-39,49-55
+    :caption: `structlog でロギングする例 <https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/structlog_example.py>`__
+
+.. https://nikkie-ftnext.hatenablog.com/entry/structlog-integration-with-stdlib-logging-example-httpx
+
+One more thing
+======================================================================
+
+:command:`uvx --with happy-python-logging[flake8] flake8`
+----------------------------------------------------------------------
+
+* 自作 https://pypi.org/project/happy-python-logging/
+* ``logging.basicConfig()`` の使用を **リンターで指摘** する案の実装に着手
