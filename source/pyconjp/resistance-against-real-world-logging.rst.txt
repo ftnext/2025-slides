@@ -9,6 +9,7 @@ Chapter 4: 伸びしろのあるロギング実装と、対処術
 色付きでストリームに出力するロガーの実装
 
 .. code-block:: python
+    :caption: `crawl4ai v0.4.24 <https://github.com/unclecode/crawl4ai/blob/v0.4.24/crawl4ai/async_logger.py#L147>`__
 
     class AsyncLogger:
         def _log(
@@ -24,7 +25,7 @@ Chapter 4: 伸びしろのあるロギング実装と、対処術
 ログにはprintでなくloggerを使う
 --------------------------------------------------
 
-『`自走プログラマー <https://gihyo.jp/book/2020/978-4-297-11197-7>`__』 `72:ログにはprintでなくloggerを使う <https://jisou-programmer.beproud.jp/%E3%83%AD%E3%82%AE%E3%83%B3%E3%82%B0/72-%E3%83%AD%E3%82%B0%E3%81%AB%E3%81%AFprint%E3%81%A7%E3%81%AA%E3%81%8Flogger%E3%82%92%E4%BD%BF%E3%81%86.html>`__
+『`自走プログラマー`_』 `72:ログにはprintでなくloggerを使う <https://jisou-programmer.beproud.jp/%E3%83%AD%E3%82%AE%E3%83%B3%E3%82%B0/72-%E3%83%AD%E3%82%B0%E3%81%AB%E3%81%AFprint%E3%81%A7%E3%81%AA%E3%81%8Flogger%E3%82%92%E4%BD%BF%E3%81%86.html>`__
 
     ロギングを使えば、表示をやめたり、ファイルに出力したり、ログを残した日時を残したりできます。
 
@@ -45,17 +46,19 @@ print と logger [#when-to-use-logging]_
 ``logger.info("メッセージ")`` は ``print`` と違って
 ------------------------------------------------------------
 
-* ログレベルの指定で、出力なしにできる
-* ハンドラを変えて、ファイルに出力できる
-* ログレコードの ``asctime`` で日時を記録できる（フォーマッタ）
+* **ロガーのレベル** の指定で、出力なしにできる
+* **ハンドラ** を変えて、ファイルに出力できる
+* ログレコードの **asctime属性** で日時を記録できる（フォーマッタ）
 
 色付きロギングの選択肢
 --------------------------------------------------
 
-* richの ``RichHandler``
-* uvicorn のロギングはなぜ色がつくか（自作Formatter）
+.. TODO もうちょい膨らませられそう
 
-事例2：ライブラリでルートロガーを触ってはいけません
+* richの ``RichHandler``
+* レベルに色が付く uvicorn のロギング（`自作Formatter <https://github.com/Kludex/uvicorn/blob/0.37.0/uvicorn/logging.py#L14-L65>`__）にならう
+
+事例2： **ライブラリで** ルートロガーを触ってはいけません
 ======================================================================
 
 DON'T🙅‍♂️ ライブラリで ``basicConfig()``
@@ -65,7 +68,7 @@ DON'T🙅‍♂️ ライブラリで ``basicConfig()``
 
     (略) ルートロガーに設定されたハンドラがあれば何もしません。
 
-`logging.basicConfig() <https://docs.python.org/ja/3/library/logging.html#logging.basicConfig>`__
+`logging.basicConfig()`_
 
 実験スクリプト
 --------------------------------------------------
@@ -116,11 +119,15 @@ DON'T🙅‍♂️ ライブラリで ``basicConfig()``
 あのGoogleのライブラリでもやってる😭
 --------------------------------------------------
 
-* google-genai（修正済み）
-* google-adk
+* `google-genai <https://github.com/googleapis/python-genai>`__ （`修正済み <https://github.com/googleapis/python-genai/issues/278>`__）
+* `google-adk <https://github.com/google/adk-python>`__
 
-``basicConfig()`` の ``force`` 引数
---------------------------------------------------
+.. https://nikkie-ftnext.hatenablog.com/entry/google-genai-fixed-issue-call-logging-info-not-logger-info
+
+.. https://nikkie-ftnext.hatenablog.com/entry/google-adk-python-cli-debug-logging-noisy-and-workaround
+
+workaround: ``basicConfig()`` の ``force`` 引数
+------------------------------------------------------------
 
 .. code-block:: python
     :emphasize-lines: 7
