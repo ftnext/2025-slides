@@ -57,6 +57,7 @@ propagateでログレコードは **親ロガーのハンドラへ**
     :language: python
     :lines: 13-21
     :emphasize-lines: 1,4,9
+    :caption: `本トークで示すロギングの1つの型 <https://github.com/ftnext/2025-slides/blob/6f6b360b8b884f5dce9b62e2cd37055c0313db25/samplecode/python-logging/library_logger/root_logging_hard.py>`__
 
 ハンドラにフォーマッタをとりつけ
 --------------------------------------------------
@@ -66,15 +67,18 @@ propagateでログレコードは **親ロガーのハンドラへ**
     :lines: 13-21
     :emphasize-lines: 4-8
 
-**全て** のロガーのログ出力
---------------------------------------------------
+**全て** のロガーのログ出力 [#httpx-guide-logging]_
+------------------------------------------------------------
 
 .. literalinclude:: all-logger-log.txt
+    :caption: ``httpx`` ロガーも ``httpcore`` ロガーも実効レベルが ``DEBUG``
+
+.. [#httpx-guide-logging] https://www.python-httpx.org/logging/
 
 .. _logging.basicConfig(): https://docs.python.org/ja/3/library/logging.html#logging.basicConfig
 
-`logging.basicConfig()`_
---------------------------------------------------
+🍰 `logging.basicConfig()`_ でルートロガーを簡単に設定
+------------------------------------------------------------
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_easy.py
     :language: python
@@ -86,7 +90,7 @@ propagateでログレコードは **親ロガーのハンドラへ**
 多い出力には、フィルタ
 --------------------------------------------------
 
-* （ルートロガーではなく）ルートロガーのハンドラにフィルタを設定
+* （ルートロガーではなく） **ルートロガーのハンドラにフィルタ** を設定
 * ``httpx`` ロガーによるログだけを出力
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_hard.py
@@ -123,14 +127,14 @@ propagateでログレコードは **親ロガーのハンドラへ**
 * ライブラリのロガーは ``propagate=True`` （ルートロガーに伝播）
 * ルートロガーに **ハンドラ・フォーマッタ・フィルタを取り付け** てロギングできる！
 
-ルートロガーでロギングの例
+ルートロガーでロギングの例 [#appendix-note]_
 ======================================================================
 
 ``NOTSET`` と ``propagate`` を使った **2例** 紹介
 
-.. ルートロガーの代わりに、モジュールのトップレベルに設定とも読み替えられる
+.. [#appendix-note] 本発表はルートロガーの設定で話しますが、ルートロガーの代わりに、特定モジュールのトップレベルのロガーに設定しても同じ議論と思います
 
-例1️⃣ ルートロガーに複数ハンドラ
+例1️⃣ ルートロガーに **複数ハンドラ**
 ======================================================================
 
 .. logging flow を通して、ハンドラのレベルは知った
@@ -164,13 +168,13 @@ propagateでログレコードは **親ロガーのハンドラへ**
     :lines: 14-31
     :emphasize-lines: 5-7
 
-例2️⃣ JSON形式でロギング
+例2️⃣ JSON形式でロギング [#json-format-blog]_
 ======================================================================
 
-* ルートロガーのハンドラのフォーマッタを **JSON出力する** ものに差し替えるだけ
+* ルートロガーのハンドラのフォーマッタを **JSON出力するものに差し替え** るだけ
 * `python-json-logger <https://github.com/nhairs/python-json-logger>`__ の ``JsonFormatter``
 
-.. https://nikkie-ftnext.hatenablog.com/entry/python-json-logger-formatter-for-json-logging-quickstart
+.. [#json-format-blog] 拙ブログ `PythonでログをJSON形式で出力したいなら、python-json-logger があるじゃな〜い！と思い出して触ったメモ <https://nikkie-ftnext.hatenablog.com/entry/python-json-logger-formatter-for-json-logging-quickstart>`__
 
 ``JsonFormatter`` に差し替え
 --------------------------------------------------
@@ -190,10 +194,10 @@ propagateでログレコードは **親ロガーのハンドラへ**
 
 * レベルによる出力先 の振り分け ➡️ 複数ハンドラ
 * JSON形式 ➡️ フォーマッタを差し替え
-* IMO：レゴブロックの組合せ（型）から、特定のパーツだけいじっている感
+* IMO：レゴブロックの組合せ（型）から **特定のパーツだけいじっている** 感
 
 logging の構成要素を押さえると美しい、のですが
 --------------------------------------------------
 
 * HTTPXのようなロギングは、 **現実世界ではまれ** 😢
-* ルートロガーでロギングという型が簡単に適用できないライブラリをいくつもいくつも踏んできました...（このトークに結実しています）
+* ルートロガーでロギングという紹介した型が簡単に適用できないライブラリは多い（経験談）。皆さんにも武器を配ります

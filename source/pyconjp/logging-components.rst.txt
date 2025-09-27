@@ -1,4 +1,6 @@
-Chapter 1: loggingモジュールの構成要素
+.. _Logger.setLevel(): https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel
+
+Chapter 1: loggingモジュールの構成要素 [#chapter1-base]_
 ======================================================================
 
 * ロガー
@@ -6,10 +8,10 @@ Chapter 1: loggingモジュールの構成要素
 * フォーマッタ
 * フィルタ
 
+.. [#chapter1-base] 元にした拙ブログ `Pythonのライブラリに用意されたロガーを設定してログを出力する <https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger>`__
+
 HTTPXを例に **実際のログを見ながら** [#pep723]_ 構成要素を紹介
 ----------------------------------------------------------------------
-
-.. ref: https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
@@ -18,7 +20,7 @@ HTTPXを例に **実際のログを見ながら** [#pep723]_ 構成要素を紹�
 
 .. [#pep723] `PyCon JP 2024 で話した inline script metadata <https://2024.pycon.jp/ja/talk/89F3RQ>`__ を使っています
 
-.. [#logging-percent-format] ログメッセージに限っては、f-stringよりも ``%s`` で変数を埋めるのが推奨です（t-stringは話が違うっぽい？）
+.. [#logging-percent-format] ログメッセージに限っては、f-stringよりも ``%s`` で変数を埋めるのが推奨です（`拙ブログ <https://nikkie-ftnext.hatenablog.com/entry/hey-claude-dont-use-f-string-in-logging-messages>`__。t-stringは話が違うっぽい？）
 
 ロガー
 ======================================================================
@@ -30,7 +32,7 @@ HTTPXの中にあるロギング
 --------------------------------------------------
 
 .. code-block:: python
-    :caption: INFOレベルでHTTPリクエストを記録 [#httpx-guide-logging]_
+    :caption: INFOレベルでHTTPリクエストを記録 [#httpx-logger-info-line]_
 
     class Client(BaseClient):
         def _send_single_request(self, request: Request) -> Response:
@@ -43,9 +45,7 @@ HTTPXの中にあるロギング
                 response.reason_phrase,
             )
 
-https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
-
-.. [#httpx-guide-logging] https://www.python-httpx.org/logging/
+.. [#httpx-logger-info-line] https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
 
 ログのレベル [#level-table-ref]_
 --------------------------------------------------
@@ -82,15 +82,17 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025
 .. ロギングレベル https://docs.python.org/ja/3/library/logging.html#logging-levels
     レベルを追加する人向け？
 
-ロガーの取得に ``logging.getLogger()``
+.. _logging.getLogger(): https://docs.python.org/ja/3/library/logging.html#logging.getLogger
+
+ロガーの取得に `logging.getLogger()`_
 --------------------------------------------------
 
 .. code-block:: python
-    :caption: httpxロガーを取得
+    :caption: httpxロガーを取得 [#httpx-get-logger-line]_
 
     logger = logging.getLogger("httpx")
 
-https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
+.. [#httpx-get-logger-line] https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
 ライブラリ **ユーザ** がログを **見る** には
 ======================================================================
@@ -117,8 +119,10 @@ HTTPXに仕込まれたログを見るためのコード
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 13-21
+    :linenos:
+    :caption: `サンプルスクリプト <https://github.com/ftnext/2025-slides/blob/9a87155e4d4923ba0e957a7e2e9e1c9cdd91cd73/samplecode/python-logging/library_logger/httpx_logging.py>`__
 
-ユーザもロガーを取得
+1️⃣ ユーザもロガーを取得
 --------------------------------------------------
 
 * ライブラリユーザも都度 ``getLogger`` [#singleton]_
@@ -130,19 +134,19 @@ HTTPXに仕込まれたログを見るためのコード
     :lines: 13-14
     :emphasize-lines: 1
 
-ロガーの **レベルを設定**
---------------------------------------------------
+2️⃣ ロガーの **レベルを設定** - `Logger.setLevel()`_
+------------------------------------------------------------
 
-* `setLevel <https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel>`__ したレベル以上のメッセージを記録、未満は無視
-* 今回は ``DEBUG`` レベル以上のログを見る（``INFO`` 含む）
+* ロガーのレベル以上の重要度のメッセージを記録、未満は無視
+* 今回は ``DEBUG`` レベル以上を記録する（``INFO`` 含む）
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 13-14
     :emphasize-lines: 2
 
-📌ロガーは **レベル以上** のメッセージを **記録**
---------------------------------------------------
+📌ロガーは **自身のレベル以上** の重要度のメッセージを **記録**
+----------------------------------------------------------------------
 
 .. list-table:: ``WARNING`` レベルのロガー ``logger``
 
@@ -151,13 +155,16 @@ HTTPXに仕込まれたログを見るためのコード
     * - ``logger.info("メッセージ")``
       - 無視
 
-**出力先** を設定 - ハンドラ
+3️⃣ **出力先** を設定 - ハンドラ
 --------------------------------------------------
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
-    :lines: 16,21
+    :lines: 16-21
     :caption: ストリームに出力するハンドラをロガーに取り付け
+    :linenos:
+    :lineno-start: 4
+    :emphasize-lines: 1,6
 
 .. code-block:: txt
     :caption: httpxロガーによるログが見えます！
@@ -174,9 +181,9 @@ HTTPXに仕込まれたログを見るためのコード
 
 * ストリーム
 * ファイル
-* などなど
+* などなど（`logging.handlers <https://docs.python.org/ja/3/library/logging.handlers.html>`__）
 
-**見た目の設定** - フォーマッタ
+4️⃣ **見た目の設定** - フォーマッタ
 --------------------------------------------------
 
 * フォーマッタがログレコードに書式を適用し、それをハンドラが出力
@@ -184,13 +191,18 @@ HTTPXに仕込まれたログを見るためのコード
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
     :lines: 17-20
+    :linenos:
+    :lineno-start: 4
 
 書式は **ログレコードの属性名** を指定
 --------------------------------------------------
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/httpx_logging.py
     :language: python
-    :lines: 18
+    :lines: 17-20
+    :linenos:
+    :lineno-start: 4
+    :emphasize-lines: 2
 
 .. code-block:: txt
 
@@ -218,11 +230,12 @@ HTTPXに仕込まれたログを見るためのコード
     * - message
       - ログメッセージ
 
-フィルタ（ここでは名前だけ。3章で登場）
+5️⃣ フィルタ（ここでは名前だけ。3章で登場）
 --------------------------------------------------
 
 * ロガーやハンドラに取り付ける
-* フィルタにロガーの名前を指定し、指定したロガーと *子のロガー* のログレコードだけを通す
+* フィルタにロガーの名前を指定する
+* 指定したロガーと *子のロガー* のログレコードだけを通す
 
 まとめ🥟 loggingモジュールの構成要素
 ======================================================================
@@ -248,5 +261,3 @@ HTTPXに仕込まれたログを見るためのコード
 * ロガーにレベルを設定
 * ロガーに **ハンドラ** を取り付ける
 * ハンドラに **フォーマッタ** を取り付ける
-
-.. TODO ロガーとハンドラにフィルタ、またレベル

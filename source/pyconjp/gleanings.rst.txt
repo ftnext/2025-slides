@@ -63,6 +63,7 @@ Chapter 5: 落穂拾い
 .. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_dictconfig.py
     :language: python
     :lines: 8,13-39
+    :caption: `ルートロガーでロギング dictConfig版 <https://github.com/ftnext/2025-slides/blob/6f6b360b8b884f5dce9b62e2cd37055c0313db25/samplecode/python-logging/library_logger/root_logging_dictconfig.py>`__
 
 .. _fileConfig: https://docs.python.org/ja/3/library/logging.config.html#logging.config.fileConfig
 
@@ -75,14 +76,17 @@ Chapter 5: 落穂拾い
 
 .. [#configparser-file] `ロギングの環境設定 <https://docs.python.org/ja/3/howto/logging.html#configuring-logging>`__ で見られます
 
-💡YAMLファイル + ``dictConfig``
---------------------------------------------------
+💡YAMLファイル + ``dictConfig`` [#yaml-dictconfig-blog]_
+------------------------------------------------------------
 
 .. literalinclude:: ../../samplecode/python-logging/library_logger/root_logging_yamlconfig.py
     :language: python
     :lines: 16-19
+    :caption: `ルートロガーでロギング ファイルから辞書で読み込み版 <https://github.com/ftnext/2025-slides/blob/6f6b360b8b884f5dce9b62e2cd37055c0313db25/samplecode/python-logging/library_logger/root_logging_yamlconfig.py>`__
 
-.. https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger-logging-config-dict-or-yaml
+uvicornのロギングの実装で学びました
+
+.. [#yaml-dictconfig-blog] 拙ブログ `Pythonのライブラリに用意されたロガーをlogging.configで設定する（httpxを例に、辞書やYAMLで設定） <https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger-logging-config-dict-or-yaml>`__
 
 3️⃣ 標準ライブラリ logging 以外の選択肢
 ======================================================================
@@ -110,9 +114,9 @@ IMO：それぞれ我の強い世界観を持っている
 .. literalinclude:: ../../samplecode/python-logging/library_logger/loguru_example.py
     :language: python
     :lines: 18-37
-    :caption: `loguru でロギングする例 <https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/loguru_example.py>`__
+    :caption: `loguru でロギングする例 <https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/loguru_example.py>`__ [#loguru-with-logging-blog]_
 
-.. https://nikkie-ftnext.hatenablog.com/entry/loguru-compatibility-with-stdlib-logging-example-httpx
+.. [#loguru-with-logging-blog] 拙ブログ `HTTPX を例に、標準ライブラリ logging によるログを loguru で出力するには <https://nikkie-ftnext.hatenablog.com/entry/loguru-compatibility-with-stdlib-logging-example-httpx>`__
 
 .. _structlog: https://github.com/hynek/structlog
 
@@ -130,9 +134,9 @@ IMO：それぞれ我の強い世界観を持っている
 .. literalinclude:: ../../samplecode/python-logging/library_logger/structlog_example.py
     :language: python
     :lines: 23-39,49-55
-    :caption: `structlog でロギングする例 <https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/structlog_example.py>`__
+    :caption: `structlog でロギングする例 <https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/structlog_example.py>`__ [#structlog-with-logging-blog]_
 
-.. https://nikkie-ftnext.hatenablog.com/entry/structlog-integration-with-stdlib-logging-example-httpx
+.. [#structlog-with-logging-blog] 拙ブログ `HTTPX を例に、標準ライブラリ logging によるログを structlog で出力するには <https://nikkie-ftnext.hatenablog.com/entry/structlog-integration-with-stdlib-logging-example-httpx>`__
 
 One more thing
 ======================================================================
@@ -142,3 +146,7 @@ One more thing
 
 * 自作 https://pypi.org/project/happy-python-logging/
 * ``logging.basicConfig()`` の使用を **リンターで指摘** する案の実装に着手
+
+.. code-block:: txt
+
+    src/antipattern_logging/call_basic_config.py:3:1: HPL101 Don't configure the root logger in your library

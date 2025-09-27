@@ -1,15 +1,13 @@
 Chapter 4: 伸びしろのあるロギング実装と、対処術
 ======================================================================
 
-📣「ライブラリユーザにこんなハックが必要ないように、ロギングを実装してくださいね」
+📣「2事例を他山の石とし、ライブラリ **ユーザにハックが必要ない** ようにロギングを実装してくださいね」
 
-事例1：``print`` するものはロギングではありません
-======================================================================
-
-色付きでストリームに出力するロガーの実装
+事例1：``print`` するものはロギングではありません [#anti-pattern-print]_
+================================================================================
 
 .. code-block:: python
-    :caption: `crawl4ai v0.4.24 <https://github.com/unclecode/crawl4ai/blob/v0.4.24/crawl4ai/async_logger.py#L147>`__
+    :caption: 色付きでストリームに出力するロガー（`crawl4ai v0.4.24 <https://github.com/unclecode/crawl4ai/blob/v0.4.24/crawl4ai/async_logger.py#L147>`__）
 
     class AsyncLogger:
         def _log(
@@ -20,7 +18,7 @@ Chapter 4: 伸びしろのあるロギング実装と、対処術
             if self.verbose or kwargs.get("force_verbose", False):
                 print(log_line)
 
-.. https://nikkie-ftnext.hatenablog.com/entry/use-logger-instead-of-print-in-python-libraries
+.. [#anti-pattern-print] `組み込み関数 print の呼び出しは、決してロギングではありません <https://nikkie-ftnext.hatenablog.com/entry/use-logger-instead-of-print-in-python-libraries>`__ （拙ブログ）
 
 ログにはprintでなくloggerを使う
 --------------------------------------------------
@@ -31,6 +29,8 @@ Chapter 4: 伸びしろのあるロギング実装と、対処術
 
 print と logger [#when-to-use-logging]_
 --------------------------------------------------
+
+.. printは機能。loggerは非機能（出力しなくても困らない）
 
 .. [#when-to-use-logging] `logging を使うとき（基本 logging チュートリアル） <https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging>`__
 
@@ -53,10 +53,10 @@ print と logger [#when-to-use-logging]_
 色付きロギングの選択肢
 --------------------------------------------------
 
-.. TODO もうちょい膨らませられそう
-
-* richの ``RichHandler``
+* `Rich <https://github.com/Textualize/rich/blob/master/README.ja.md>`__ の ``RichHandler`` [#rich-handler-blog]_
 * レベルに色が付く uvicorn のロギング（`自作Formatter <https://github.com/Kludex/uvicorn/blob/0.37.0/uvicorn/logging.py#L14-L65>`__）にならう
+
+.. [#rich-handler-blog] 拙ブログ `Python でコンソールに色付きでロギングしたいときの選択肢、Rich の Logging Handler を触る <https://nikkie-ftnext.hatenablog.com/entry/python-colorful-console-logging-by-richhandler>`__
 
 事例2： **ライブラリで** ルートロガーを触ってはいけません
 ======================================================================
@@ -77,11 +77,13 @@ DON'T🙅‍♂️ ライブラリで ``basicConfig()``
 
     import logging
 
+    # 先にimportされるライブラリコードを想定
     logging.basicConfig(level=logging.INFO)
     logging.info("想定通り")
     logging.warning("ちょっとヤバいよ")
 
-    logging.basicConfig(level=logging.WARNING)  # 効きません
+    # ライブラリユーザの設定の想定
+    logging.basicConfig(level=logging.WARNING)  # 効きません😭
     logging.info("想定通り")
     logging.warning("ちょっとヤバいよ")
 
@@ -89,7 +91,7 @@ DON'T🙅‍♂️ ライブラリで ``basicConfig()``
 --------------------------------------------------
 
 .. code-block:: python
-    :caption: https://github.com/python/cpython/blob/v3.13.7/Lib/logging/__init__.py#L2082
+    :caption: `basicConfig() の実装 <https://github.com/python/cpython/blob/v3.13.7/Lib/logging/__init__.py#L2082>`__
 
     def basicConfig(**kwargs):
 
@@ -119,12 +121,14 @@ DON'T🙅‍♂️ ライブラリで ``basicConfig()``
 あのGoogleのライブラリでもやってる😭
 --------------------------------------------------
 
-* `google-genai <https://github.com/googleapis/python-genai>`__ （`修正済み <https://github.com/googleapis/python-genai/issues/278>`__）
-* `google-adk <https://github.com/google/adk-python>`__
+* `google-genai <https://github.com/googleapis/python-genai>`__ （`修正済み <https://github.com/googleapis/python-genai/issues/278>`__） [#google-genai-issue-blog]_
+* `google-adk <https://github.com/google/adk-python>`__ [#google-adk-issue-blog]_
 
-.. https://nikkie-ftnext.hatenablog.com/entry/google-genai-fixed-issue-call-logging-info-not-logger-info
+プルリク送ってこ！
 
-.. https://nikkie-ftnext.hatenablog.com/entry/google-adk-python-cli-debug-logging-noisy-and-workaround
+.. [#google-genai-issue-blog] 拙ブログ `google-genaiよ、ライブラリはルートロガーを触ってはいけません (v1.3.0で解消済み) <https://nikkie-ftnext.hatenablog.com/entry/google-genai-fixed-issue-call-logging-info-not-logger-info>`__
+
+.. [#google-adk-issue-blog] 拙ブログ `Agent Development Kit (1.10.0) のWeb UIやAPIサーバは DEBUG レベルでロギングして送られているプロンプトを確認できますが、その実装には伸びしろがあります（Workaroundを添えて） <https://nikkie-ftnext.hatenablog.com/entry/google-adk-python-cli-debug-logging-noisy-and-workaround>`__
 
 workaround: ``basicConfig()`` の ``force`` 引数
 ------------------------------------------------------------

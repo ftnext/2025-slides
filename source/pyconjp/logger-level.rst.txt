@@ -1,7 +1,9 @@
-Chapter 2: ロガーのレベルはどう決まる？
+Chapter 2: ロガーのレベルはどう決まる？ [#chapter2-base]_
 ======================================================================
 
-復習：ロガーの **レベル以上** の呼び出しでログレコードが作られる
+.. [#chapter2-base] 底本とした `拙ブログ <https://nikkie-ftnext.hatenablog.com/entry/python-configuring-logging-for-library-log-level-notset>`__
+
+復習：ロガーは **自身のレベル以上** の重要度のメッセージを **記録**
 ----------------------------------------------------------------------
 
 .. list-table:: ``INFO`` レベルのロガー ``logger``
@@ -13,14 +15,12 @@ Chapter 2: ロガーのレベルはどう決まる？
     * - ``logger.debug()``
       - 無視
 
-❓ ``httpx`` ロガーのレベルは？
---------------------------------------------------
+❓ ``httpx`` ロガーのレベルは？ [#httpx-get-logger-line]_
+------------------------------------------------------------
 
 .. code-block:: python
 
     logger = logging.getLogger("httpx")
-
-https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
 ❓ ``httpx`` ロガーのレベル
 --------------------------------------------------
@@ -36,7 +36,7 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 
     ロガーが生成された際、レベルは ``NOTSET`` (略) に設定されます。
 
-`Logger.setLevel <https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel>`__
+`Logger.setLevel()`_
 
 .. code-block:: pycon
 
@@ -50,7 +50,7 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 ``NOTSET`` とは
 --------------------------------------------------
 
-   もしロガーのレベルが ``NOTSET`` ならば、祖先ロガーの系列の中を ``NOTSET`` 以外のレベルの祖先を見つけるかルートに到達するまで辿っていく
+   もしロガーのレベルが ``NOTSET`` ならば、祖先ロガーの系列の中を ``NOTSET`` 以外のレベルの祖先を見つけるかルートに到達するまで辿っていく（`Logger.setLevel()`_）
 
 祖先ロガー？
 
@@ -99,7 +99,10 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 * 「ロガーに名前をつけるときの良い習慣」（`上級ロギングチュートリアル <https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial>`__） [#why-name-good]_
 * `70:個別の名前でロガーを作らない <https://jisou-programmer.beproud.jp/%E3%83%AD%E3%82%AE%E3%83%B3%E3%82%B0/70-%E5%80%8B%E5%88%A5%E3%81%AE%E5%90%8D%E5%89%8D%E3%81%A7%E3%83%AD%E3%82%AC%E3%83%BC%E3%82%92%E4%BD%9C%E3%82%89%E3%81%AA%E3%81%84.html>`__　（『`自走プログラマー`_』）
 
-.. [#why-name-good] 上位のモジュールのロガーを触ってロギングを設定できるためです
+.. [#why-name-good] 上位のモジュールのロガーを触ってロギングを設定できるためです。今日の話も適用可能です
+
+.. https://docs.python.org/ja/3/library/logging.html#logger-objects
+    推奨される構築方法である logging.getLogger(__name__) を使ってモジュール単位でロガーを構築すれば、パッケージの階層構造とロガーの階層構造は同一になります。
 
 💡ルートロガーのレベルを変える
 ======================================================================
@@ -147,7 +150,7 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 子のロガーの **実効レベルを切り替え** られている
 --------------------------------------------------
 
-.. image:: ../_static/pyconjp/pyconjp-root-default-warning.drawio.png
+.. image:: ../_static/pyconjp/pyconjp-root-setlevel-debug.drawio.png
     :scale: 120%
 
 .. code-block:: pycon
@@ -158,5 +161,8 @@ https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117
 まとめ🥟 ロガーのレベルはどう決まる？
 ======================================================================
 
-* ライブラリのロガーのレベルは ``NOTSET`` （何もしなければ、ルートロガーと同じ ``WARNING``）
+* ライブラリのロガーのレベルは ``NOTSET``
+
+    * 何もしなければ、ルートロガーと同じ ``WARNING``
+
 * **ルートロガーのレベルを変えると、子のロガーの実効レベルも変わる** （これを利用💡）
