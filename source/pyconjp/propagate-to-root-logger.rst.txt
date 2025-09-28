@@ -43,11 +43,9 @@ propagateでログレコードは **親ロガーのハンドラへ**
 
 .. [#reload1] 読み込めてなさそうならリロードを。 `Logging Flow <https://docs.python.org/ja/3/howto/logging.html#logging-flow>`__  (Logger flow)の簡略版（なお省略しましたが、親ロガーのフィルタも見ません）
 
-.. revealjs-section::
-   :data-background-color: white
-
 .. mermaid:: ../pyconshizu/logging-propagate-flow.mmd
     :zoom:
+    :config: {"themeVariables": {"lineColor": "#fff"}}
 
 右側のループで、親ロガーのレベルを見ていません
 
@@ -101,10 +99,8 @@ propagateでログレコードは **親ロガーのハンドラへ**
 なぜハンドラにフィルタをつける？ [#reload2]_
 --------------------------------------------------
 
-.. revealjs-section::
-   :data-background-color: white
-
 .. mermaid:: ../pyconjp/logging-handler-flow.mmd
+    :config: {"themeVariables": {"lineColor": "#fff"}}
 
 **ハンドラのレベルとフィルタ** は確認される
 
@@ -113,11 +109,9 @@ propagateでログレコードは **親ロガーのハンドラへ**
 伝播では親ロガーのレベル（とフィルタ）は見ない
 --------------------------------------------------
 
-.. revealjs-section::
-   :data-background-color: white
-
 .. mermaid:: ../pyconshizu/logging-propagate-flow.mmd
     :zoom:
+    :config: {"themeVariables": {"lineColor": "#fff"}}
 
 * ルートロガーのフィルタは見ない（再掲した図） [#reload1]_
 * ルートロガーの **ハンドラのフィルタ** は見る（前頁）
