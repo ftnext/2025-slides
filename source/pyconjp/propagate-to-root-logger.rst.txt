@@ -47,6 +47,7 @@ propagateでログレコードは **親ロガーのハンドラへ**
    :data-background-color: white
 
 .. mermaid:: ../pyconshizu/logging-propagate-flow.mmd
+    :zoom:
 
 右側のループで、親ロガーのレベルを見ていません
 
@@ -116,6 +117,7 @@ propagateでログレコードは **親ロガーのハンドラへ**
    :data-background-color: white
 
 .. mermaid:: ../pyconshizu/logging-propagate-flow.mmd
+    :zoom:
 
 * ルートロガーのフィルタは見ない（再掲した図） [#reload1]_
 * ルートロガーの **ハンドラのフィルタ** は見る（前頁）
