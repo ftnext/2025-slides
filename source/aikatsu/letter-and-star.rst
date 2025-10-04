@@ -1,3 +1,9 @@
+:ogp_title: 私と「秘密の手紙と見えない星」
+:ogp_event_name: aikatsu
+:ogp_slide_name: letter-and-star
+:ogp_description: アイカツエンジニア Tech Meetup vol.1
+:ogp_image_name: aikatsu-letter-and-star
+
 ============================================================
 私と「秘密の手紙と見えない星」
 ============================================================
