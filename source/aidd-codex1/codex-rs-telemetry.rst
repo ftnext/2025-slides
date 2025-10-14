@@ -1,3 +1,9 @@
+:ogp_title: ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？
+:ogp_event_name: aidd-codex1
+:ogp_slide_name: codex-rs-telemetry
+:ogp_description: Codex Meetup Japan #1
+:ogp_image_name: aidd-codex1
+
 ======================================================================
 ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？
 ======================================================================
