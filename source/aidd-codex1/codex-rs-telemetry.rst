@@ -129,7 +129,9 @@ Codex CLIは手元でビルドできる！
 ご清聴ありがとうございました
 ------------------------------------------------------------
 
-Appendix 続きます
+Enjoy coding with Codex!
+
+Appendixが続きます
 
 OpenTelemetryの補足
 ======================================================================
@@ -193,4 +195,4 @@ Gemini CLI で可観測性
 * Claude Code Meetup Japan #1 `Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン <https://ftnext.github.io/2025-slides/aidd-cc1/llm-claude-code.html#1>`__
 
 EOF
----
+===
