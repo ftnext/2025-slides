@@ -85,12 +85,6 @@ OpenTelemetry events (`#2103`_ v0.44.0)
 
 .. image:: ../_static/aidd-codex1/codex-rs-otel-export.png
 
-脱線：他のツールでも
-------------------------------------------------------------
-
-* Claude Code（コンソールへ）
-* Gemini CLI：システムプロンプトまで簡単に見えます（ファイルへ）
-
 Codex CLIのコンテキスト、もっと見たい！
 ======================================================================
 
@@ -106,15 +100,15 @@ Using OpenAI Codex & Pydantic Logfire to Debug Rust Code
 .. revealjs-break::
 
 * Pydantic社による配信のアーカイブ
-* **Logfire** という可観測性サービス。Rust向けのSDKも提供
-* codex-rsにLogfire Rust SDKを組み込んで、Codexの挙動を観測
+* `Logfire <https://pydantic.dev/logfire>`__ という可観測性サービス。`Rust向けのSDK <https://github.com/pydantic/logfire-rust>`__ も提供
+* **codex-rsにLogfire Rust SDKを組み込んで**、Codexの挙動を観測
 
 Codex CLIは手元でビルドできる！
 ------------------------------------------------------------
 
-* v0.44.0 の前の v0.42.0 (`rust-v0.42.0 <https://github.com/openai/codex/tree/rust-v0.42.0/codex-rs>`__)
+* v0.44.0 の前の **v0.42.0** (`rust-v0.42.0 <https://github.com/openai/codex/tree/rust-v0.42.0/codex-rs>`__)
 * :command:`cargo run --bin codex`
-* v0.44.0 で入ったOpenTelemetryの実装とLogfireを一緒に動かせてないです
+* ⚠️v0.44.0 で入ったOpenTelemetryの実装とLogfireを一緒に動かせてないです
 
 デモ：手元でビルド〜Logfireに記録
 ------------------------------------------------------------
@@ -128,16 +122,75 @@ Codex CLIは手元でビルドできる！
 まとめ🌯：ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？
 ======================================================================
 
-* 持論：コーディングエージェントは全て分かりたい
+* 持論：コーディングエージェントは全て分かりたい -> **可観測性**
 * :command:`codex -c` でOpenTelemetryのexporterを指定できる
 * Logfire Rust SDKを組み込む動画に沿ってローカルでビルドし、コンテキストを覗いてみた
 
-One more thing: Codex CLIにコードを読ませて進めた
+ご清聴ありがとうございました
+------------------------------------------------------------
+
+Appendix 続きます
+
+OpenTelemetryの補足
+======================================================================
+
+* `OpenTelemetry <https://opentelemetry.io/ja/docs/what-is-opentelemetry/>`__ は、テレメトリの送出・処理・受信のオープンソース
+* ベンダー・ツール非依存
+* 今回テレメトリの保存と表示は *Logfire* に任せた（他のツールに差し替え可能）
+
+Logfire Rust SDK を入れた箇所
+------------------------------------------------------------
+
+.. code-block:: diff
+    :caption: :file:`codex-rs/tui/src/lib.rs`
+
+    -    let _ = tracing_subscriber::registry().with(file_layer).try_init();
+    +    let logfire = logfire::configure()
+    +        .local()
+    +        .with_service_name("codex")
+    +        .finish()
+    +        .expect("Failed to configure Logfire");
+    +
+    +    let _ = tracing_subscriber::registry().with(file_layer).with(logfire.tracing_layer()).try_init();
+
+拙ブログ `Pydantic 社の動画アーカイブに沿って Logfire Rust SDK を追加し、Codex CLI 動作中の情報を Logfire に記録する <https://nikkie-ftnext.hatenablog.com/entry/try-using-openai-codex-and-pydantic-logfire-to-debug-rust-code>`__
+
+Claude Code で可観測性
+------------------------------------------------------------
+
+.. code-block:: bash
+    :caption: これだけでコンソールに出ます
+
+    export CLAUDE_CODE_ENABLE_TELEMETRY=1
+    export OTEL_LOGS_EXPORTER=console
+
+拙ブログ `Claude Code が OpenTelemetry をサポートしていました <https://nikkie-ftnext.hatenablog.com/entry/claude-code-supports-opentelemetry>`__
+
+Gemini CLI で可観測性
+------------------------------------------------------------
+
+.. code-block:: bash
+    :caption: これだけでファイルに出ます
+
+    export GEMINI_TELEMETRY_ENABLED=true
+    export GEMINI_TELEMETRY_OUTFILE='gemini-telemetry.log'
+
+**システムプロンプトまで** 見えます
+
+拙ブログ `テレメトリを有効にして、Gemini CLI から Gemini API へのリクエスト・レスポンスを覗けるようにする <https://nikkie-ftnext.hatenablog.com/entry/gemini-cli-observability-with-opentelemetry-get-started>`__
+
+準備は **Codex CLIにコードを読ませて** 進めた
 ------------------------------------------------------------
 
 * 試しにcodexに質問したら、Logfire SDKのソースコードまで読みに行っていた
 * そこからはガンガン読ませていった（ただv0.44.0で動かすまではいけてません）
-* 1回で数万トークン使うので、Proゆえの富豪アプローチかも（Pulseを体験したくて）
+* 1回で数万〜10万トークン使うので、Proゆえの富豪アプローチかも（Pulseを体験したくて）
 
-ご清聴ありがとうございました
+過去のAI駆動開発勉強会LT
 ------------------------------------------------------------
+
+* Devin Meetup Japan #2 `コマンドラインからDevinを呼び出してみないか？ <https://ftnext.github.io/2025-slides/aid-devin2/llm-devin.html>`__
+* Claude Code Meetup Japan #1 `Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン <https://ftnext.github.io/2025-slides/aidd-cc1/llm-claude-code.html#1>`__
+
+EOF
+---
