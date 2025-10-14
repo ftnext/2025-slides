@@ -1,5 +1,6 @@
 # 2025-slides
 
+* [ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？](https://ftnext.github.io/2025-slides/aidd-codex1/codex-rs-telemetry.html#/2) @[Codex Meetup Japan #1 (2025/10)](https://aid.connpass.com/event/369420/)
 * [私と「秘密の手紙と見えない星」](https://ftnext.github.io/2025-slides/aikatsu/letter-and-star.html) @[アイカツエンジニア Tech Meetup vol.1](https://connpass.com/event/364456/)
 * [標準ライブラリのlogging、レゴブロックのように組合せてロギングできることを理解しよう！](https://ftnext.github.io/2025-slides/pyconjp/stdlib-logging-kata.html#/1) @[PyCon JP 2025 (2025/09)](https://2025.pycon.jp/ja)
 * [Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？](https://ftnext.github.io/2025-slides/python-fukuoka/why-we-can-run-rust-package-cli#/1) @[Python Meetup Fukuoka #4 (2025/09)](https://lycorptech-fukuoka.connpass.com/event/365202/)
