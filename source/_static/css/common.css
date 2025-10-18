@@ -10,3 +10,7 @@
 .reveal strong {
   color: #5ae08e;
 }
+
+.reveal ol.upperalpha {
+  list-style-type: upper-alpha;
+}
