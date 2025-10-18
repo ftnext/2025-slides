@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Rustで作るPythonパッケージの例 sampleproject-rs の紹介</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=e16ffa82" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides//.html">
+    <meta property="og:title" content="">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">Rustで作るPythonパッケージの例 sampleproject-rs の紹介</h1>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Rustで作るPythonパッケージの例 <strong>sampleproject-rs</strong> の紹介</h2>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pythonの多様性 深掘りLT Night</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/10/22 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ？</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー） <span class="fab fa-twitter"></span> <span class="fab fa-github"></span> @ftnext</p></li>
+<li><p>PyCon JP 2025 では <a class="reference external" href="https://2025.pycon.jp/en/timetable/talk/Z8ZYFA" rel="noreferrer" target="_blank">標準ライブラリloggingの話</a> をしました</p></li>
+<li><p>機械学習エンジニア。 <a class="reference external" href="https://www.uzabase.com/jp/info/20250901/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Rustで書かれたPythonパッケージを <strong>作れる</strong> ようになりたい</h2>
+<dl class="field-list simple">
+<dt class="field-odd">uv, Ruff<span class="colon">:</span></dt>
+<dd class="field-odd"><p>RustをバイナリにしてPyPIで配布</p>
+</dd>
+<dt class="field-even">Pydantic<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rustで書いたコードをPythonから呼び出せる</p>
+</dd>
+</dl>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">目標に近づくために sampleproject-rs で素振り💪</h3>
+<p><a class="reference external" href="https://pypi.org/project/sampleproject-rs/" rel="noreferrer" target="_blank">https://pypi.org/project/sampleproject-rs/</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">sampleproject、知っている方？🙋</h2>
+<p><a class="reference external" href="https://pypi.org/project/sampleproject/" rel="noreferrer" target="_blank">https://pypi.org/project/sampleproject/</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">☝️ <strong class="command">uvx --from sampleproject sample</strong></h3>
+<pre data-id="uvx-from-sampleproject-sample"><code class="console" data-noescape="" data-trim="">% uvx --from sampleproject sample
+Call your main application code here</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">✌️ <code class="docutils literal notranslate"><span class="pre">sample.simple.add_one()</span></code></h3>
+<pre data-id="sample-simple-add-one"><code class="console" data-noescape="" data-trim="">% uv run --with sampleproject \
+    python -c "from sample import simple; print(simple.add_one(1))"
+2</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Python <strong>パッケージのサンプル</strong></h3>
+<ul class="simple">
+<li><p>PyPA（Python Packaging Authority）が作ってます：<a class="reference external" href="https://github.com/pypa/sampleproject/" rel="noreferrer" target="_blank">https://github.com/pypa/sampleproject/</a></p></li>
+<li><p>チュートリアル <a class="reference external" href="https://packaging.python.org/en/latest/tutorials/packaging-projects/" rel="noreferrer" target="_blank">Packaging Python Projects</a></p></li>
+<li><p>Pythonパッケージを作りたい方におすすめ</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">私のsampleproject-rs</h2>
+<p>sampleprojectにインスパイアされ、爆誕させた</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">☝️ <strong class="command">uvx --from sampleproject-rs sample</strong></h3>
+<pre data-id="uvx-from-sampleproject-rs-sample"><code class="console" data-noescape="" data-trim="">% uvx --from sampleproject-rs sample
+Call your main application code here</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">✌️ <code class="docutils literal notranslate"><span class="pre">sample.simple.add_one()</span></code></h3>
+<pre data-id="id4"><code class="console" data-noescape="" data-trim="">% uv run --with sampleproject-rs \
+    python -c "from sample import simple; print(simple.add_one(1))"
+2</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>Rust実装</strong> で完全再現です！！</h3>
+<p><a class="reference external" href="https://github.com/ftnext/sampleproject-rs" rel="noreferrer" target="_blank">https://github.com/ftnext/sampleproject-rs</a></p>
+<pre data-id="rust"><code class="rust" data-noescape="" data-trim="">fn main() {
+    println!("Call your main application code here");
+}
+
+#[pyfunction]
+fn add_one(number: i32) -&gt; i32 {
+    number + 1
+}</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">sampleproject-rs からの学び</h2>
+<ul class="simple">
+<li><p><em>maturin</em></p></li>
+<li><p><em>PyO3</em></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">1️⃣ <strong class="command">maturin build</strong> でPythonパッケージになる</h3>
+<ul class="simple">
+<li><p>maturinは、Rustで書かれたビルドバックエンド</p></li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text"><code class="file docutils literal notranslate"><span class="pre">pyproject.toml</span></code></span></div>
+<pre><code class="toml" data-noescape="" data-trim="">[build-system]
+requires = ["maturin&gt;=1.8,&lt;2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+bindings = "bin"  # バイナリの指定
+strip = true</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Python製パッケージと違って <strong>環境ごとのビルド</strong> が必要</h3>
+<ul class="simple">
+<li><p>GitHub Actions（Ubuntu環境）で <code class="docutils literal notranslate"><span class="pre">maturin</span> <span class="pre">build</span></code> してPyPIに上げたら、<strong>macOSでは実行できず</strong></p></li>
+</ul>
+<pre data-id="id6"><code class="console" data-noescape="" data-trim="">% uvx --from sampleproject-rs sample
+× No solution found when resolving tool dependencies:
+╰─▶ Because only sampleproject-rs==0.0.1 is available and
+    sampleproject-rs==0.0.1 has no wheels with a matching platform tag
+    (e.g., `macosx_14_0_arm64`), we can conclude that all versions of
+    sampleproject-rs cannot be used.</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">2️⃣ <strong>PyO3</strong> でRustプログラムをPythonから呼び出せるようにした</h3>
+<pre data-id="pyo3-rustpython"><code class="rust" data-noescape="" data-trim="">use pyo3::prelude::*;
+
+#[pyfunction]
+fn add_one(number: i32) -&gt; i32 {
+    number + 1
+}
+
+#[pymodule]
+mod sample {
+    use super::*;
+
+    #[pymodule]
+    mod simple {
+        #[pymodule_export]
+        use super::add_one;
+    }
+}</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">合わせて <code class="docutils literal notranslate"><span class="pre">sample</span></code> コマンドはPythonスクリプトに変更</h3>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text"><code class="file docutils literal notranslate"><span class="pre">pyproject.toml</span></code></span></div>
+<pre><code class="toml" data-noescape="" data-trim="">[project.scripts]
+sample = "sample:main"
+
+[tool.maturin]
+bindings = "pyo3"  # "bin"から変更</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯：Rustで作るPythonパッケージの例 sampleproject-rs の紹介</h2>
+<p>Rustで書いたプログラムは</p>
+<ul class="simple">
+<li><p><strong>maturin</strong> でバイナリとしてPyPIから配布できる</p></li>
+<li><p><strong>PyO3</strong> でPythonプログラム中で呼び出せる</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>
