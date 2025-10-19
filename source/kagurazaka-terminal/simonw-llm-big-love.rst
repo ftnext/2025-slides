@@ -28,9 +28,16 @@ LLM、使っていますか？🙋
 * Google `Gemini <https://deepmind.google/models/gemini/>`__
 * etc. etc.
 
-.. ブラウザ チャットウィンドウ
+ブラウザでChatGPT (GPT-5)
+---------------------------------------------------
 
-.. エディタ（Copilot）
+.. image:: ../_static/kagurazaka-terminal/chatgpt-web.png
+
+エディタで GitHub Copilot
+---------------------------------------------------
+
+.. image:: ../_static/kagurazaka-terminal/github-copilot-agent.png
+    :scale: 60%
 
 私は思った「**ターミナルでも** LLMを使いたい！」
 ------------------------------------------------------------
@@ -201,7 +208,11 @@ RAG: Retrieval-Augmented Generation
 LLMのコンテキストに外部情報を追加
 ---------------------------------------------------
 
-`In-Context Retrieval-Augmented Language Models <https://arxiv.org/abs/2302.00083>`__ Figure 2
+.. image:: ../_static/kagurazaka-terminal/in-context-ralm-figure2.png
+
+論文「`In-Context Retrieval-Augmented Language Models <https://arxiv.org/abs/2302.00083>`__」Figure 2
+
+.. revealjs-break::
 
 * 私「ミリオンライブ！12thライブ、めっちゃよかった...」
 * LLMは12thライブを知らないが、先の質問と合わせてWeb検索結果も与えられれば回答できる
