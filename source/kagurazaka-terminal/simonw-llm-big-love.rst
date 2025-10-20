@@ -108,15 +108,13 @@ simonw/llm動作例
     $ uvx --with llm-gemini \
         llm -m gemini-2.5-flash 'Tell me fun facts about Mountain View'
 
-推し1️⃣ Unixコマンドと **パイプ** で繋げられる！
----------------------------------------------------
+推し1️⃣ Unixコマンドと **パイプ** で繋げられる！ [#first_blog]_
+----------------------------------------------------------------------
 
 .. code-block:: bash
 
     $ cat index.ts | uvx --with llm-gemini \
         llm -m gemini-2.0-flash 'TypeScriptの内容を解説してください。'
-
-.. https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-and-plugins-are-awesome
 
 .. code-block:: bash
 
@@ -124,7 +122,9 @@ simonw/llm動作例
         | uvx --with llm-gemini \
         llm -m gemini-2.0-flash 'マークダウンはそのままに、日本語に翻訳してください' > translated.md
 
-推し2️⃣ 自動ロギング
+.. [#first_blog] 拙ブログ `simonwさんによるllmとそのプラグインを使って、LLMをCLIから呼び出す <https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-and-plugins-are-awesome>`__
+
+推し2️⃣ 自動ロギング [#auto_logging]_
 ---------------------------------------------------
 
 * `Logging to SQLite <https://llm.datasette.io/en/stable/logging.html>`__
@@ -134,13 +134,13 @@ simonw/llm動作例
 
     $ uvx llm logs -n1 --json
 
-.. 拙ブログ `simonwさんのllmは天才！ LLM APIへの入出力が全部ロギングされてました <https://nikkie-ftnext.hatenablog.com/entry/2025/04/11/224643>`__）
+.. [#auto_logging] 拙ブログ `simonwさんのllmは天才！ LLM APIへの入出力が全部ロギングされてました <https://nikkie-ftnext.hatenablog.com/entry/2025/04/11/224643>`__
 
 推し3️⃣ プラグインで拡張
 ---------------------------------------------------
 
 * `Developing a model plugin <https://llm.datasette.io/en/stable/plugins/tutorial-model-plugin.html>`__
-* https://github.com/ftnext/llm-devin
+* https://github.com/ftnext/llm-devin [#llm-devin]_
 
 .. code-block:: bash
 
@@ -148,7 +148,7 @@ simonw/llm動作例
     DevinModel: devin
     DeepWikiModel: deepwiki
 
-.. LT `コマンドラインからDevinを呼び出してみないか？ <https://ftnext.github.io/2025-slides/aid-devin2/llm-devin.html>`__
+.. [#llm-devin] 拙LT `コマンドラインからDevinを呼び出してみないか？ <https://ftnext.github.io/2025-slides/aid-devin2/llm-devin.html>`__
 
 コーディングエージェント **CLI** の台頭
 ======================================================================
@@ -178,7 +178,7 @@ Unixコマンドとパイプで繋げられる🙆‍♂️
         claude -p "what are my changes?" --output-format=json | \
         jq '.result'
 
-自動ロギング🙆‍♂️
+自動ロギング🙆‍♂️ [#resume_continue]_
 ---------------------------------------------------
 
 :直前の会話の続きから再開: :command:`claude --resume`
@@ -186,7 +186,7 @@ Unixコマンドとパイプで繋げられる🙆‍♂️
 
 `CLI flags <https://docs.claude.com/en/docs/claude-code/cli-reference#cli-flags>`__
 
-.. https://nikkie-ftnext.hatenablog.com/entry/claude-code-tips-print-then-continue-or-resume
+.. [#resume_continue] 拙ブログ `Claude Code に -p (--print) で質問した後、--continue や --resume から追加で質問できるぞ！ <https://nikkie-ftnext.hatenablog.com/entry/claude-code-tips-print-then-continue-or-resume>`__
 
 プラグインで **拡張** 🤔
 ---------------------------------------------------
@@ -222,14 +222,12 @@ LLMのコンテキストに外部情報を追加
 
 .. image:: ../_static/kagurazaka-terminal/naive-rag.drawio.png
 
-* LLMはライブをもちろん知らないが、質問と合わせて例えば **Web検索結果も与えられれば** 回答できる
+* LLMはライブをもちろん知らないが、質問と合わせて例えば **Web検索結果も与えられれば** 回答できる [#awesome_12th]_
 
-.. `担当の主演公演を観て <https://note.com/gold_fish5029/n/n4501462d643a>`__
+.. [#awesome_12th] 例えば `担当の主演公演を観て <https://note.com/gold_fish5029/n/n4501462d643a>`__
 
 simonw/llmでRAG
 ======================================================================
-
-.. https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-support-text-embedding-cosine-similarity
 
 * `劇場版アイドルマスター <https://www.idolmaster-anime.jp/>`__ についてLLMとおしゃべりします
 * 「**もう時間がないんですか**」
@@ -255,7 +253,7 @@ embeddingを保存
 
 `劇場版のセリフ <https://github.com/erutaso/THE-IDOL-MASTER-MOVIE>`__ を公開している方がいます
 
-コサイン類似度で検索（＝意味検索）
+コサイン類似度で検索（＝意味検索） [#llm_similar]_
 ---------------------------------------------------
 
 .. code-block:: bash
@@ -266,6 +264,8 @@ embeddingを保存
     {"id":"954","score":0.42914991489215454,"content":"P「今からやれば十分間に合うわけだし、そう重く受け止めなくてもいいんじゃないか？」","metadata":null}
     {"id":"1072","score":0.418144028938804,"content":"P「だから、もう少しみんなに負担がない時期とか、やりようはあるとおも…」","metadata":null}
     {"id":"1192","score":0.41312547632270286,"content":"千早「まだ…見つかってないわ」","metadata":null}
+
+.. [#llm_similar] `simonw/llm でコマンドラインからテキストを embedding にして、コサイン類似度計算までできる！ <https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-support-text-embedding-cosine-similarity>`__
 
 「もう時間がないんですか」💯
 ---------------------------------------------------
