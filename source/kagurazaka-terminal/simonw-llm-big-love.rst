@@ -1,3 +1,9 @@
+:ogp_title: ターミナルからLLMを！ simonw/llm の布教
+:ogp_event_name: kagurazaka-terminal
+:ogp_slide_name: simonw-llm-big-love
+:ogp_description: 神楽坂第1ターミナル
+:ogp_image_name: kagurazaka-terminal-1
+
 ======================================================================
 ターミナルからLLMを！ simonw/llm の布教
 ======================================================================
