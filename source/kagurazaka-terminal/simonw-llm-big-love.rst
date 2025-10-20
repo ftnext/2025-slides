@@ -8,8 +8,8 @@
 お前、誰よ？
 ======================================================================
 
-* nikkie（にっきー）・Python使い・1000日ブログ執筆（継続中）
-* :fab:`github` @ftnext 私が欲しい小さなライブラリをおすそ分けでOSS
+* nikkie（にっきー）・Python使い（`ポジションペーパー <https://docs.google.com/presentation/d/1XTpSIbPFdUWu_I4uKZtQFWy7bWw9ljUFhhnefUsgBS0/edit?slide=id.g38c054c9981_0_0#slide=id.g38c054c9981_0_0>`__）
+* :fab:`github` @ftnext 私が欲しい小さなライブラリをおすそ分けでOSS（hayasaka, flake8-kotoha）
 * 機械学習エンジニア。 `Speeda AI Agent <https://www.uzabase.com/jp/info/20250901/>`__ 開発（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
 
 .. image:: ../_static/uzabase-white-logo.png
@@ -19,6 +19,7 @@
 
 * 「お勧めコマンドラインツール」を聞きたい人もいる！
 * ref: `Magnoliaさんのツイート「ターミナルナイト、どんなことが聞きたい？」 <https://x.com/magnolia_k_/status/1968689078792016191>`__
+* **ターミナルからLLMを使う** という話です
 
 LLM、使っていますか？🙋
 ======================================================================
@@ -77,14 +78,12 @@ simonw/llm動作例
     $ # OPENAI_API_KEY
     $ uvx llm "Ten fun names for a pet pelican"
 
-補足：:command:`uvx`
+補足：Python環境は :command:`uv` だけあればいい
 ---------------------------------------------------
 
-.. Python環境前提。uvを入れると簡単になる
-
-* Python製ツールは *仮想環境* にインストールして使う。仮想環境を簡単に管理するツールが昨今登場
-* `Astral社のuv <https://github.com/astral-sh/uv>`__ を入れると（``uv`` の他に） `uvxコマンド <https://docs.astral.sh/uv/guides/tools/>`__ も生える
-* ``uvx llm`` は最新の ``llm`` を一時的な仮想環境にインストールして実行
+* `Astral社のuv <https://github.com/astral-sh/uv>`__ 登場でPython環境が *簡単* に
+* （``uv`` の他に） `uvxコマンド <https://docs.astral.sh/uv/guides/tools/>`__ も生える
+* ``uvx llm`` は最新の ``llm`` を一時的な *仮想環境* にインストールして実行
 
 .. 他に pipx run
 
@@ -134,6 +133,7 @@ simonw/llm動作例
 推し3️⃣ プラグインで拡張
 ---------------------------------------------------
 
+* `Developing a model plugin <https://llm.datasette.io/en/stable/plugins/tutorial-model-plugin.html>`__
 * https://github.com/ftnext/llm-devin
 
 .. code-block:: bash
@@ -202,7 +202,7 @@ RAG: Retrieval-Augmented Generation
 ---------------------------------------------------
 
 * LLMはある時点までの知識しかない（*カットオフ*）
-* 例えば、最新の話題（`ミリオンライブ！12thライブ <https://idolmaster-official.jp/live_event/million12th/>`__）には正確に回答できない
+* 例えば、最新の話題（`先週のアイドルマスターのライブ <https://idolmaster-official.jp/live_event/million12th/>`__）には正確に回答できない
 * 解決するために、RAG（検索拡張生成）
 
 LLMのコンテキストに外部情報を追加
@@ -214,8 +214,9 @@ LLMのコンテキストに外部情報を追加
 
 .. revealjs-break::
 
-* 私「ミリオンライブ！12thライブ、めっちゃよかった...」
-* LLMは12thライブを知らないが、先の質問と合わせてWeb検索結果も与えられれば回答できる
+.. image:: ../_static/kagurazaka-terminal/naive-rag.drawio.png
+
+* LLMはライブをもちろん知らないが、質問と合わせて例えば **Web検索結果も与えられれば** 回答できる
 
 .. `担当の主演公演を観て <https://note.com/gold_fish5029/n/n4501462d643a>`__
 
@@ -224,8 +225,8 @@ simonw/llmでRAG
 
 .. https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-support-text-embedding-cosine-similarity
 
-* `劇場版アイドルマスター 輝きの向こう側へ! <https://www.idolmaster-anime.jp/>`__ についてLLMとおしゃべりします
-* 「もう時間がないんですか」
+* `劇場版アイドルマスター <https://www.idolmaster-anime.jp/>`__ についてLLMとおしゃべりします
+* 「**もう時間がないんですか**」
 * 劇中に「もう時間がないんです！」が登場するので、それを踏まえて回答してほしい
 
 simonw/llmはembeddingを計算できる！
@@ -246,7 +247,7 @@ embeddingを保存
     oai-movimas: text-embedding-3-small
       1207 embeddings
 
-`輝きの向こう側へ! のセリフ <https://github.com/erutaso/THE-IDOL-MASTER-MOVIE>`__ を公開している方がいます
+`劇場版のセリフ <https://github.com/erutaso/THE-IDOL-MASTER-MOVIE>`__ を公開している方がいます
 
 コサイン類似度で検索（＝意味検索）
 ---------------------------------------------------
