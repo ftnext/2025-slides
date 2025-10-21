@@ -1,5 +1,6 @@
 # 2025-slides
 
+* [Rustで作るPythonパッケージの例 sampleproject-rs の紹介](https://ftnext.github.io/2025-slides/findy-techbaton/sampleproject-rs.html#/1) @[Pythonの多様性 深掘りLT Night (2025/10)](https://findy.connpass.com/event/371749/)
 * [ターミナルからLLMを！ simonw/llm の布教](https://ftnext.github.io/2025-slides/kagurazaka-terminal/simonw-llm-big-love.html) @[神楽坂第1ターミナル (2025/10)](https://kagurazaka-terminal.connpass.com/event/370095/)
 * [ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？](https://ftnext.github.io/2025-slides/aidd-codex1/codex-rs-telemetry.html#/2) @[Codex Meetup Japan #1 (2025/10)](https://aid.connpass.com/event/369420/)
 * [私と「秘密の手紙と見えない星」](https://ftnext.github.io/2025-slides/aikatsu/letter-and-star.html) @[アイカツエンジニア Tech Meetup vol.1](https://connpass.com/event/364456/)
