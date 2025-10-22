@@ -110,8 +110,8 @@ sampleproject-rs からの学び
 * *maturin*
 * *PyO3*
 
-1️⃣ :command:`maturin build` でPythonパッケージになる
-======================================================================
+1️⃣ :command:`maturin build` でPythonパッケージになる [#maturin_first_blog]_
+================================================================================
 
 * maturinは、Rustで書かれたビルドバックエンド
 
@@ -126,9 +126,10 @@ sampleproject-rs からの学び
     bindings = "bin"  # バイナリの指定
     strip = true
 
+.. [#maturin_first_blog] 拙ブログ `Rustプログラムから作ったバイナリは、maturinでPythonパッケージにできる！！ <https://nikkie-ftnext.hatenablog.com/entry/maturin-bindings-bin-python-package-from-rust-binary>`__
+
 .. 参考
     https://www.maturin.rs/tutorial
-    https://nikkie-ftnext.hatenablog.com/entry/maturin-bindings-bin-python-package-from-rust-binary
 
 Rustによるバイナリがパッケージに
 ------------------------------------------------------------
@@ -138,13 +139,15 @@ Rustによるバイナリがパッケージに
     % # git checkout 0.1.0
     % cargo run --quiet
     Call your main application code here
+    % file target/debug/sample
+    target/debug/sample: Mach-O 64-bit executable arm64
     % target/debug/sample
     Call your main application code here
 
-Python製パッケージと違って **環境ごとのビルド** が必要
-------------------------------------------------------------
+Python製パッケージと違って **環境ごとのビルド** が必要 [#maturin_impression]_
+--------------------------------------------------------------------------------
 
-.. https://nikkie-ftnext.hatenablog.com/entry/try-maturin-pypi-upload-confuse-binary-each-environment
+.. [#maturin_impression] 拙ブログ `Rust プログラムから作ったバイナリを PyPI にアップロードしてみて <https://nikkie-ftnext.hatenablog.com/entry/try-maturin-pypi-upload-confuse-binary-each-environment>`__
 
 * GitHub Actions（Ubuntu環境）で ``maturin build`` してPyPIに上げたら、**macOSでは実行できず**
 
@@ -180,10 +183,10 @@ Python製パッケージと違って **環境ごとのビルド** が必要
         }
     }
 
-合わせて ``sample`` コマンドはPythonスクリプトに変更
-------------------------------------------------------------
+合わせて ``sample`` コマンドはPythonスクリプトに変更 [#pyo3_first_blog]_
+--------------------------------------------------------------------------------
 
-.. https://nikkie-ftnext.hatenablog.com/entry/rust-maturin-cli-and-import-support-python-library
+.. [#pyo3_first_blog] 拙ブログ `Rust プログラムから作った Python パッケージで、エントリポイントスクリプトも import もサポートするには <https://nikkie-ftnext.hatenablog.com/entry/rust-maturin-cli-and-import-support-python-library>`__
 
 .. code-block:: toml
     :caption: :file:`pyproject.toml`
@@ -205,4 +208,14 @@ Rustで書いたプログラムは
 ご清聴ありがとうございました
 --------------------------------------------------
 
-.. https://ftnext.github.io/2025-slides/python-fukuoka/why-we-can-run-rust-package-cli#/1
+Happy Python development🫶
+
+Appendix：関連発表 [#pyfukuoka4]_
+--------------------------------------------------
+
+.. raw:: html
+
+    <iframe width="800" height="480" src="https://ftnext.github.io/2025-slides/python-fukuoka/why-we-can-run-rust-package-cli#/1"
+        title="Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？"></iframe>
+
+.. [#pyfukuoka4] `アーカイブ動画 <https://youtu.be/9P8Cq63S1eM?si=qMZBYxiCTyAVTdYw&t=3967>`__
