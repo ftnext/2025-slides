@@ -1,3 +1,9 @@
+:ogp_title: Rustで作るPythonパッケージの例 sampleproject-rs の紹介
+:ogp_event_name: findy-techbaton
+:ogp_slide_name: sampleproject-rs
+:ogp_description: Pythonの多様性 深掘りLT Night
+:ogp_image_name: findy-techbaton-python
+
 ======================================================================
 Rustで作るPythonパッケージの例 sampleproject-rs の紹介
 ======================================================================
