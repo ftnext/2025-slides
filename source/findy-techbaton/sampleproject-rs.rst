@@ -17,6 +17,15 @@ Rustで作るPythonパッケージの例 **sampleproject-rs** の紹介
 
 .. image:: ../_static/uzabase-white-logo.png
 
+宣伝（運営に関わっているもの）
+------------------------------------------------------------
+
+* 毎月くらいで開催中、みんなのPython勉強会（オンライン開催）
+
+    * 10月は明日23日(木) https://startpython.connpass.com/event/371646/
+
+* 10/30(木)31(金) `AI駆動開発カンファレンス 2025秋 <https://aid.connpass.com/event/367697/>`__、オンライン枠あります！
+
 Rustで書かれたPythonパッケージを **作れる** ようになりたい
 ======================================================================
 
@@ -102,7 +111,7 @@ sampleproject-rs からの学び
 * *PyO3*
 
 1️⃣ :command:`maturin build` でPythonパッケージになる
-------------------------------------------------------------
+======================================================================
 
 * maturinは、Rustで書かれたビルドバックエンド
 
@@ -121,6 +130,17 @@ sampleproject-rs からの学び
     https://www.maturin.rs/tutorial
     https://nikkie-ftnext.hatenablog.com/entry/maturin-bindings-bin-python-package-from-rust-binary
 
+Rustによるバイナリがパッケージに
+------------------------------------------------------------
+
+.. code-block:: console
+
+    % # git checkout 0.1.0
+    % cargo run --quiet
+    Call your main application code here
+    % target/debug/sample
+    Call your main application code here
+
 Python製パッケージと違って **環境ごとのビルド** が必要
 ------------------------------------------------------------
 
@@ -138,7 +158,7 @@ Python製パッケージと違って **環境ごとのビルド** が必要
         sampleproject-rs cannot be used.
 
 2️⃣ **PyO3** でRustプログラムをPythonから呼び出せるようにした
-----------------------------------------------------------------------
+======================================================================
 
 .. code-block:: rust
 
