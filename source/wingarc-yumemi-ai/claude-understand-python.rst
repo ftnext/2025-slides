@@ -9,7 +9,7 @@ AIにPythonを理解したコードを書かせる試行錯誤
 ======================================================================
 
 * nikkie（にっきー）・Python使い
-* :fab:`github` `@ftnext <https://github.com/ftnext>`__ 私が欲しい小さなライブラリをおすそ分けでOSS
+* :fab:`github` `@ftnext <https://github.com/ftnext>`__ 私が欲しい小さなライブラリをおすそ分けでOSS（`llm-claude-code <https://github.com/ftnext/llm-claude-code>`__）
 * 機械学習エンジニア。 `Speeda AI Agent <https://www.uzabase.com/jp/info/20250901/>`__ 開発（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
 
 .. image:: ../_static/uzabase-white-logo.png
@@ -32,7 +32,7 @@ Codex CLI にゴリゴリOSSのソース読ませもしています（DeepWiki�
 
 .. raw:: html
 
-    <blockquote class="twitter-tweet" data-dnt="true"><p lang="ja" dir="ltr">言語を少し深く知ってる開発者なら、いまのAIよりは自分のほうが（速くはないけど）詳しいって感覚なんですかねぇ <a href="https://twitter.com/hashtag/kichijojipm?src=hash&amp;ref_src=twsrc%5Etfw">#kichijojipm</a><br>私にとってはPythonがそうで、Claude Codeが書いてくるコード、Pythonを理解してないので、リンタが怒るようなコードをいつも書くんですよね（リンタを設定して渡さなきゃ</p>&mdash; nikkie(にっきー) / にっP (@ftnext) <a href="https://twitter.com/ftnext/status/1964228096263094311?ref_src=twsrc%5Etfw">September 6, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <blockquote class="twitter-tweet" data-lang="ja" data-align="center" data-dnt="true"><p lang="ja" dir="ltr">言語を少し深く知ってる開発者なら、いまのAIよりは自分のほうが（速くはないけど）詳しいって感覚なんですかねぇ <a href="https://twitter.com/hashtag/kichijojipm?src=hash&amp;ref_src=twsrc%5Etfw">#kichijojipm</a><br>私にとってはPythonがそうで、Claude Codeが書いてくるコード、Pythonを理解してないので、リンタが怒るようなコードをいつも書くんですよね（リンタを設定して渡さなきゃ</p>&mdash; nikkie(にっきー) / にっP (@ftnext) <a href="https://twitter.com/ftnext/status/1964228096263094311?ref_src=twsrc%5Etfw">September 6, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 あなた Python 分かってます？
 ---------------------------------------------------
@@ -52,9 +52,11 @@ Codex CLI にゴリゴリOSSのソース読ませもしています（DeepWiki�
     >>> name = "りせ"
     >>> f"こんにちは、{name}さん！"
     'こんにちは、りせさん！'
+    >>> print(f"2 + 3 = {2 + 3}")
+    2 + 3 = 5
 
-ロギングにf-stringは使わない
----------------------------------------------------
+ロギングにf-stringは使わない [#fstring_logging_article]_
+----------------------------------------------------------------------
 
 .. code-block:: python
     :caption: f-stringの代わりに%-format
@@ -62,18 +64,18 @@ Codex CLI にゴリゴリOSSのソース読ませもしています（DeepWiki�
     logger.info("%s - Something happened", user)
     logger.error("Python version: %s", sys.version)
 
-.. https://nikkie-ftnext.hatenablog.com/entry/hey-claude-dont-use-f-string-in-logging-messages
+.. [#fstring_logging_article] 拙ブログ `Pythonのログメッセージにf-stringはいけません。そこのClaude、私はあなたに言っているんですよ <https://nikkie-ftnext.hatenablog.com/entry/hey-claude-dont-use-f-string-in-logging-messages>`__
 
 しかしClaudeは平気でf-stringを使う
 ---------------------------------------------------
 
 .. code-block:: python
-    :caption: f-stringでロギングしてはいけません
+    :caption: f-stringでロギングしてはいけません [#why_no_fstring_logging]_
 
     logger.info(f"{user} - Something happened")
     logger.error(f"Python version: {sys.version}")
 
-.. f-stringはその場で評価されるためです。%-formatならログレベルが有効なときのみ評価されます
+.. [#why_no_fstring_logging] f-stringはその場で評価されるためです。%-formatならログレベルが有効なときのみ評価されます
 
 💡リンタで指摘しよう
 ======================================================================
@@ -88,19 +90,23 @@ Codex CLI にゴリゴリOSSのソース読ませもしています（DeepWiki�
 `Ruff`_
 ---------------------------------------------------
 
-* Rustで書かれたPythonのリンタ兼フォーマッタ。速い
-* flake8（リンタ）・black（フォーマッタ）からRuffへの置き換えが進む
+* Rustで書かれたPythonのリンタ兼フォーマッタ。速い [#ruff_command]_
+* flake8やpylint（リンタ）・black（フォーマッタ）からRuffへの置き換えが進む
 
 .. code-block:: console
 
     $ uvx ruff check --fix --extend-select I && uvx ruff format
 
+.. [#ruff_command] 拙ブログ `Ruffは format と check --fix の2つのコマンドでフォーマットする (Ruff 0.7.2) <https://nikkie-ftnext.hatenablog.com/entry/ruff-as-python-formatter-two-commands>`__
+
 :command:`hatch fmt`
 ---------------------------------------------------
 
 * Ruffのリントとフォーマットは現状別々のコマンド
-* Pythonプロジェクト管理ツール `Hatch <https://github.com/pypa/hatch>`__ は、Ruffのリントとフォーマットを1コマンドで流せる
+* Pythonプロジェクト管理ツール `Hatch <https://github.com/pypa/hatch>`__ は、Ruffのリントとフォーマットを1コマンドで流せる [#hatch_fmt_reference]_
 * 普通にRuffを流すよりも **厳しいルール**
+
+.. [#hatch_fmt_reference] https://hatch.pypa.io/latest/cli/reference/#hatch-fmt
 
 Claude Codeの **フック** を設定
 ======================================================================
@@ -138,7 +144,76 @@ EditまたはWriteでPythonファイルを書いたら
 * :file:`python_format.sh` の終了コードを **2** にする（Claude Codeをブロック）
 * ``hatch fmt`` の出力を **stderr** へ（Claudeが見る）
 
-.. https://nikkie-ftnext.hatenablog.com/entry/claude-code-hooks-run-hatch-fmt-good-python-code
+リファレンスの「`Hook出力 <https://docs.claude.com/ja/docs/claude-code/hooks#hook%E5%87%BA%E5%8A%9B>`__」参照 [#claude_code_hook_article]_
+
+.. [#claude_code_hook_article] 拙ブログ `フックでリンタ（hatch fmt）のエラーを Claude Code に見せて、Python を理解している実装をさせる <https://nikkie-ftnext.hatenablog.com/entry/claude-code-hooks-run-hatch-fmt-good-python-code>`__
 
 デモ
 ======================================================================
+
+時間があったら話すコンテンツ
+======================================================================
+
+* Pythonでフックを書く
+* プラグインで配布
+
+1️⃣ cchooks
+---------------------------------------------------
+
+* https://github.com/GowayLee/cchooks
+* `hesreallyhim/awesome-claude-code <https://github.com/hesreallyhim/awesome-claude-code>`__ 掲載
+* Pythonスクリプトでフックを書ける [#cchooks_article]_
+
+.. [#cchooks_article] 拙ブログ `Claude Code のフックを Python スクリプトで書ける cchooks で hatch fmt を実行するフックを書く <https://nikkie-ftnext.hatenablog.com/entry/claude-code-hooks-cchooks-first-step-hatch-fmt>`__
+
+inline script metadataと奇跡的相性🫶
+---------------------------------------------------
+
+.. code-block:: python
+
+    #!/usr/bin/env -S uv run
+    # /// script
+    # requires-python = ">=3.11"
+    # dependencies = [
+    #     "cchooks",
+    # ]
+    # ///
+    import subprocess
+
+    import cchooks
+
+    c = cchooks.create_context()
+
+    if c.tool_input.get("file_path", "").endswith(".py"):
+        file_path = c.tool_input["file_path"]
+        result = subprocess.run(["uvx", "hatch", "fmt", file_path], capture_output=True, text=True)
+        if result.returncode == 1:  # Need to fix formatting
+            cchooks.exit_block(f"Fix `hatch fmt` issues:\n{result.stdout}")
+        else:
+            cchooks.exit_success()
+
+2️⃣ プラグイン
+---------------------------------------------------
+
+* `Plugins <https://docs.claude.com/en/docs/claude-code/plugins>`__
+* https://github.com/ftnext/claude-code を作った
+* インストールできるが、PostToolUseの終了コード2で *止まって* しまう（v2.0.27で観測）
+
+まとめ🌯 AIにPythonを理解したコードを書かせる試行錯誤
+======================================================================
+
+* Claude Code、Pythonを理解してないよなあ
+* :command:`hatch fmt` をPostToolUseフックに設定して逃さない
+* 引き続き磨き込んでいくぞ（コメント多い、型チェック）
+
+ご清聴ありがとうございました
+--------------------------------------------------
+
+Happy AI-assisted development🤖
+
+.. revealjs-break::
+    :notitle:
+
+.. raw:: html
+
+    <blockquote class="twitter-tweet" data-lang="ja" data-align="center" data-dnt="true"><p lang="ja" dir="ltr">学マスの秦谷美鈴さんが言ったとされる<br>「わたしが上で、あなたが下です」<a href="https://t.co/tMEWieYG3i">https://t.co/tMEWieYG3i</a><br>ChatGPTとかClaudeを使うときのマインドセットに通じるものがあるかもしれません。LLMが下</p>&mdash; nikkie(にっきー) / にっP (@ftnext) <a href="https://twitter.com/ftnext/status/1949106210122391956?ref_src=twsrc%5Etfw">2025年7月26日</a></blockquote>
