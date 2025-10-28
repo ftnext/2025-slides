@@ -1,3 +1,5 @@
+.PHONY: slide clean
+
 slide:
 	@uvx --from sphinx \
 		--with sphinx-revealjs \
