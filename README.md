@@ -1,5 +1,6 @@
 # 2025-slides
 
+* [AIにPythonを理解したコードを書かせる試行錯誤](https://ftnext.github.io/2025-slides/wingarc-yumemi-ai/claude-understand-python.html) @[AIを“相棒”にするための勉強会 (2025/10)](https://yumemi.connpass.com/event/370633/)
 * [Rustで作るPythonパッケージの例 sampleproject-rs の紹介](https://ftnext.github.io/2025-slides/findy-techbaton/sampleproject-rs.html#/1) @[Pythonの多様性 深掘りLT Night (2025/10)](https://findy.connpass.com/event/371749/)
 * [ターミナルからLLMを！ simonw/llm の布教](https://ftnext.github.io/2025-slides/kagurazaka-terminal/simonw-llm-big-love.html) @[神楽坂第1ターミナル (2025/10)](https://kagurazaka-terminal.connpass.com/event/370095/)
 * [ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？](https://ftnext.github.io/2025-slides/aidd-codex1/codex-rs-telemetry.html#/2) @[Codex Meetup Japan #1 (2025/10)](https://aid.connpass.com/event/369420/)
