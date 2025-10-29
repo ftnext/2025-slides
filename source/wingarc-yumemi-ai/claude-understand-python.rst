@@ -1,3 +1,9 @@
+:ogp_title: AIにPythonを理解したコードを書かせる試行錯誤
+:ogp_event_name: wingarc-yumemi-ai
+:ogp_slide_name: claude-understand-python
+:ogp_description: AIを“相棒”にするための勉強会
+:ogp_image_name: wingarc-yumemi-ai
+
 ======================================================================
 AIにPythonを理解したコードを書かせる試行錯誤
 ======================================================================
