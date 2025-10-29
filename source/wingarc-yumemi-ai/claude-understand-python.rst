@@ -10,9 +10,11 @@ AIにPythonを理解したコードを書かせる試行錯誤
 
 * nikkie（にっきー）・Python使い
 * :fab:`github` `@ftnext <https://github.com/ftnext>`__ 私が欲しい小さなライブラリをおすそ分けでOSS（`llm-claude-code <https://github.com/ftnext/llm-claude-code>`__）
-* 機械学習エンジニア。 `Speeda AI Agent <https://www.uzabase.com/jp/info/20250901/>`__ 開発（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
+* 機械学習エンジニア。 `Speeda AI Agent <https://www.uzabase.com/jp/info/20250901/>`__ 開発（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__） [#ai_agent_meetup]_
 
 .. image:: ../_static/uzabase-white-logo.png
+
+.. [#ai_agent_meetup] 今週末31日(金)夜にオンライン勉強会やります！`UB Tech vol.21 AIエージェントって何から始める？ソフトウェアエンジニアによる挑戦 <https://connpass.com/event/370935/>`__
 
 .. _サム・アルトマン: https://publishing.newspicks.com/books/9784910063447
 
@@ -210,6 +212,8 @@ inline script metadataと奇跡的相性🫶
 --------------------------------------------------
 
 Happy AI-assisted development🤖
+
+宣伝：`10/30(木)31(金)AI駆動開発カンファレンス <https://aid.connpass.com/event/367697/>`__ オンライン無料です！！
 
 .. revealjs-break::
     :notitle:
