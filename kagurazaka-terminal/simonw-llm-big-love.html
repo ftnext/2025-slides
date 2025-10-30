@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>ターミナルからLLMを！ simonw/llm の布教</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/kagurazaka-terminal/simonw-llm-big-love.html">
+    <meta property="og:title" content="ターミナルからLLMを！ simonw/llm の布教">
+    <meta property="og:description" content="神楽坂第1ターミナル">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/kagurazaka-terminal-1.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">ターミナルからLLMを！ simonw/llm の布教</h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>神楽坂第1ターミナル</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/10/20 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ？</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー）・Python使い（<a class="reference external" href="https://docs.google.com/presentation/d/1XTpSIbPFdUWu_I4uKZtQFWy7bWw9ljUFhhnefUsgBS0/edit?slide=id.g38c054c9981_0_0#slide=id.g38c054c9981_0_0" rel="noreferrer" target="_blank">ポジションペーパー</a>）</p></li>
+<li><p><span class="fab fa-github"></span> @ftnext 私が欲しい小さなライブラリをおすそ分けでOSS（hayasaka, flake8-kotoha）</p></li>
+<li><p>機械学習エンジニア。 <a class="reference external" href="https://www.uzabase.com/jp/info/20250901/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">好きなCLIツールを布教するぜ！</h3>
+<ul class="simple">
+<li><p>「お勧めコマンドラインツール」を聞きたい人もいる！</p></li>
+<li><p>ref: <a class="reference external" href="https://x.com/magnolia_k_/status/1968689078792016191" rel="noreferrer" target="_blank">Magnoliaさんのツイート「ターミナルナイト、どんなことが聞きたい？」</a></p></li>
+<li><p><strong>ターミナルからLLMを使う</strong> という話です</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">LLM、使っていますか？🙋</h2>
+<ul class="simple">
+<li><p>OpenAI <a class="reference external" href="https://chatgpt.com/ja-JP/overview" rel="noreferrer" target="_blank">GPT</a></p></li>
+<li><p>Anthropic <a class="reference external" href="https://www.claude.com/product/overview" rel="noreferrer" target="_blank">Claude</a></p></li>
+<li><p>Google <a class="reference external" href="https://deepmind.google/models/gemini/" rel="noreferrer" target="_blank">Gemini</a></p></li>
+<li><p>etc. etc.</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ブラウザでChatGPT (GPT-5)</h3>
+<img alt="../_images/chatgpt-web.png" src="../_images/chatgpt-web.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">エディタで GitHub Copilot</h3>
+<a class="reference internal image-reference" href="../_images/github-copilot-agent.png"><img alt="../_images/github-copilot-agent.png" src="../_images/github-copilot-agent.png" style="width: 570.0px; height: 394.8px;"/>
+</a>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">私は思った「<strong>ターミナルでも</strong> LLMを使いたい！」</h3>
+<p>※今年（2025年）の3月終わり頃の話です</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">推しの simonw/llm</h2>
+<p>Python🐍製CLIツール</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Simon Willisonさん</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.djangoproject.com/" rel="noreferrer" target="_blank">Django</a> （PythonのWebアプリフレームワーク）のCo-creator</p></li>
+<li><p><a class="reference external" href="https://simonwillison.net/" rel="noreferrer" target="_blank">https://simonwillison.net/</a> でここ数年 <strong>LLMについて精力的に発信</strong> （自転車に乗るペリカン）</p></li>
+<li><p>（勝手に） <em>我がヨーダ</em></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">simonw/llm</h3>
+<blockquote>
+<div><p>CLI utility and Python library for interacting with Large Language Models from organizations like OpenAI, Anthropic and Gemini plus (略)</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pypi.org/project/llm/" rel="noreferrer" target="_blank">https://pypi.org/project/llm/</a> (2023年4月〜)</p></li>
+<li><p><a class="reference external" href="https://github.com/simonw/llm" rel="noreferrer" target="_blank">https://github.com/simonw/llm</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">simonw/llm動作例</h3>
+<pre data-id="id4"><code class="bash" data-noescape="" data-trim="">$ uvx llm models
+Default: gpt-4o-mini</code></pre>
+<pre data-id="id4"><code class="bash" data-noescape="" data-trim="">$ # OPENAI_API_KEY
+$ uvx llm "Ten fun names for a pet pelican"</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">補足：Python環境は <strong class="command">uv</strong> だけあればいい</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/astral-sh/uv" rel="noreferrer" target="_blank">Astral社のuv</a> 登場でPython環境が <em>簡単</em> に</p></li>
+<li><p>（<code class="docutils literal notranslate"><span class="pre">uv</span></code> の他に） <a class="reference external" href="https://docs.astral.sh/uv/guides/tools/" rel="noreferrer" target="_blank">uvxコマンド</a> も生える</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">uvx</span> <span class="pre">llm</span></code> は最新の <code class="docutils literal notranslate"><span class="pre">llm</span></code> を一時的な <em>仮想環境</em> にインストールして実行</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">プラグインでサポートするモデルを拡張</h2>
+<pre data-id="id5"><code class="bash" data-noescape="" data-trim="">$ uvx --with llm-gemini llm models
+GeminiPro: gemini/gemini-2.5-flash (aliases: gemini-2.5-flash)
+GeminiPro: gemini/gemini-2.5-pro (aliases: gemini-2.5-pro)</code></pre>
+<pre data-id="id5"><code class="bash" data-noescape="" data-trim="">$ # LLM_GEMINI_KEY
+$ uvx --with llm-gemini \
+    llm -m gemini-2.5-flash 'Tell me fun facts about Mountain View'</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">推し1️⃣ Unixコマンドと <strong>パイプ</strong> で繋げられる！ <a class="footnote-reference brackets" href="#first-blog" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></h3>
+<pre data-id="unix"><code class="bash" data-noescape="" data-trim="">$ cat index.ts | uvx --with llm-gemini \
+    llm -m gemini-2.0-flash 'TypeScriptの内容を解説してください。'</code></pre>
+<pre data-id="unix"><code class="bash" data-noescape="" data-trim="">% curl &lt;URL&gt; | uvx markitdown \
+    | uvx --with llm-gemini \
+    llm -m gemini-2.0-flash 'マークダウンはそのままに、日本語に翻訳してください' &gt; translated.md</code></pre>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="first-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id6" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-and-plugins-are-awesome" rel="noreferrer" target="_blank">simonwさんによるllmとそのプラグインを使って、LLMをCLIから呼び出す</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">推し2️⃣ 自動ロギング <a class="footnote-reference brackets" href="#auto-logging" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://llm.datasette.io/en/stable/logging.html" rel="noreferrer" target="_blank">Logging to SQLite</a></p></li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">ログの最新1件をJSON形式で出力</span></div>
+<pre><code class="bash" data-noescape="" data-trim="">$ uvx llm logs -n1 --json</code></pre>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="auto-logging" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id7" role="doc-backlink">2</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/2025/04/11/224643" rel="noreferrer" target="_blank">simonwさんのllmは天才！ LLM APIへの入出力が全部ロギングされてました</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">推し3️⃣ プラグインで拡張</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://llm.datasette.io/en/stable/plugins/tutorial-model-plugin.html" rel="noreferrer" target="_blank">Developing a model plugin</a></p></li>
+<li><p><a class="reference external" href="https://github.com/ftnext/llm-devin" rel="noreferrer" target="_blank">https://github.com/ftnext/llm-devin</a> <a class="footnote-reference brackets" href="#llm-devin" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<pre data-id="id9"><code class="bash" data-noescape="" data-trim="">$ uvx --with llm-devin llm models
+DevinModel: devin
+DeepWikiModel: deepwiki</code></pre>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="llm-devin" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id10" role="doc-backlink">3</a><span class="fn-bracket">]</span></span>
+<p>拙LT <a class="reference external" href="https://ftnext.github.io/2025-slides/aid-devin2/llm-devin.html" rel="noreferrer" target="_blank">コマンドラインからDevinを呼び出してみないか？</a></p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">コーディングエージェント <strong>CLI</strong> の台頭</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.claude.com/product/claude-code" rel="noreferrer" target="_blank">Claude Code</a></p></li>
+<li><p><a class="reference external" href="https://geminicli.com/" rel="noreferrer" target="_blank">Gemini CLI</a></p></li>
+<li><p><a class="reference external" href="https://developers.openai.com/codex/cli/" rel="noreferrer" target="_blank">Codex CLI</a></p></li>
+<li><p>etc. etc.</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">「simonw/llmの代わりにClaude Codeでよくない？」</h3>
+<p>🥹 🥹 🥹</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Unixコマンドとパイプで繋げられる🙆‍♂️</h3>
+<div class="literal-block-wrapper docutils container" id="id25">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://docs.claude.com/en/docs/claude-code/cli-reference#cli-commands" rel="noreferrer" target="_blank">CLI commands (Claude Code)</a></span></div>
+<pre><code class="bash" data-noescape="" data-trim="">$ cat logs.txt | claude -p "explain"</code></pre>
+</div>
+<div class="literal-block-wrapper docutils container" id="id26">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/anthropic-code-with-claude-archive-mastering-claude-code-in-30-minutes-amazing-part2#Scripting-Claude" rel="noreferrer" target="_blank">Scripting Claude</a> （動画「<a class="reference external" href="https://www.youtube.com/watch?v=6eBSHbLKuN0" rel="noreferrer" target="_blank">Mastering Claude Code in 30 minutes</a>」）</span></div>
+<pre><code class="bash" data-noescape="" data-trim="">$ git status | \
+    claude -p "what are my changes?" --output-format=json | \
+    jq '.result'</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">自動ロギング🙆‍♂️ <a class="footnote-reference brackets" href="#resume-continue" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">直前の会話の続きから再開<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong class="command">claude --resume</strong></p>
+</dd>
+<dt class="field-even">これまでの会話履歴から選んで再開<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong class="command">claude --continue</strong></p>
+</dd>
+</dl>
+<p><a class="reference external" href="https://docs.claude.com/en/docs/claude-code/cli-reference#cli-flags" rel="noreferrer" target="_blank">CLI flags</a></p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="resume-continue" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id13" role="doc-backlink">4</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/claude-code-tips-print-then-continue-or-resume" rel="noreferrer" target="_blank">Claude Code に -p (--print) で質問した後、--continue や --resume から追加で質問できるぞ！</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">プラグインで <strong>拡張</strong> 🤔</h3>
+<p>llm-devin 爆誕と等価ではないかもしれないですが</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://geminicli.com/extensions/" rel="noreferrer" target="_blank">Gemini CLI Extensions</a></p></li>
+<li><p>Claude Code <a class="reference external" href="https://docs.claude.com/en/docs/claude-code/plugins" rel="noreferrer" target="_blank">Plugins</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">simonw/llmだけにできることは...？</h3>
+<p>実際私もClaude Code -&gt; Codex CLIと変遷しています（テノヒラクルクルー👋）</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">💡simonw/llmは <strong>RAG</strong> ができます！</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">RAG: Retrieval-Augmented Generation</h3>
+<ul class="simple">
+<li><p>LLMはある時点までの知識しかない（<em>カットオフ</em>）</p></li>
+<li><p>例えば、最新の話題（<a class="reference external" href="https://idolmaster-official.jp/live_event/million12th/" rel="noreferrer" target="_blank">先週のアイドルマスターのライブ</a>）には正確に回答できない</p></li>
+<li><p>解決するために、RAG（検索拡張生成）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">LLMのコンテキストに外部情報を追加</h3>
+<img alt="../_images/in-context-ralm-figure2.png" src="../_images/in-context-ralm-figure2.png"/>
+<p>論文「<a class="reference external" href="https://arxiv.org/abs/2302.00083" rel="noreferrer" target="_blank">In-Context Retrieval-Augmented Language Models</a>」Figure 2</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">LLMのコンテキストに外部情報を追加</h3>
+<img alt="../_images/naive-rag.drawio.png" src="../_images/naive-rag.drawio.png"/>
+<ul class="simple">
+<li><p>LLMはライブをもちろん知らないが、質問と合わせて例えば <strong>Web検索結果も与えられれば</strong> 回答できる <a class="footnote-reference brackets" href="#awesome-12th" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="awesome-12th" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id18" role="doc-backlink">5</a><span class="fn-bracket">]</span></span>
+<p>例えば <a class="reference external" href="https://note.com/gold_fish5029/n/n4501462d643a" rel="noreferrer" target="_blank">担当の主演公演を観て</a></p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">simonw/llmでRAG</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.idolmaster-anime.jp/" rel="noreferrer" target="_blank">劇場版アイドルマスター</a> についてLLMとおしゃべりします</p></li>
+<li><p>「<strong>もう時間がないんですか</strong>」</p></li>
+<li><p>劇中に「もう時間がないんです！」が登場するので、それを踏まえて回答してほしい</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">simonw/llmはembeddingを計算できる！</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://llm.datasette.io/en/stable/embeddings/cli.html" rel="noreferrer" target="_blank">Embedding with the CLI</a></p></li>
+<li><p>テキストを意味を保った <strong>ベクトル</strong> （embedding）に変換</p></li>
+<li><p>似た意味のテキストはembeddingのコサイン類似度が1に近い</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">embeddingを保存</h3>
+<pre data-id="embedding"><code class="bash" data-noescape="" data-trim="">$ uvx llm embed-multi oai-movimas movimas.jsonl \
+    -m text-embedding-3-small --format nl --store
+$ uvx llm collections list
+oai-movimas: text-embedding-3-small
+  1207 embeddings</code></pre>
+<p><a class="reference external" href="https://github.com/erutaso/THE-IDOL-MASTER-MOVIE" rel="noreferrer" target="_blank">劇場版のセリフ</a> を公開している方がいます</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">コサイン類似度で検索（＝意味検索） <a class="footnote-reference brackets" href="#llm-similar" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a></h3>
+<pre data-id="id20"><code class="bash" data-noescape="" data-trim="">$ # OPENAI_API_KEY
+$ uvx llm similar oai-movimas -c 'もう時間がないんですか' -n 4 | jq -c '.'
+{"id":"1045","score":0.4650222891995457,"content":"志保「もう時間が無いんです！　今進める人間だけでも進まないと、みんなダメになりますよ！？」","metadata":null}
+{"id":"954","score":0.42914991489215454,"content":"P「今からやれば十分間に合うわけだし、そう重く受け止めなくてもいいんじゃないか？」","metadata":null}
+{"id":"1072","score":0.418144028938804,"content":"P「だから、もう少しみんなに負担がない時期とか、やりようはあるとおも…」","metadata":null}
+{"id":"1192","score":0.41312547632270286,"content":"千早「まだ…見つかってないわ」","metadata":null}</code></pre>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="llm-similar" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id19" role="doc-backlink">6</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-support-text-embedding-cosine-similarity" rel="noreferrer" target="_blank">simonw/llm でコマンドラインからテキストを embedding にして、コサイン類似度計算までできる！</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">「もう時間がないんですか」💯</h3>
+<pre data-id="id21"><code class="bash" data-noescape="" data-trim="">$ echo "Use the following pieces of context to answer the user's question.
+If you don't know the answer, just say that you don't know, don't try to make up an answer.
+----------------
+$(uvx llm similar oai-movimas -c 'もう時間がないんですか' -n 4 | jq -r '.content')
+----------------
+Question: もう時間がないんですか" | uvx llm -
+はい、志保が「もう時間が無いんです！」と言っていますので、時間がない状況であることは確かです。</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯 ターミナルからLLMを！ simonw/llm の布教</h2>
+<ul class="simple">
+<li><p>パイプで繋げる！ 自動ロギング！ プラグインで拡張！</p></li>
+<li><p>しかし、昨今Claude CodeなどのCLIツールでもこれら機能は提供される</p></li>
+<li><p><strong>ナイーブなRAGができる</strong> という独自価値を今回明らかにした（<strong class="command">llm embed-multi</strong>・<strong class="command">llm similar</strong>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<p>Simon Willisonさん、素晴らしいツールをありがとう🫶</p>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

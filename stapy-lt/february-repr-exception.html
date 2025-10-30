@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Pythonの組み込み例外の小話</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/stapy-lt/february-repr-exception.html">
+    <meta property="og:title" content="Pythonの組み込み例外の小話">
+    <meta property="og:description" content="みんなのPython勉強会#112">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/stapy-lt-february.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">Pythonの組み込み例外の小話</h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>みんなのPython勉強会#112</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/02/13 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ</h2>
+<ul class="simple">
+<li><p>nikkie ／ みんなのPython勉強会 スタッフ・4代目LT王子</p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/" rel="noreferrer" target="_blank">ブログ</a> 連続 <strong>810</strong> 日突破</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Pythonの <strong>組み込み例外</strong> の小話</h3>
+<p>毎日書いてるブログ記事からご紹介</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">例外を出力するように実装</h2>
+<pre data-id="id3"><code class="python" data-noescape="" data-trim="">try:
+    外部との通信処理()
+except Exception as ex:
+    print(f"エラー発生: {ex}")</code></pre>
+<p>どのような具体の例外が送出されるか不明なので様子を見ていた</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">よっしゃ、どんなエラーか知るぞ！</h3>
+<pre data-id="id4"><code class="txt" data-noescape="" data-trim="">エラー発生:</code></pre>
+<ul class="simple">
+<li><p>エラーの情報が分からない😱</p></li>
+<li><p>俺みたいになるな！というLTです</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">📌 <code class="docutils literal notranslate"><span class="pre">{ex!r}</span></code> にしています</h3>
+<pre data-id="ex-r"><code class="python" data-line-numbers="4" data-noescape="" data-trim="">try:
+    外部との通信処理()
+except Exception as ex:
+    print(f"エラー発生: {ex!r}")</code></pre>
+<p>例外におすすめ！</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">{ex!r}</span></code> とはなにか</h2>
+<ul>
+<li><p><strong>変換</strong> （Conversion）なるもの（<a class="reference external" href="https://docs.python.org/ja/3/reference/lexical_analysis.html#formatted-string-literals" rel="noreferrer" target="_blank">2.4.3. f-strings</a>）</p>
+<blockquote>
+<div><p>変換 <code class="docutils literal notranslate"><span class="pre">'!s'</span></code> は <code class="docutils literal notranslate"><span class="pre">str()</span></code> を、 <code class="docutils literal notranslate"><span class="pre">'!r'</span></code> は <code class="docutils literal notranslate"><span class="pre">repr()</span></code> を、(略) 呼び出します。</p>
+</div></blockquote>
+</li>
+<li><p>変換を書かないときは <code class="docutils literal notranslate"><span class="pre">!s</span></code></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">返す文字列には違いがある</h3>
+<dl class="field-list simple">
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">str()</span></code><span class="colon">:</span></dt>
+<dd class="field-odd"><p>人間が読める表現</p>
+</dd>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">repr()</span></code><span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Python処理系</strong> が読める表現</p>
+</dd>
+</dl>
+<p>参考 <a class="reference external" href="https://docs.python.org/ja/3/tutorial/inputoutput.html#fancier-output-formatting" rel="noreferrer" target="_blank">7.1. 出力を見やすくフォーマットする</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">引数を渡さない例外とf-strings</h3>
+<pre data-id="f-strings"><code class="pycon" data-noescape="" data-trim="">&gt;&gt;&gt; ex = Exception()
+&gt;&gt;&gt; print(f"{ex}")
+
+&gt;&gt;&gt; print(f"{ex!r}")
+Exception()</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">基底クラス <a class="reference external" href="https://docs.python.org/ja/3/library/exceptions.html#BaseException" rel="noreferrer" target="_blank">BaseException</a></h3>
+<blockquote>
+<div><p>このクラスのインスタンスに <code class="docutils literal notranslate"><span class="pre">str()</span></code> が呼ばれた場合、インスタンスへの引数の表現か、 <strong>引数が無い場合には空文字列</strong> が返されます。</p>
+</div></blockquote>
+<p>（強調は引用者による）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">HTTPクライアント HTTPX にて</h3>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/encode/httpx/blob/0.28.1/httpx/_exceptions.py#L146" rel="noreferrer" target="_blank">https://github.com/encode/httpx/blob/0.28.1/httpx/_exceptions.py#L146</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">class ReadTimeout(TimeoutException):
+    """
+    Timed out while receiving data from the host.
+    """</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">参考： <code class="docutils literal notranslate"><span class="pre">ReadTimeout</span></code> の継承関係</h3>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/encode/httpx/blob/0.28.1/httpx/_exceptions.py#L4-L9" rel="noreferrer" target="_blank">https://github.com/encode/httpx/blob/0.28.1/httpx/_exceptions.py#L4-L9</a></span></div>
+<pre><code class="txt" data-noescape="" data-trim="">* HTTPError
+  x RequestError
+    + TransportError
+      - TimeoutException
+        · ReadTimeout</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">元のブログ記事</h3>
+<p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-exception-with-repr-recommendation" rel="noreferrer" target="_blank">Pythonで例外を文字列中に出力するときは、str()ではなくてrepr()に渡すのがオススメです</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯 f-stringsでは <code class="docutils literal notranslate"><span class="pre">{ex!r}</span></code></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">try</span> <span class="pre">...</span> <span class="pre">except</span></code> で例外を捕捉し出力するような場合</p></li>
+<li><p>例外は引数がないと <code class="docutils literal notranslate"><span class="pre">f"{ex}"</span></code> すなわち <code class="docutils literal notranslate"><span class="pre">str()</span></code> は空文字列</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">f"{ex!r}"</span></code> で <code class="docutils literal notranslate"><span class="pre">repr()</span></code> を呼び出すことで、 <strong>引数がない例外でもクラス名が表示される</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">One more 小話： <code class="docutils literal notranslate"><span class="pre">except</span> <span class="pre">Exception:</span></code></h3>
+<p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-except-specify-exception-or-more-concrete-one" rel="noreferrer" target="_blank">Pythonで例外を捕捉するときに、except:やexcept BaseException:と書いてはいけません。except Exception:またはもっと具体な例外クラスを指定しましょう</a></p>
+<p>その2までLTには盛り込めませんでした🙏</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<p>Happy <a class="reference external" href="https://youtu.be/jrXRStmE-to?si=Ihjnf6PwXc8g5bT2" rel="noreferrer" target="_blank">ショコラブル＊イブ</a> 🍫🔵</p>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

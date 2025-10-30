@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Pythonで Agent2Agent Protocol</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/stapy-lt/july-agent2agent.html">
+    <meta property="og:title" content="Pythonで Agent2Agent Protocol">
+    <meta property="og:description" content="みんなのPython勉強会#116">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/stapy-lt-july.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">Pythonで Agent2Agent Protocol</h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>みんなのPython勉強会#116</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/07/17 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">AI Agent <strong>どうし</strong> の話</h2>
+<blockquote>
+<div><p>(略) Agentic AI systems represent a paradigmatic shift marked by multi-agent collaboration, (略)</p>
+</div></blockquote>
+<p>論文「<a class="reference external" href="https://arxiv.org/abs/2505.10468" rel="noreferrer" target="_blank">AI Agents vs. Agentic AI: A Conceptual Taxonomy, Applications and Challenges</a>」によれば、単体のエージェントをAgentic AIとは呼びません</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">A2A、ご存知ですか？🙋</h3>
+<ul class="simple">
+<li><p>この <strong>4月</strong> のGoogle Cloud Next ‘25で発表</p></li>
+<li><p><a class="reference external" href="https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/" rel="noreferrer" target="_blank">Announcing the Agent2Agent Protocol (A2A)</a></p></li>
+<li><p>🏃‍♂️6月 <a class="reference external" href="https://developers.googleblog.com/en/google-cloud-donates-a2a-to-linux-foundation/" rel="noreferrer" target="_blank">Google Cloud donates A2A to Linux Foundation</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://a2aproject.github.io/A2A/latest/" rel="noreferrer" target="_blank">A2Aのページ</a> より</h3>
+<blockquote>
+<div><p>Build with ADK (or any framework), equip with MCP (or any tool), and communicate with A2A, to remote agents, local agents, and humans.</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">A2Aのコンセプト</h3>
+<ul class="simple">
+<li><p>フレームワーク（<a class="reference external" href="https://google.github.io/adk-docs/" rel="noreferrer" target="_blank">ADK</a> など）を使って、エージェントを構築</p></li>
+<li><p>エージェントに <strong>ツール</strong> を持たせる（MCP）</p></li>
+<li><p>A2Aでリモートエージェント、ローカルエージェント、 <em>人類</em> が <strong>やりとり</strong></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><strong>リモート</strong> エージェントと <strong>ローカル</strong> エージェント</h2>
+<a class="reference internal image-reference" href="../_images/Agent2Agent-announcement-how-works.png"><img alt="../_images/Agent2Agent-announcement-how-works.png" src="../_images/Agent2Agent-announcement-how-works.png" style="width: 499.75px; height: 355.5px;"/>
+</a>
+<p><a class="reference external" href="https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/" rel="noreferrer" target="_blank">Announcing the Agent2Agent Protocol (A2A)</a> より引用</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">サーバとクライアント</h3>
+<dl class="field-list simple">
+<dt class="field-odd">リモートエージェント<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A2Aサーバ</p>
+</dd>
+<dt class="field-even">ローカルエージェント<span class="colon">:</span></dt>
+<dd class="field-even"><p>A2Aクライアント</p>
+</dd>
+</dl>
+<p><strong>HTTP</strong> でやり取り</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">A2Aサーバの実装</h3>
+<ul>
+<li><p><cite>GET /.well-known/agent.json</cite></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://a2aproject.github.io/A2A/latest/specification/#5-agent-discovery-the-agent-card" rel="noreferrer" target="_blank">Agent Card</a> 公開</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><cite>POST /</cite> （※Agent Cardに記載）</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>JSON RPCでクライアントから呼び出す</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="file docutils literal notranslate"><span class="pre">agent.json</span></code> （抜粋）</h3>
+<pre data-id="agent-json"><code class="json" data-noescape="" data-trim="">{
+  "name": "Hello World Agent",
+  "description": "Just a hello world agent",
+  "url": "http://localhost:9999/",
+  "skills": [
+    {
+      "description": "just returns hello world",
+      "examples": [
+        "hi",
+        "hello world"
+      ],
+      "id": "hello_world",
+      "name": "Returns hello world",
+      "tags": [
+        "hello world"
+      ]
+    }
+  ]
+}</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">JSON RPC</h3>
+<pre data-id="json-rpc"><code class="bash" data-noescape="" data-trim="">% curl http://0.0.0.0:9999/ --json '{"id": 1, "jsonrpc": "2.0", "method": "message/send", "params": {"message": {"role": "user", "parts": [{"kind": "text", "text": "Hi"}], "messageId": "abc"}}}'
+{"id":1,"jsonrpc":"2.0","result":{"kind":"message","messageId":"13c44c32-1fcf-4d27-a3c5-d5fd46583390","parts":[{"kind":"text","text":"Hello World"}],"role":"agent"}}</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">a2a-sdk</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pypi.org/project/a2a-sdk/" rel="noreferrer" target="_blank">https://pypi.org/project/a2a-sdk/</a></p></li>
+<li><p>PythonでA2Aサーバ・クライアントの実装例（フレームワーク非依存）</p></li>
+<li><p>Hello World サンプル：<a class="reference external" href="https://github.com/a2aproject/a2a-samples/tree/main/samples/python/agents/helloworld" rel="noreferrer" target="_blank">https://github.com/a2aproject/a2a-samples/tree/main/samples/python/agents/helloworld</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Hello World エージェントとA2A</h3>
+<ul class="simple">
+<li><p>リモート：Hello World （a2a-sdk実装）</p></li>
+<li><p>ローカル：<em>人</em> （ADKでつなぎこみ）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ADK: Agent Development Kit</h3>
+<blockquote>
+<div><p>Add A2A support as experimental features (<a class="reference external" href="https://github.com/google/adk-python/releases/tag/v1.6.1" rel="noreferrer" target="_blank">1.6.1</a>)</p>
+</div></blockquote>
+<pre data-id="adk-agent-development-kit"><code class="python" data-noescape="" data-trim="">root_agent = RemoteA2aAgent(
+    name="Hello_World_Agent",
+    agent_card="http://0.0.0.0:9999/.well-known/agent.json",
+)</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ：ローカル（人）からリモートにメッセージを送信</h3>
+<img alt="../_images/A2A-hello-world.png" src="../_images/A2A-hello-world.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ：ローカル（人）からリモートにメッセージを送信</h3>
+<dl class="field-list simple">
+<dt class="field-odd">A2Aサーバ<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong class="command">uv run .</strong> (<a class="reference external" href="https://github.com/a2aproject/a2a-samples/tree/72e5fff85524e8af1f44cbf1c87b9a2424a7c3da/samples/python/agents/helloworld" rel="noreferrer" target="_blank">a2a-samples の Hello World</a>)</p>
+</dd>
+<dt class="field-even">A2Aクライアント<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong class="command">uvx --from 'google-adk[a2a]' adk web</strong> (<a class="reference external" href="https://github.com/ftnext/a2a-practice/tree/d73447b8b5fad7194596bf3c0f02d42dc33ca7f2/a2a-samples/helloworld/call_from_adk" rel="noreferrer" target="_blank">call_from_adk</a> agent)</p>
+</dd>
+</dl>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ：ローカル（人）からリモートにメッセージを送信</h3>
+<ul class="simple">
+<li><p>今回はメッセージに絞ってますが、<em>タスク</em> という概念があります（時間のかかる処理らしい）</p></li>
+<li><p>積ん読リストより <a class="reference external" href="https://azukiazusa.dev/blog/ai-a2a-protocol/" rel="noreferrer" target="_blank">AI エージェントの連携を標準化する A2A プロトコルを試してみる</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><strong>プロトコル</strong> ということは</h2>
+<ul class="simple">
+<li><p>フレームワークによらない</p></li>
+<li><p>プログラミング言語によらない（Python以外）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">a2a-sdkを使わない例</h3>
+<ul class="simple">
+<li><p>リモート：オウム返し（<strong>FastAPI</strong> 実装）</p></li>
+<li><p>ローカル：人（ADKでつなぎこみ）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">A2Aに則るので、メッセージをやり取りできます！</h3>
+<pre data-id="id10"><code class="bash" data-noescape="" data-trim="">% curl http://0.0.0.0:9999/ --json '{"id": 1, "jsonrpc": "2.0", "method": "message/send", "params": {"message": {"role": "user", "parts": [{"kind": "text", "text": "Hi"}], "messageId": "abc"}}}'
+{"id":1,"jsonrpc":"2.0","result":{"kind":"message","messageId":"4d1dfebee3af46c8b2c726074de3b536","parts":[{"kind":"text","text":"Hi"}],"role":"agent"}}</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ：a2a-sdkを使わない例</h3>
+<img alt="../_images/A2A-parrot.png" src="../_images/A2A-parrot.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ：a2a-sdkを使わない例</h3>
+<dl class="field-list simple">
+<dt class="field-odd">A2Aサーバ<span class="colon">:</span></dt>
+<dd class="field-odd"><p>uv run <a class="reference external" href="https://github.com/ftnext/a2a-practice/blob/d73447b8b5fad7194596bf3c0f02d42dc33ca7f2/a2a-samples/helloworld/minimum_server.py" rel="noreferrer" target="_blank">minimum_server.py</a></p>
+</dd>
+<dt class="field-even">A2Aクライアント<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong class="command">uvx --from 'google-adk[a2a]' adk web</strong> (<a class="reference external" href="https://github.com/ftnext/a2a-practice/tree/d73447b8b5fad7194596bf3c0f02d42dc33ca7f2/a2a-samples/helloworld/call_from_adk" rel="noreferrer" target="_blank">call_from_adk</a>)（再掲）</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯：Pythonで Agent2Agent Protocol</h2>
+<ul class="simple">
+<li><p>A2Aは <strong>リモートエージェント</strong> と <strong>ローカルエージェント</strong> のやり取りのためのプロトコル</p></li>
+<li><p>Pythonには a2a-sdk がある</p></li>
+<li><p>ADKなどフレームワークでもサポートが進む（<a class="reference external" href="https://ai.pydantic.dev/a2a/" rel="noreferrer" target="_blank">PydanticAI</a>）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">以上、nikkie（にっきー）でした！</h2>
+<ul class="simple">
+<li><p>機械学習エンジニア・<a class="reference external" href="https://www.uzabase.com/jp/info/20250630/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p>みんなのPython勉強会 スタッフ・4代目LT王子</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+<p>Thank you for your attention!</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Appendix（拙ブログ記事）</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/agent2agent-protocol-sample-hello-world-python-server-and-client" rel="noreferrer" target="_blank">a2a-samplesのPython Hello World Exampleを動かす</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/a2a-hello-world-sample-try-compatible-fastapi-implementation" rel="noreferrer" target="_blank">Hello World Example相当のA2AサーバをFastAPIで再現する</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/google-adk-161-experimental-a2a-support-remotea2aagent-practice" rel="noreferrer" target="_blank">Agent Development Kit 1.6.1 でA2Aが実験的にサポートされました！その中の RemoteA2AAgent を触る</a></p></li>
+</ul>
+</section>
+</section>
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>
