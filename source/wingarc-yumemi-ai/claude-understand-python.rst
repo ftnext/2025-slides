@@ -159,6 +159,88 @@ EditまたはWriteでPythonファイルを書いたら
 デモ
 ======================================================================
 
+    エラトステネスの篩をPythonで書いて
+
+.. revealjs-break::
+    :notitle:
+
+.. code-block:: console
+
+    ⎿ PostToolUse:Write hook returned blocking error: [jq -r 
+        '.tool_input.file_path' | { read file_path; if echo "$file_path"
+        | grep -q '\.py$'; then 
+        "$CLAUDE_PROJECT_DIR"/.claude/hooks/python_format.sh 
+        "$file_path"; fi; }]: cmd [1] | ruff check --config 
+        '/.../hatch/env/.internal/
+        hatch-static-analysis/.config/ukmfGEkg/ruff_defaults.toml' --fix
+        /.../claude-code-harness
+        /sieve_of_eratosthenes.py
+        sieve_of_eratosthenes.py:11:12: PLR2004 Magic value used in 
+        comparison, consider replacing `2` with a constant variable
+        sieve_of_eratosthenes.py:27:12: RET504 Unnecessary assignment to
+        `primes` before `return` statement
+        sieve_of_eratosthenes.py:35:5: T201 `print` found
+        sieve_of_eratosthenes.py:36:5: T201 `print` found
+        sieve_of_eratosthenes.py:37:5: T201 `print` found
+        Found 5 errors.
+        No fixes available (4 hidden fixes can be enabled with the 
+        `--unsafe-fixes` option).
+
+
+    ⏺ Pythonのlintエラーが  08:24 PM  claude-sonnet-4-5-20250929
+    検出されました。修正
+    します。
+
+.. revealjs-break::
+    :notitle:
+
+.. code-block:: python
+    :caption: 当日生成された :file:`sieve_of_eratosthenes.py`
+
+    MINIMUM_PRIME = 2
+
+
+    def sieve_of_eratosthenes(n):
+        """
+        エラトステネスの篩を使って、n以下の素数を全て求める
+
+        Args:
+            n: 上限値
+
+        Returns:
+            n以下の素数のリスト
+        """
+        if n < MINIMUM_PRIME:
+            return []
+
+        # 最初は全ての数を素数候補とする
+        is_prime = [True] * (n + 1)
+        is_prime[0] = is_prime[1] = False  # 0と1は素数ではない
+
+        # 2からsqrt(n)まで処理
+        for i in range(MINIMUM_PRIME, int(n**0.5) + 1):
+            if is_prime[i]:
+                # iの倍数を全て合成数としてマーク
+                for j in range(i * i, n + 1, i):
+                    is_prime[j] = False
+
+        # 素数のリストを作成して返す
+        return [i for i in range(n + 1) if is_prime[i]]
+
+
+    # 使用例
+    def main():
+        # 100以下の素数を求める
+        n = 100
+        primes = sieve_of_eratosthenes(n)
+        print(f"{n}以下の素数:")  # noqa: T201
+        print(primes)  # noqa: T201
+        print(f"\n素数の個数: {len(primes)}")  # noqa: T201
+
+
+    if __name__ == "__main__":
+        main()
+
 時間があったら話すコンテンツ
 ======================================================================
 
