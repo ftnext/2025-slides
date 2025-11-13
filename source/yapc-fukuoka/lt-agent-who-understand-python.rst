@@ -2,6 +2,14 @@
 Pythonを"理解"しているコーディングエージェントが欲しい！！
 ======================================================================
 
+デモ準備
+======================================================================
+
+* /plugin disable （/hooks ローカルだけに）
+* 過去に作ったスクリプトは消す
+* PS1
+* tree -a
+
 Pythonを"理解"しているコーディングエージェントが欲しい！！
 ======================================================================
 
@@ -39,7 +47,7 @@ Pythonを"理解"しているコーディングエージェントが欲しい！
 でも、Pythonのこと分かってます？
 ---------------------------------------------------
 
-ClaudeがPythonを理解しているようには見えないんです
+ClaudeがPythonを **理解しているようには見えない** んです
 
 分かっていない一例：f-string
 ---------------------------------------------------
@@ -68,7 +76,7 @@ ClaudeがPythonを理解しているようには見えないんです
 ---------------------------------------------------
 
 .. code-block:: python
-    :caption: f-stringの代わりに%-format
+    :caption: f-stringの代わりに%-formatと **使い分け**
 
     logger.info("%s - Something happened", user)
     logger.error("Python version: %s", sys.version)
@@ -94,7 +102,7 @@ Claude Codeの **フック** を設定
 
     エラトステネスの篩をPythonで書いて
 
-配布しています
+配布しています [#prerequisite]_
 ---------------------------------------------------
 
 .. code-block:: shell
@@ -103,6 +111,8 @@ Claude Codeの **フック** を設定
     /plugin install opinionated-python-hook@nikkie-marketplace
 
 https://github.com/ftnext/claude-code
+
+.. [#prerequisite] uvが必要です https://docs.astral.sh/uv/getting-started/installation/
 
 .. サブエージェントの余地？
 
@@ -120,4 +130,74 @@ https://github.com/ftnext/claude-code
 
 .. image:: ../_static/uzabase-white-logo.png
 
-.. Appendix 自走について先行発表
+Appendix
+======================================================================
+
+* 逃がさないフック設定詳細
+* 自走について先行発表
+
+Claude Codeのフック設定
+======================================================================
+
+概要
+
+* Pythonを書いたら＝PostToolUse
+* フックの終了コードは2、標準エラー出力へ
+
+ローカルのプロジェクトに設定
+---------------------------------------------------
+
+.. code-block:: text
+
+    .claude/
+    ├── hooks/
+    │   └── python_format.sh
+    └── settings.local.json
+
+PostToolUseフック
+---------------------------------------------------
+
+EditまたはWriteでPythonファイルを書いたら
+
+.. literalinclude:: ../../samplecode/claude-code-harness/.claude/settings.local.json
+    :language: json
+
+:file:`python_format.sh`
+---------------------------------------------------
+
+.. literalinclude:: ../../samplecode/claude-code-harness/.claude/hooks/python_format.sh
+    :language: bash
+
+フックのエラーメッセージをClaudeに見せるために
+---------------------------------------------------
+
+* :file:`python_format.sh` の終了コードを **2** にする（Claude Codeをブロック）
+* ``hatch fmt`` の出力を **stderr** へ（Claudeが見る）
+
+リファレンスの「`Hook出力 <https://docs.claude.com/ja/docs/claude-code/hooks#hook%E5%87%BA%E5%8A%9B>`__」参照 [#claude_code_hook_article]_
+
+.. [#claude_code_hook_article] 拙ブログ `フックでリンタ（hatch fmt）のエラーを Claude Code に見せて、Python を理解している実装をさせる <https://nikkie-ftnext.hatenablog.com/entry/claude-code-hooks-run-hatch-fmt-good-python-code>`__
+
+コーディングエージェントの自走
+======================================================================
+
+先行する発表
+
+AI Coding Agent Enablement in TypeScript
+--------------------------------------------------
+
+.. raw:: html
+
+    <iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/1b717ecfee8a4833a8ac0999900753d5?slide=29" title="AI Coding Agent Enablement in TypeScript" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+.. https://nikkie-ftnext.hatenablog.com/entry/generative-ai-programming-with-fast-linter-python-case-ruff-ast-grep
+
+関数型でTypeScriptを書かせる試み
+--------------------------------------------------
+
+.. raw:: html
+
+    <iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/baf1965843b549f49f31703cc697b5b6?slide=1" title="LintのみでAIに開発スタイルを叩き込めるのか？" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+EOF
+===
