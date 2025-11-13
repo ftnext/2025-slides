@@ -143,7 +143,7 @@ EditまたはWriteでPythonファイルを書いたら
 :file:`python_format.sh`
 ---------------------------------------------------
 
-.. literalinclude:: ../../samplecode/claude-code-harness/.claude/hooks/python_format.sh
+.. literalinclude:: ../../samplecode/claude-code-harness/.claude/hooks/python_format_v0.sh
     :language: bash
 
 フックのエラーメッセージをClaudeに見せるために
