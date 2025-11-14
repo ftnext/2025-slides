@@ -1,3 +1,9 @@
+:ogp_title: Pythonを"理解"しているコーディングエージェントが欲しい！！
+:ogp_event_name: yapc-fukuoka
+:ogp_slide_name: lt-agent-who-understand-python
+:ogp_description: YAPC::Fukuoka 2025 企画LT「あなたが本気で欲しいAI Agent」
+:ogp_image_name: yapc-fukuoka
+
 ======================================================================
 Pythonを"理解"しているコーディングエージェントが欲しい！！
 ======================================================================
