@@ -18,13 +18,6 @@ Pythonを"理解"しているコーディングエージェントが欲しい！
 :Event: YAPC::Fukuoka 企画LT「あなたが本気で欲しいAI Agent」
 :Presented: 2025/11/14 nikkie
 
-お久しぶりです（2022年OnlineのLT）
-======================================================================
-
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/bV8dm4I9148?si=azj1mdtKYf9w-ATR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
 コーディングエージェント
 ======================================================================
 
@@ -102,6 +95,8 @@ Claude Codeの **フック** を設定
 
     エラトステネスの篩をPythonで書いて
 
+Claude Code v2.0.37
+
 配布しています [#prerequisite]_
 ---------------------------------------------------
 
@@ -114,7 +109,14 @@ https://github.com/ftnext/claude-code
 
 .. [#prerequisite] uvが必要です https://docs.astral.sh/uv/getting-started/installation/
 
-.. サブエージェントの余地？
+💡サブエージェントの出番では
+---------------------------------------------------
+
+* **Pythonを書くサブエージェント** を用意した（`設定例 <https://github.com/ftnext/2025-slides/tree/5341f0021698527deea5195184aa69ebc9765a87/samplecode/claude-code-harness-v2/.claude>`__）
+* メインの Claude Code のコンテキストにリントエラーとその修正過程は不要
+* サブエージェントがPythonを書いた後、フックのリントエラーを見て修正していって *そう* [#apologies]_
+
+.. [#apologies] 動作の様子からの判断です。ドキュメントの裏とり間に合わず🙏
 
 まとめ🌯 Pythonを"理解"しているコーディングエージェントが欲しい！！
 ======================================================================
@@ -125,7 +127,7 @@ https://github.com/ftnext/claude-code
 ご清聴ありがとうございました
 --------------------------------------------------
 
-* nikkie（にっきー）・Python使い・:fab:`github` `@ftnext <https://github.com/ftnext>`__
+* nikkie（にっきー）・Python使い・:fab:`github` `@ftnext <https://github.com/ftnext>`__ `sphinx-deck <https://github.com/ftnext/sphinx-deck>`__ など
 * 機械学習エンジニア。 `Speeda AI Agent <https://www.uzabase.com/jp/info/20250901/>`__ 開発（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
 
 .. image:: ../_static/uzabase-white-logo.png
