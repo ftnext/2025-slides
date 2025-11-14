@@ -103,6 +103,90 @@ Claude Codeの **フック** を設定
 
 Claude Code v2.0.37
 
+追記：応援ありがとうございました
+---------------------------------------------------
+
+.. code-block:: txt
+    :caption: 本番アドリブの3往復
+
+    > エラトステネスの篩をPythonで書いて
+    ⏺ エラトステネスの篩をPythonで実装します。
+
+    > いいね、ファイルに書いてみよっか
+    ⏺ ファイルに書き込みます。どのファイル名にしますか？例えば sieve_of_eratosthenes.py などでしょうか？
+
+    > それで
+    ⏺ わかりました。sieve_of_eratosthenes.py として保存します。
+
+セッション全体 https://gist.github.com/ftnext/58d17133b3b282831f136864ac770c28
+
+追記：フックの様子
+---------------------------------------------------
+
+.. code-block:: txt
+
+    ⎿ PostToolUse:Write hook returned blocking error: [jq -r '.tool_input.file_path' | { read file_path; if echo "$file_path" | grep -q 
+        '\.py$'; then "$CLAUDE_PROJECT_DIR"/.claude/hooks/python_format.sh "$file_path"; fi; }]: cmd [1] | ruff check --config 
+        '/.../hatch/env/.internal/hatch-static-analysis/.config/ukmfGEkg/ruff_defaults.toml' --fix 
+        /.../2025-slides/samplecode/claude-code-harness/sieve_of_eratosthenes.py
+        sieve_of_eratosthenes.py:11:12: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+        sieve_of_eratosthenes.py:14:20: RUF003 Comment contains ambiguous `（` (FULLWIDTH LEFT PARENTHESIS). Did you mean `(` (LEFT 
+        PARENTHESIS)?
+        sieve_of_eratosthenes.py:14:25: RUF003 Comment contains ambiguous `）` (FULLWIDTH RIGHT PARENTHESIS). Did you mean `)` (RIGHT 
+        PARENTHESIS)?
+        sieve_of_eratosthenes.py:27:12: RET504 Unnecessary assignment to `primes` before `return` statement
+        sieve_of_eratosthenes.py:34:5: T201 `print` found
+        sieve_of_eratosthenes.py:35:5: T201 `print` found
+        Found 6 errors.
+        No fixes available (3 hidden fixes can be enabled with the `--unsafe-fixes` option).
+
+    ⏺ ruffのチェックでいくつかエラーが出ているので、修正します。
+
+追記：リントをパスしたエラトステネスの篩
+---------------------------------------------------
+
+.. code-block:: python
+
+    MIN_PRIME = 2
+
+
+    def sieve_of_eratosthenes(n):
+        """
+        エラトステネスの篩を使ってn以下の素数を求める
+
+        Args:
+            n: 素数を求める上限値
+
+        Returns:
+            n以下の素数のリスト
+        """
+        if n < MIN_PRIME:
+            return []
+
+        # 最初は全てTrueで初期化(素数候補)
+        is_prime = [True] * (n + 1)
+        is_prime[0] = is_prime[1] = False  # 0と1は素数ではない
+
+        # 2からsqrt(n)まで処理
+        for i in range(MIN_PRIME, int(n**0.5) + 1):
+            if is_prime[i]:
+                # iの倍数を全て合成数としてマーク
+                for j in range(i * i, n + 1, i):
+                    is_prime[j] = False
+
+        # 素数のリストを生成
+        return [i for i in range(n + 1) if is_prime[i]]
+
+
+    # 使用例
+    if __name__ == "__main__":
+        import sys
+
+        n = 100
+        primes = sieve_of_eratosthenes(n)
+        sys.stdout.write(f"{n}以下の素数: {primes}\n")
+        sys.stdout.write(f"個数: {len(primes)}\n")
+
 配布しています [#prerequisite]_
 ---------------------------------------------------
 
