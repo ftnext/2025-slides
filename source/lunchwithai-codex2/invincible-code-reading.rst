@@ -1,3 +1,9 @@
+:ogp_title: Codex CLIで加速するコードリーディング
+:ogp_event_name: lunchwithai-codex2
+:ogp_slide_name: invincible-code-reading
+:ogp_description: 爆速開発LT：Codex編 Vol.2
+:ogp_image_name: lunchwithai-codex2
+
 ======================================================================
 Codex CLIで **加速** するコードリーディング
 ======================================================================
