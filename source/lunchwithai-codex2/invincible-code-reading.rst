@@ -8,16 +8,17 @@
 Codex CLIで **加速** するコードリーディング
 ======================================================================
 
-:Event: 爆速開発LT：Codex編 Vol.2
-:Presented: 2025/11/26 nikkie
+:Event: 爆速開発LT：Codex編 Vol.2 ``#Lancers_AI_LT``
+:Presented: 2025/11/26 nikkie（スライド **スクショOK**）
 
 お前、誰よ？（**Python使い** の自己紹介）
 ======================================================================
 
 * nikkie（にっきー） @ftnext
 * 好きなことは、Python製ライブラリのソースコードを読むこと
+* コーディングエージェントに対して強い **思想** を持つ
 
-コンテキスト、教えて？（10月発表）
+思想1：コンテキスト、教えて？（10月発表）
 ------------------------------------------------------------
 
 .. raw:: html
@@ -25,7 +26,7 @@ Codex CLIで **加速** するコードリーディング
     <iframe width="800" height="480" src="https://ftnext.github.io/2025-slides/aidd-codex1/codex-rs-telemetry.html#/4"
         title="ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？"></iframe>
 
-フックでClaude Code自走（11月発表）
+思想2：フックでClaude Code自走（11月発表）
 ------------------------------------------------------------
 
 .. raw:: html
@@ -33,7 +34,7 @@ Codex CLIで **加速** するコードリーディング
     <iframe width="800" height="480" src="https://ftnext.github.io/2025-slides/yapc-fukuoka/lt-agent-who-understand-python.html#/4"
         title="Pythonを'理解'しているコーディングエージェントが欲しい！！"></iframe>
 
-お前、誰よ？
+お前、誰よ？（続き）
 ------------------------------------------------------------
 
 * 機械学習エンジニア・LLM・自然言語処理（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
@@ -61,7 +62,7 @@ Codex CLIで **加速** するコードリーディング
 こいつ、できる
 ------------------------------------------------------------
 
-* codex-rsにOTel計装のためのlogfireを追加（10月登壇ネタ）したらビルドエラー
+* codex-rsにOTel計装のための `logfire <https://crates.io/crates/logfire>`__ を追加（10月登壇ネタ）したらビルドエラー
 * Codex CLIが **インストールされたlogfireのソースを読んで** 解決
 
 読める、読めるぞ！
@@ -86,24 +87,24 @@ Codex CLIで **加速** するコードリーディング
 
 .. [#brew_codex] Homebrewでアップデートできなかった際に救われた：`CodexのHomebrewアップグレードが効かない件──原因と対処、そしてnpm版への移行について <https://gri.jp/media/entry/37479>`__
 
-調査依頼例
+調査依頼例 [#other_prompts]_
 ------------------------------------------------------------
 
     OpenAI Codexのリポジトリです。 codex-rs/ 下からデフォルトのモデルはどう決まっているかまず教えてください
 
+.. [#other_prompts] Appendixを参照ください
+
 調査中のCodex CLIの表示
 ------------------------------------------------------------
 
-* List
-* Search
-* Read
+.. image:: ../_static/lunchwithai-codex2/codex-screen.png
 
 何をしている？
 
 セッション履歴
 ------------------------------------------------------------
 
-* :file:`~/.codex/sessions` に `resume <https://developers.openai.com/codex/cli/reference/#codex-resume>`__ に使う **JSON Lines** がある
+* :file:`~/.codex/sessions` に `resume <https://developers.openai.com/codex/cli/reference/#codex-resume>`__ に使う **JSON Lines** がある [#session_file_name]_
 
 .. ~/.codex/sessions/2025/11/24/rollout-2025-11-24T08-24-32-019ab308-885d-77d3-859c-7c32c9db9416.jsonl
 
@@ -112,6 +113,8 @@ Codex CLIで **加速** するコードリーディング
     {"payload":{"type":"reasoning","summary":[{"type":"summary_text","text":"**Planning search for default model**"}],"content":null}}
     {"payload":{"type":"function_call","name":"shell_command","arguments":"{\"command\":\"ls\",\"workdir\":\"/.../openai-codex\"}","call_id":"call_Twy3ilTyWGpBGYlOS46CmYj6"}}
     {"payload":{"type":"function_call_output","call_id":"call_Twy3ilTyWGpBGYlOS46CmYj6","output":"Exit code: 0\nWall time: 0 seconds\nOutput:\nAGENTS.md\nCHANGELOG.md\nLICENSE\nNOTICE\nPNPM.md\nREADME.md\ncliff.toml\ncodex-cli\ncodex-rs\ndocs\nflake.lock\nflake.nix\npackage.json\npnpm-lock.yaml\npnpm-workspace.yaml\nscripts\nsdk\nshell-tool-mcp\n"}}
+
+.. [#session_file_name] https://github.com/openai/codex/blob/rust-v0.63.0/codex-rs/core/src/rollout/recorder.rs#L315-L333
 
 実は **シェルコマンドのみ**
 ------------------------------------------------------------
@@ -134,9 +137,9 @@ Codex CLIの中のLLMの気持ち
 要は **調べ方を分かっている** ということ
 ------------------------------------------------------------
 
-* ``ls`` から始めてディレクトリ構造を掴む
-* ``rg -n`` で該当する可能性のあるファイル群を掴む
-* 中身を確認（``sed -n '1,200p'``）
+* :command:`ls` から始めてディレクトリ構造を掴む
+* :command:`rg` で該当する可能性のあるファイル群を掴む
+* 中身を確認（:command:`sed -n '1,200p'`）
 * List, Search, Readを繰り返す
 
 Listの例
@@ -267,3 +270,22 @@ Gemini CLI
 ------------------------------------------------------------
 
 Enjoy code reading with Codex!
+
+Appendixが続きます
+
+他の依頼事項
+------------------------------------------------------------
+
+* OpenAI Codexのソースコードが codex-rs 下にあります。codexを使うと、$HOME/.codex/sessions/yyyy/mm/dd にJSONLファイルができているのですが、これはどのような処理で作られていますか？
+* OpenAIのCodex CLIのリポジトリです。Sessionについて、OpenAIのエンドポイントにどのようなリクエストを送っているかを知りたいです。codex-rs/下にある実装を調査してください
+* OpenAI Code CLIの実装が codex-rs/ 下にあります。Slash commandの中の/mentionってどんな実装ですか？
+
+実装を見て同意見です
+------------------------------------------------------------
+
+.. raw:: html
+
+    <blockquote class="twitter-tweet" data-lang="ja" data-dnt="true"><p lang="ja" dir="ltr">ここ数日、敢えてGemini 3だけで生活してみたけどまだ同じ感想です。<br>前と比べるとかなり良くなってるのは事実なんだけど、それでもなんか『勢いに任せて玉石混交の情報をぶちまけてるだけ』というのが変わってない。<br>GPTが『賢い』のに対してGeminiは『賢い情報も含んでる』みたいな感じ。… <a href="https://t.co/5hcT1n0XCA">https://t.co/5hcT1n0XCA</a></p>&mdash; 炎鎮🔥 - ₿onochin - (@super_bonochin) <a href="https://twitter.com/super_bonochin/status/1992832807283130798?ref_src=twsrc%5Etfw">2025年11月24日</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+EOF
+===
