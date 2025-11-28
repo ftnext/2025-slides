@@ -1,3 +1,9 @@
+:ogp_title: fzfと履歴の話
+:ogp_event_name: terminal-night1
+:ogp_slide_name: fzf-happy-history
+:ogp_description: Terminal Night #1
+:ogp_image_name: terminal-night1
+
 ======================================================================
 fzfと履歴の話
 ======================================================================
