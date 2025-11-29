@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>クイズでお祝い！ みんなのPython勉強会10周年</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/stapy-may-10th/celebration-quiz.html">
+    <meta property="og:title" content="クイズでお祝い！ みんなのPython勉強会10周年">
+    <meta property="og:description" content="みんなのPython勉強会#114">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/stapy-may-10th.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">クイズでお祝い！ みんなのPython勉強会10周年</h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>みんなのPython勉強会#114</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/05/30 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">クイズの時間だあああああああああ</h2>
+<ul>
+<li><p>皆さまいつもご参加ありがとうございます！</p></li>
+<li><p><strong>参加型のstapyクイズ</strong> を実施します</p>
+<blockquote>
+<div><p>参加者数の推移や反響が大きかった発表などから出題します。(connpass参照)</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">出題者、誰よ？</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー） ／ みんなのPython勉強会 <strong>スタッフ</strong></p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/" rel="noreferrer" target="_blank">ブログ</a> 連続 920日突破</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">私とstapy</h3>
+<ul>
+<li><p>初参加は <strong>2018年1月</strong> <a class="reference external" href="https://startpython.connpass.com/event/73165/" rel="noreferrer" target="_blank">みんなのPython勉強会#31</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>そのときの <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/2018/01/11/001445" rel="noreferrer" target="_blank">レポートブログ</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>その年の <a class="reference external" href="https://startpython.connpass.com/event/92358/" rel="noreferrer" target="_blank">9月（#38）</a> で4代目LT王子🤴襲名</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">4択クイズです！</h2>
+<p>鉛筆コロコロ🎲Pythonスクリプトも用意しました</p>
+<p><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext/2025-slides/blob/main/samplecode/quiz/app.py" rel="noreferrer" target="_blank">quiz/app.py</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">本トークわずかのPython要素</h3>
+<div class="literal-block-wrapper docutils container" id="id37">
+<div class="code-block-caption"><span class="caption-text">quiz/app.py</span></div>
+<pre><code class="python" data-noescape="" data-trim=""># /// script
+# requires-python = "&gt;=3.11"
+# dependencies = [
+#     "rich",
+# ]
+# ///
+</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Inline script metadata (PEP 723)</h3>
+<ul class="simple">
+<li><p><strong class="command">uv run app.py</strong> や <strong class="command">pipx run app.py</strong></p></li>
+<li><p>Pythonスクリプトに必要な仮想環境をツールにおまかせできるんです！（<a class="reference external" href="https://2024.pycon.jp/ja/talk/89F3RQ" rel="noreferrer" target="_blank">PyCon JP 2024</a> で話しました）</p></li>
+<li><p>10年前と比べて <strong>超便利</strong> になってます。全人類使ってくれ〜📣</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">手元で鉛筆転がしたい方へ</h3>
+<pre data-id="id4"><code class="bash" data-noescape="" data-trim="">uv run https://raw.githubusercontent.com/ftnext/2025-slides/refs/heads/main/samplecode/quiz/app.py</code></pre>
+<pre data-id="id4"><code class="bash" data-noescape="" data-trim="">pipx run https://raw.githubusercontent.com/ftnext/2025-slides/refs/heads/main/samplecode/quiz/app.py</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">💬より手軽な方法（当日コメントより）</h3>
+<pre data-id="id5"><code class="bash" data-noescape="" data-trim="">python -c "import random; print(random.choice('ABCD'))"</code></pre>
+<p>私は今回Richでコンソールアプリを作ってみたかったのです</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">それではクイズを始めます！</h2>
+<ul class="simple">
+<li><p>4択クイズ 全8問です。<strong>お手元で計数</strong> ください🙏</p></li>
+<li><p>Zoomのチャット欄やTwitter #stapy への投稿もよければどうぞ</p></li>
+<li><p>現地参加者限定で成績上位者にPython書籍プレゼント！</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">AIを使っても大丈夫です</h3>
+<ul class="simple">
+<li><p>GPT + Web search / Claude + Web search</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">第1問</h3>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">いま何回目？</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">いま何回目？</h3>
+<ol class="upperalpha simple">
+<li><p>114</p></li>
+<li><p>116</p></li>
+<li><p>118</p></li>
+<li><p>120</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">正解は <strong>A. 114</strong></h3>
+<p><a class="reference external" href="https://startpython.connpass.com/event/353837/" rel="noreferrer" target="_blank">https://startpython.connpass.com/event/353837/</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">o4-mini + Web searchさん 🙆‍♂️</h3>
+<img alt="../_images/o4-mini-web-search-q1.png" src="../_images/o4-mini-web-search-q1.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">第2問</h3>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">これまでのみんなのPython勉強会で、<strong>2回開催</strong> したナンバリングはどれ？</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">2回開催したナンバリングはどれ？</h3>
+<ol class="upperalpha simple">
+<li><p>33回目</p></li>
+<li><p>38回目</p></li>
+<li><p>43回目</p></li>
+<li><p>2回開催したことはない</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">o4-mini「D. 2回開催したことはない」、さて</h3>
+<img alt="../_images/o4-mini-web-search-q2.png" src="../_images/o4-mini-web-search-q2.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ヒントは時期</h3>
+<ol class="upperalpha simple">
+<li><p>33回目（春）</p></li>
+<li><p>38回目（夏）</p></li>
+<li><p>43回目（春）</p></li>
+<li><p>2回開催したことはない</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">正解は <strong>B. 38回目</strong></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://startpython.connpass.com/event/92356/" rel="noreferrer" target="_blank">2018年8月の #38</a> が台風で中止（<a class="reference external" href="https://weathernews.jp/onebox/typhoon/2018/13/" rel="noreferrer" target="_blank">サンサン</a>）</p></li>
+<li><p>翌 <a class="reference external" href="https://startpython.connpass.com/event/92358/" rel="noreferrer" target="_blank">9月に #38</a> を別の内容「秋の夜長のショートトーク会」で実施（<a class="reference external" href="https://www.youtube.com/live/9rAv0ejA9X0?si=Rvms9Qc5NEpXwLew" rel="noreferrer" target="_blank">アーカイブ</a>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">第3問</h3>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">2025年時点で、参加者最大を記録したのは何年？</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">参加者最大を記録したのは何年？</h3>
+<ol class="upperalpha simple">
+<li><p>2019年</p></li>
+<li><p>2020年</p></li>
+<li><p>2021年</p></li>
+<li><p>2022年</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">o4-mini「C. 2021年」</h3>
+<img alt="../_images/o4-mini-web-search-q3.png" src="../_images/o4-mini-web-search-q3.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">正解は <strong>B. 2020年</strong></h3>
+<ul>
+<li><p><a class="reference external" href="https://startpython.connpass.com/event/175455/" rel="noreferrer" target="_blank">2020年8月の #60</a> にて 595人参加 を記録（<a class="reference external" href="https://www.youtube.com/live/DVF1q6k4UfE?si=KmonTDcH3LY6K5P_" rel="noreferrer" target="_blank">アーカイブ</a>）</p>
+<blockquote>
+<div><p>マーケティングとデータアナリティクスとPython</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<p>コロナ禍で <strong>オンライン開催</strong> に移り、参加者が増えました</p>
+<img alt="../_images/stapy_participants.png" src="../_images/stapy_participants.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">第4問</h3>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">本日の発表者と司会の参加回数を合計して近い数字は？</h2>
+<ul class="simple">
+<li><p>司会：どいつまさん</p></li>
+<li><p>辻さん</p></li>
+<li><p>nikkie</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">3名の参加回数の合計に近い数字は？</h3>
+<ol class="upperalpha simple">
+<li><p>200</p></li>
+<li><p>210</p></li>
+<li><p>240</p></li>
+<li><p>300</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">o4-mini「D. 300」</h3>
+<p>connpassの <em>全イベント</em> 参加回数を集計</p>
+<img alt="../_images/o4-mini-web-search-q4.png" src="../_images/o4-mini-web-search-q4.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">正解は <strong>B. 210</strong></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://startpython.connpass.com/participation/" rel="noreferrer" target="_blank">https://startpython.connpass.com/participation/</a> で見られます</p></li>
+<li><p>105 (辻さん) + 83 (nikkie) + 21 (どいつまさん)</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">第5問</h3>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">「みんなのPython勉強会#100」はどの日に開催された？</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">「みんなのPython勉強会#100」はどの日に開催された？</h3>
+<ol class="upperalpha simple">
+<li><p>2024年1月25日</p></li>
+<li><p>2024年2月22日</p></li>
+<li><p>2023年11月15日</p></li>
+<li><p>2023年10月12日</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">正解は <strong>A. 2024年1月25日</strong></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://startpython.connpass.com/event/304688/" rel="noreferrer" target="_blank">2024/01 みんなのPython勉強会#100</a> （<a class="reference external" href="https://youtu.be/B2X6b6NUmU0?si=4QnnnNU7ecezDTZ_" rel="noreferrer" target="_blank">アーカイブ</a>）</p></li>
+<li><p>2023年11月が99回、12月にお休みして翌年1月に100回</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">o4-mini「A. 2024年1月25日」🙆‍♂️</h3>
+<img alt="../_images/o4-mini-web-search-q5.png" src="../_images/o4-mini-web-search-q5.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">第6問</h3>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">stapy <strong>参加回数</strong> の多い順に並べると？</h2>
+<ul class="simple">
+<li><p>辻さん</p></li>
+<li><p>nikkie</p></li>
+<li><p>kiotoさん</p></li>
+<li><p>soogieさん</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">参加回数の多い順に並んでいるものは？</h3>
+<ol class="upperalpha simple">
+<li><p>辻さん &gt; kiotoさん &gt; soogieさん &gt; nikkie</p></li>
+<li><p>kiotoさん &gt; soogieさん &gt; 辻さん &gt; nikkie</p></li>
+<li><p>kiotoさん &gt; 辻さん &gt; soogieさん &gt; nikkie</p></li>
+<li><p>nikkie &gt; 辻さん &gt; kiotoさん &gt; soogieさん</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">発動、50:50</h3>
+<p><strong>A または C</strong> です</p>
+<dl class="field-list simple">
+<dt class="field-odd">A<span class="colon">:</span></dt>
+<dd class="field-odd"><p>辻さん &gt; kiotoさん &gt; soogieさん &gt; nikkie</p>
+</dd>
+<dt class="field-even">C<span class="colon">:</span></dt>
+<dd class="field-even"><p>kiotoさん &gt; 辻さん &gt; soogieさん &gt; nikkie</p>
+</dd>
+</dl>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">正解は <strong>C</strong></h3>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>名前</p></td>
+<td><p><a class="reference external" href="https://startpython.connpass.com/participation/" rel="noreferrer" target="_blank">回数</a></p></td>
+</tr>
+<tr class="row-even"><td><p>kiotoさん</p></td>
+<td><p>118回</p></td>
+</tr>
+<tr class="row-odd"><td><p>辻さん</p></td>
+<td><p>105回</p></td>
+</tr>
+<tr class="row-even"><td><p>soogieさん</p></td>
+<td><p>91回</p></td>
+</tr>
+<tr class="row-odd"><td><p>nikkie</p></td>
+<td><p>83回</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">参考までに、o4-miniさん「A」</h3>
+<img alt="../_images/o4-mini-web-search-q6.png" src="../_images/o4-mini-web-search-q6.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">kiotoさん</h3>
+<ul class="simple">
+<li><p>いつもご参加ありがとうございます</p></li>
+<li><p><a class="reference external" href="https://startpython.connpass.com/event/276540/" rel="noreferrer" target="_blank">オンラインもくもく会</a> （with Uematsuさん）</p></li>
+<li><p><a class="reference external" href="https://youtu.be/a53WdNPQntw?si=Qwz8s7IfKTFf6X2P" rel="noreferrer" target="_blank">108回「人生100年時代、長く現役で働くには」のトーク</a> 👏</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">soogieさん</h3>
+<ul class="simple">
+<li><p>いつもご参加ありがとうございます</p></li>
+<li><p><a class="reference external" href="https://startpython.connpass.com/event/245654/" rel="noreferrer" target="_blank">2022年5月 #81</a> 『職場にPythonistaを増やすには』👏</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">第7問</h3>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">みんなのPython勉強会で紹介された言語のうち、Pythonに <strong>文法が近い</strong> と紹介されたものは？</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Pythonに文法が近いと紹介されたものは？</h3>
+<ol class="upperalpha simple">
+<li><p>Go</p></li>
+<li><p>JavaScript</p></li>
+<li><p>Rust</p></li>
+<li><p>Nim</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">o4-mini「D. Nim」</h3>
+<img alt="../_images/o4-mini-web-search-q7.png" src="../_images/o4-mini-web-search-q7.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">正解は <strong>D. Nim</strong></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://startpython.connpass.com/event/239619/" rel="noreferrer" target="_blank">2022年3月 #79</a> 「Diversity &amp; Inclusion of Programming Language」</p></li>
+<li><p>medyさんによる「Pythonistaに伝えたいNimの魅力」</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">第8問</h3>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">みんなのPython勉強会が過去に <em>かけた</em> ことがあるものはどれ？</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">過去に <em>かけた</em> ことがあるのは？</h3>
+<ol class="upperalpha simple">
+<li><p>命</p></li>
+<li><p>金</p></li>
+<li><p>時</p></li>
+<li><p>推し</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">o4-mini「C. 時」</h3>
+<img alt="../_images/o4-mini-web-search-q8.png" src="../_images/o4-mini-web-search-q8.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">正解は <strong>D. 推し</strong></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://startpython.connpass.com/event/163337/" rel="noreferrer" target="_blank">2020年2月 #54</a> 推し×IT（<a class="reference external" href="https://www.youtube.com/live/w7CxVJb0AJo?si=CWciDr1oEZf2r_-N" rel="noreferrer" target="_blank">アーカイブ</a>）</p></li>
+<li><p>Togetterまとめは1万PVを超える <a class="reference external" href="https://posfie.com/@abenben/p/p6nAikd" rel="noreferrer" target="_blank">https://posfie.com/@abenben/p/p6nAikd</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">クイズ終了〜！</h2>
+<p>おつかれさまでした</p>
+<p>o4-miniさん 3/8（第1,5,7問）</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">初代stapyクイズ王 表彰👏</h2>
+<p>おめでとうございます！</p>
+<p>オフラインで賞品の贈呈</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">皆さまの声が聞こえてくるようです</h2>
+<ul class="simple">
+<li><p>「出題者の人間性を疑う」（並べ替えとか「かけた」とか）</p></li>
+<li><p>「あの回がクイズに入っていないなんて」</p></li>
+<li><p>「<strong>わたしはこれが神回</strong>」ぜひ教えてください</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">💬阿久津さんの神回</h3>
+<blockquote>
+<div><p>Pepperが来た、10回は神回かな。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://startpython.connpass.com/event/25269/" rel="noreferrer" target="_blank">祝10回記念講演「心の鍵を開く感情技術」＆2015年度総集編</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">💬どいつまさんの神回</h3>
+<ul class="simple">
+<li><p>108回「人生100年時代、長く現役で働くには」</p></li>
+<li><p><a class="reference external" href="https://x.com/d01tsumath/status/1928402076234924514" rel="noreferrer" target="_blank">父娘登壇</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">クイズでお祝い！ みんなのPython勉強会10周年</h2>
+<p>クイズならびに本勉強会にご参加いただき、ありがとうございました</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">stapy アーカイブ</h3>
+<ul class="simple">
+<li><p>最近 <a class="reference external" href="https://www.youtube.com/@startpythonclub9441/" rel="noreferrer" target="_blank">Start Python Club</a></p></li>
+<li><p>過去 <a class="reference external" href="https://www.youtube.com/@%E3%83%AA%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%A8%E3%83%83%E3%82%B8%E7%A4%BE" rel="noreferrer" target="_blank">リーディング・エッジ社</a></p></li>
+</ul>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>標準ライブラリのlogging、レゴブロックのように組合せてロギングできることを理解しよう！</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("True" === "True") {
+        const mermaids_to_add_zoom = 2 === -1 ? all_mermaids.length : 2;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll(".mermaid[data-zoom-id=id-8ad0d99c-73fd-4fac-b7c3-193eada2b237] svg, .mermaid[data-zoom-id=id-b5deb9f9-551f-47c3-b9f1-13c574a9a269] svg");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("True" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
+</script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/pyconjp/stdlib-logging-kata.html">
+    <meta property="og:title" content="標準ライブラリのlogging、レゴブロックのように組合せてロギングできることを理解しよう！">
+    <meta property="og:description" content="PyCon JP 2025">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/pyconjp.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">標準ライブラリのlogging、レゴブロックのように組合せてロギングできることを理解しよう！</h1>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">標準ライブラリのlogging、レゴブロックのように組合せてロギングできることを理解しよう！</h2>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PyCon JP 2025（広島） <code class="docutils literal notranslate"><span class="pre">#pyconjp_3</span></code></p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/09/27 nikkie</p>
+</dd>
+</dl>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">皆さん、<strong>自信</strong> を持って標準ライブラリのloggingを使えていますか？</h3>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">loggingモジュールを理解しましょう！（Takeaway）</h3>
+<ul class="simple">
+<li><p><em>ロガー</em>、<em>ハンドラ</em> といった構成要素を理解する</p></li>
+<li><p>構成要素を <strong>組合せ</strong> てロギングできることを理解する</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">レゴブロックのように組合せて（IMO）</h3>
+<ul class="simple">
+<li><p>easy（理解しやすい）という意味でなく、 <strong>単純</strong> という意味でのsimple</p></li>
+<li><p>レゴブロックのように、単純なものを <strong>組合せて複雑なもの</strong> を作れる <a class="footnote-reference brackets" href="#ooc-talk" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
+<li><p>Pythonに見るsimple：Zen <a class="footnote-reference brackets" href="#zen-of-python-simple" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 、loggingモジュール、パッケージマネージャ</p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="ooc-talk" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id3" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://ftnext.github.io/2024-slides/ooc/software-lessons.html#/6" rel="noreferrer" target="_blank">OOC 2024でもっと話しました</a></p>
+</aside>
+<aside class="footnote brackets" id="zen-of-python-simple" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id4" role="doc-backlink">2</a><span class="fn-bracket">]</span></span>
+<p><em>Simple is better than complex.</em> （<a class="reference external" href="https://peps.python.org/pep-0020/" rel="noreferrer" target="_blank">The Zen of Python</a>）</p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">本トークの対象者</h3>
+<ul class="simple">
+<li><p>前提：<strong>Pythonでロギングを実装した経験</strong> あり</p></li>
+<li><p>loggingモジュールの使用経験は問いません</p></li>
+<li><p>「loggingモジュールいまいちわからないんだよな...」、どんぴしゃターゲットです！</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ</h3>
+<ul class="simple">
+<li><p>nikkie ／ nikkie ／ <span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext" rel="noreferrer" target="_blank">@ftnext</a> / Python歴8年</p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p>LLMアプリケーション開発で、 <strong>LLMの入出力をロギング</strong> してすべてを分かりたい（束縛系）</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">5章構成 <a class="footnote-reference brackets" href="#chapter" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></h3>
+<ol class="arabic simple">
+<li><p>loggingモジュールの構成要素</p></li>
+<li><p>ロガーのレベル</p></li>
+<li><p>ルートロガーへの <em>伝播</em> （<strong>組合せたロギング</strong>）</p></li>
+<li><p>現実世界のライブラリのロギング実装への対処</p></li>
+<li><p>落穂拾い</p></li>
+</ol>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="chapter" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id7" role="doc-backlink">3</a><span class="fn-bracket">]</span></span>
+<p>章で構成したのは、最近推してる映画『<a class="reference external" href="https://sh-anime.shochiku.co.jp/alice-movie/" rel="noreferrer" target="_blank">不思議の国でアリスと</a>』インスパイアです</p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Chapter 1: loggingモジュールの構成要素 <a class="footnote-reference brackets" href="#chapter1-base" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></h2>
+<ul class="simple">
+<li><p>ロガー</p></li>
+<li><p>ハンドラ</p></li>
+<li><p>フォーマッタ</p></li>
+<li><p>フィルタ</p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="chapter1-base" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id9" role="doc-backlink">4</a><span class="fn-bracket">]</span></span>
+<p>元にした拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger" rel="noreferrer" target="_blank">Pythonのライブラリに用意されたロガーを設定してログを出力する</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">HTTPXを例に <strong>実際のログを見ながら</strong> <a class="footnote-reference brackets" href="#pep723" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> 構成要素を紹介</h3>
+<div class="literal-block-wrapper docutils container" id="id106">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/ftnext/2025-slides/blob/9a87155e4d4923ba0e957a7e2e9e1c9cdd91cd73/samplecode/python-logging/library_logger/httpx_logging.py" rel="noreferrer" target="_blank">サンプルスクリプト</a> <a class="footnote-reference brackets" href="#logging-percent-format" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">import httpx
+from rich.pretty import pprint
+
+resp = httpx.get("https://peps.python.org/api/peps.json")
+data = resp.json()
+pprint([(k, v["title"]) for k, v in data.items()][:10])
+</code></pre>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="pep723" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id10" role="doc-backlink">5</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://2024.pycon.jp/ja/talk/89F3RQ" rel="noreferrer" target="_blank">PyCon JP 2024 で話した inline script metadata</a> を使っています</p>
+</aside>
+<aside class="footnote brackets" id="logging-percent-format" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id11" role="doc-backlink">6</a><span class="fn-bracket">]</span></span>
+<p>ログメッセージに限っては、f-stringよりも <code class="docutils literal notranslate"><span class="pre">%s</span></code> で変数を埋めるのが推奨です（<a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/hey-claude-dont-use-f-string-in-logging-messages" rel="noreferrer" target="_blank">拙ブログ</a>。t-stringは話が違うっぽい？）</p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ロガー</h2>
+<ul class="simple">
+<li><p>ライブラリ <strong>作者</strong> はロガーを使って <strong>プログラム実行中のイベントを記録</strong> する</p></li>
+<li><p>イベントの重要性（レベル） + メッセージ</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">HTTPXの中にあるロギング</h3>
+<div class="literal-block-wrapper docutils container" id="id107">
+<div class="code-block-caption"><span class="caption-text">INFOレベルでHTTPリクエストを記録 <a class="footnote-reference brackets" href="#httpx-logger-info-line" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">class Client(BaseClient):
+    def _send_single_request(self, request: Request) -&gt; Response:
+        logger.info(
+            'HTTP Request: %s %s "%s %d %s"',
+            request.method,
+            request.url,
+            response.http_version,
+            response.status_code,
+            response.reason_phrase,
+        )</code></pre>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="httpx-logger-info-line" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id14" role="doc-backlink">7</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025" rel="noreferrer" target="_blank">https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L1025</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ログのレベル <a class="footnote-reference brackets" href="#level-table-ref" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="level-table-ref" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id15" role="doc-backlink">8</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging" rel="noreferrer" target="_blank">logging を使うとき（基本 logging チュートリアル）</a></p>
+</aside>
+</aside>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>レベル</p></td>
+<td><p>メソッド</p></td>
+<td><p>いつ使うか</p></td>
+</tr>
+<tr class="row-even"><td><p>DEBUG</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">debug()</span></code></p></td>
+<td><p>おもに問題を診断するときにのみ関心があるような、詳細な情報。</p></td>
+</tr>
+<tr class="row-odd"><td><p>INFO</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info()</span></code></p></td>
+<td><p>想定された通りのことが起こったことの確認。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>WARNING</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">warning()</span></code></p></td>
+<td><p>想定外のことが起こった、または問題が近く起こりそうであることの表示。</p></td>
+</tr>
+<tr class="row-even"><td><p>ERROR</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">error()</span></code></p></td>
+<td><p>より重大な問題により、ソフトウェアがある機能を実行できないこと。</p></td>
+</tr>
+<tr class="row-odd"><td><p>CRITICAL</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">critical()</span></code></p></td>
+<td><p>プログラム自体が実行を続けられないことを表す、重大なエラー。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの取得に <a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.getLogger" rel="noreferrer" target="_blank">logging.getLogger()</a></h3>
+<div class="literal-block-wrapper docutils container" id="id108">
+<div class="code-block-caption"><span class="caption-text">httpxロガーを取得 <a class="footnote-reference brackets" href="#httpx-get-logger-line" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">logger = logging.getLogger("httpx")</code></pre>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="httpx-get-logger-line" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a href="#id18" role="doc-backlink">1</a>,<a href="#id35" role="doc-backlink">2</a>)</span>
+<p><a class="reference external" href="https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117" rel="noreferrer" target="_blank">https://github.com/encode/httpx/blob/0.28.1/httpx/_client.py#L117</a></p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリ <strong>ユーザ</strong> がログを <strong>見る</strong> には</h2>
+<div class="literal-block-wrapper docutils container" id="id109">
+<div class="code-block-caption"><span class="caption-text">このINFOレベルのログを見たい</span></div>
+<pre><code class="python" data-noescape="" data-trim="">logger = logging.getLogger("httpx")
+
+class Client(BaseClient):
+    def _send_single_request(self, request: Request) -&gt; Response:
+        logger.info(
+            'HTTP Request: %s %s "%s %d %s"',
+            request.method,
+            request.url,
+            response.http_version,
+            response.status_code,
+            response.reason_phrase,
+        )</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">HTTPXに仕込まれたログを見るためのコード</h3>
+<div class="literal-block-wrapper docutils container" id="id110">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/ftnext/2025-slides/blob/9a87155e4d4923ba0e957a7e2e9e1c9cdd91cd73/samplecode/python-logging/library_logger/httpx_logging.py" rel="noreferrer" target="_blank">サンプルスクリプト</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">httpx_logger = logging.getLogger("httpx")
+httpx_logger.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+console_handler.setFormatter(detailed_formatter)
+httpx_logger.addHandler(console_handler)
+</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">1️⃣ ユーザもロガーを取得</h3>
+<ul class="simple">
+<li><p>ライブラリユーザも都度 <code class="docutils literal notranslate"><span class="pre">getLogger</span></code> <a class="footnote-reference brackets" href="#singleton" id="id22" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="singleton" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id22" role="doc-backlink">10</a><span class="fn-bracket">]</span></span>
+<p>ロガーはシングルトン（<a class="reference external" href="https://docs.python.org/ja/3/howto/logging-cookbook.html#using-loggers-as-attributes-in-a-class-or-passing-them-as-parameters" rel="noreferrer" target="_blank">「避けるべきパターン」の「ロガーをクラスの属性にするか、パラメータで渡す」</a>）</p>
+</aside>
+</aside>
+<pre data-id="id21"><code class="python" data-line-numbers="1" data-noescape="" data-trim="">httpx_logger = logging.getLogger("httpx")
+httpx_logger.setLevel(logging.DEBUG)
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">2️⃣ ロガーの <strong>レベルを設定</strong> - <a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel" rel="noreferrer" target="_blank">Logger.setLevel()</a></h3>
+<ul class="simple">
+<li><p>ロガーのレベル以上の重要度のメッセージを記録、未満は無視</p></li>
+<li><p>今回は <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> レベル以上を記録する（<code class="docutils literal notranslate"><span class="pre">INFO</span></code> 含む）</p></li>
+</ul>
+<pre data-id="id23"><code class="python" data-line-numbers="2" data-noescape="" data-trim="">httpx_logger = logging.getLogger("httpx")
+httpx_logger.setLevel(logging.DEBUG)
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">📌ロガーは <strong>自身のレベル以上</strong> の重要度のメッセージを <strong>記録</strong></h3>
+<table class="docutils align-default" id="id111">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">WARNING</span></code> レベルのロガー <code class="docutils literal notranslate"><span class="pre">logger</span></code></span></caption>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">logger.warning("メッセージ")</span></code></p></td>
+<td><p>記録する（ログレコード生成）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">logger.info("メッセージ")</span></code></p></td>
+<td><p>無視</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">3️⃣ <strong>出力先</strong> を設定 - ハンドラ</h3>
+<div class="literal-block-wrapper docutils container" id="id112">
+<div class="code-block-caption"><span class="caption-text">ストリームに出力するハンドラをロガーに取り付け</span></div>
+<pre><code class="python" data-line-numbers="1,6" data-noescape="" data-trim="">console_handler = logging.StreamHandler()
+detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+console_handler.setFormatter(detailed_formatter)
+httpx_logger.addHandler(console_handler)
+</code></pre>
+</div>
+<div class="literal-block-wrapper docutils container" id="id113">
+<div class="code-block-caption"><span class="caption-text">httpxロガーによるログが見えます！</span></div>
+<pre><code class="txt" data-noescape="" data-trim="">% uv run example.py
+HTTP Request: GET https://peps.python.org/api/peps.json "HTTP/1.1 200 OK"</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ハンドラがログレコードを出力先に振り分ける</h3>
+<ul class="simple">
+<li><p>ストリーム</p></li>
+<li><p>ファイル</p></li>
+<li><p>などなど（<a class="reference external" href="https://docs.python.org/ja/3/library/logging.handlers.html" rel="noreferrer" target="_blank">logging.handlers</a>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">4️⃣ <strong>見た目の設定</strong> - フォーマッタ</h3>
+<ul class="simple">
+<li><p>フォーマッタがログレコードに書式を適用し、それをハンドラが出力</p></li>
+</ul>
+<pre data-id="id27"><code class="python" data-noescape="" data-trim="">detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+console_handler.setFormatter(detailed_formatter)
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">書式は <strong>ログレコードの属性名</strong> を指定</h3>
+<pre data-id="id28"><code class="python" data-line-numbers="2" data-noescape="" data-trim="">detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+console_handler.setFormatter(detailed_formatter)
+</code></pre>
+<pre data-id="id28"><code class="txt" data-noescape="" data-trim="">2025-09-24 23:38:25,370 | INFO (httpx) | _client.py:_send_single_request:1025 - HTTP Request: GET https://peps.python.org/api/peps.json "HTTP/1.1 200 OK"</code></pre>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logrecord-attributes" rel="noreferrer" target="_blank">LogRecord 属性</a></p>
+</section>
+<section>
+<table class="docutils align-default" id="id114">
+<caption><span class="caption-text">属性名</span></caption>
+<tbody>
+<tr class="row-odd"><td><p>asctime</p></td>
+<td><p>ログレコード生成時刻</p></td>
+</tr>
+<tr class="row-even"><td><p>levelname</p></td>
+<td><p>文字のロギングレベル</p></td>
+</tr>
+<tr class="row-odd"><td><p>name</p></td>
+<td><p>ロガーの名前</p></td>
+</tr>
+<tr class="row-even"><td><p>filename</p></td>
+<td><p>ファイル名</p></td>
+</tr>
+<tr class="row-odd"><td><p>funcName</p></td>
+<td><p>関数名</p></td>
+</tr>
+<tr class="row-even"><td><p>lineno</p></td>
+<td><p>行番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>ログメッセージ</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">5️⃣ フィルタ（ここでは名前だけ。3章で登場）</h3>
+<ul class="simple">
+<li><p>ロガーやハンドラに取り付ける</p></li>
+<li><p>フィルタにロガーの名前を指定する</p></li>
+<li><p>指定したロガーと <em>子のロガー</em> のログレコードだけを通す</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🥟 loggingモジュールの構成要素</h2>
+<ul class="simple">
+<li><p>HTTPXのログを見た</p></li>
+<li><p>ライブラリ <strong>作者</strong> がイベントを <strong>記録</strong></p></li>
+<li><p>ライブラリ <strong>ユーザ</strong> が <strong>ログを見る</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリ作者がイベントを記録🥟</h3>
+<a class="reference internal image-reference" href="../_images/pyconjp-library-creator-logger.drawio.png"><img alt="../_images/pyconjp-library-creator-logger.drawio.png" src="../_images/pyconjp-library-creator-logger.drawio.png" style="width: 225.0px; height: 166.5px;"/>
+</a>
+<ul class="simple">
+<li><p>イベントの <strong>レベル</strong> と <strong>メッセージ</strong> を指定して、ロガーを操作</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリユーザがログを見る🥟</h3>
+<a class="reference internal image-reference" href="../_images/pyconjp-library-user-logger.drawio.png"><img alt="../_images/pyconjp-library-user-logger.drawio.png" src="../_images/pyconjp-library-user-logger.drawio.png" style="width: 465.0px; height: 180.0px;"/>
+</a>
+<ul class="simple">
+<li><p>ロガーにレベルを設定</p></li>
+<li><p>ロガーに <strong>ハンドラ</strong> を取り付ける</p></li>
+<li><p>ハンドラに <strong>フォーマッタ</strong> を取り付ける</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Chapter 2: ロガーのレベルはどう決まる？ <a class="footnote-reference brackets" href="#chapter2-base" id="id33" role="doc-noteref"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="chapter2-base" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id33" role="doc-backlink">11</a><span class="fn-bracket">]</span></span>
+<p>底本とした <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-configuring-logging-for-library-log-level-notset" rel="noreferrer" target="_blank">拙ブログ</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">復習：ロガーは <strong>自身のレベル以上</strong> の重要度のメッセージを <strong>記録</strong></h3>
+<table class="docutils align-default" id="id115">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">INFO</span></code> レベルのロガー <code class="docutils literal notranslate"><span class="pre">logger</span></code></span></caption>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">logger.warning()</span></code></p></td>
+<td><p>記録</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">logger.info()</span></code></p></td>
+<td><p>記録</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">logger.debug()</span></code></p></td>
+<td><p>無視</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">❓ <code class="docutils literal notranslate"><span class="pre">httpx</span></code> ロガーのレベルは？ <a class="footnote-reference brackets" href="#httpx-get-logger-line" id="id35" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a></h3>
+<pre data-id="id36"><code class="python" data-noescape="" data-trim="">logger = logging.getLogger("httpx")</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">❓ <code class="docutils literal notranslate"><span class="pre">httpx</span></code> ロガーのレベル</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>?</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INFO</span></code>?</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WARNING</span></code>?</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ERROR</span></code>?</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CRITICAL</span></code>?</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>NOTSET</strong></h3>
+<blockquote>
+<div><p>ロガーが生成された際、レベルは <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> (略) に設定されます。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel" rel="noreferrer" target="_blank">Logger.setLevel()</a></p>
+<pre data-id="notset"><code class="pycon" data-noescape="" data-trim="">&gt;&gt;&gt; import logging
+&gt;&gt;&gt; httpx_logger = logging.getLogger("httpx")
+&gt;&gt;&gt; logging.getLevelName(httpx_logger.level)
+'NOTSET'</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> とは</h3>
+<blockquote>
+<div><p>もしロガーのレベルが <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> ならば、祖先ロガーの系列の中を <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> 以外のレベルの祖先を見つけるかルートに到達するまで辿っていく（<a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel" rel="noreferrer" target="_blank">Logger.setLevel()</a>）</p>
+</div></blockquote>
+<p>祖先ロガー？</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">📌ロガーの階層構造</h2>
+<p>ロガーには <strong>名前で決まる親子関係</strong> があります</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">名前は <strong>ドット（ピリオド）区切り</strong> にもできる</h3>
+<blockquote>
+<div><p>ロガー名は、何でも望むものにでき、ロギングされたメッセージが発生した場所を指し示します。（<a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial" rel="noreferrer" target="_blank">上級ロギングチュートリアル</a>）</p>
+</div></blockquote>
+<pre data-id="id40"><code class="python" data-noescape="" data-trim="">logging.getLogger("spam")
+logging.getLogger("spam.ham")</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの親子関係</h3>
+<pre data-id="id41"><code class="python" data-noescape="" data-trim="">logger = logging.getLogger("spam.ham")</code></pre>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">spam.ham</span></code> ロガーの <strong>親</strong> にあたるのが <code class="docutils literal notranslate"><span class="pre">spam</span></code> ロガー</p></li>
+<li><p>すべてのロガーの親 <em>ルートロガー</em> （引数渡さず <code class="docutils literal notranslate"><span class="pre">logging.getLogger()</span></code>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの親子関係</h3>
+<a class="reference internal image-reference" href="../_images/pyconjp-logger-ancestors.drawio.png"><img alt="../_images/pyconjp-logger-ancestors.drawio.png" src="../_images/pyconjp-logger-ancestors.drawio.png" style="width: 433.2px; height: 361.2px;"/>
+</a>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの名前に <code class="docutils literal notranslate"><span class="pre">__name__</span></code></h3>
+<pre data-id="name"><code class="python" data-noescape="" data-trim="">logger = logging.getLogger(__name__)</code></pre>
+<ul class="simple">
+<li><p>「ロガーに名前をつけるときの良い習慣」（<a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial" rel="noreferrer" target="_blank">上級ロギングチュートリアル</a>） <a class="footnote-reference brackets" href="#why-name-good" id="id43" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a></p></li>
+<li><p><a class="reference external" href="https://jisou-programmer.beproud.jp/%E3%83%AD%E3%82%AE%E3%83%B3%E3%82%B0/70-%E5%80%8B%E5%88%A5%E3%81%AE%E5%90%8D%E5%89%8D%E3%81%A7%E3%83%AD%E3%82%AC%E3%83%BC%E3%82%92%E4%BD%9C%E3%82%89%E3%81%AA%E3%81%84.html" rel="noreferrer" target="_blank">70:個別の名前でロガーを作らない</a>　（『<a class="reference external" href="https://gihyo.jp/book/2020/978-4-297-11197-7" rel="noreferrer" target="_blank">自走プログラマー</a>』）</p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="why-name-good" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id43" role="doc-backlink">12</a><span class="fn-bracket">]</span></span>
+<p>上位のモジュールのロガーを触ってロギングを設定できるためです。今日の話も適用可能です</p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">💡ルートロガーのレベルを変える</h2>
+<p>一番親のロガーのレベルを変えると、子のロガーの <em>レベル</em> も変わる</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">実効レベル <a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.getEffectiveLevel" rel="noreferrer" target="_blank">getEffectiveLevel()</a></h3>
+<blockquote>
+<div><p>そうでない場合（＝ <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> レベルが設定されていた場合）、 <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> 以外の値が見つかるまでロガーの階層をルートロガーの方向に追跡します。</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーのレベルは <code class="docutils literal notranslate"><span class="pre">WARNING</span></code></h3>
+<pre data-id="warning"><code class="pycon" data-noescape="" data-trim="">&gt;&gt;&gt; import logging
+&gt;&gt;&gt; root_logger = logging.getLogger()
+&gt;&gt;&gt; logging.getLevelName(root_logger.level)
+'WARNING'</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーのレベルと同じ <code class="docutils literal notranslate"><span class="pre">WARNING</span></code></h3>
+<a class="reference internal image-reference" href="../_images/pyconjp-root-default-warning.drawio.png"><img alt="../_images/pyconjp-root-default-warning.drawio.png" src="../_images/pyconjp-root-default-warning.drawio.png" style="width: 312.0px; height: 253.2px;"/>
+</a>
+<pre data-id="id46"><code class="pycon" data-noescape="" data-trim="">&gt;&gt;&gt; httpx_logger = logging.getLogger("httpx")
+&gt;&gt;&gt; logging.getLevelName(httpx_logger.getEffectiveLevel())
+'WARNING'</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーのレベルを変えると</h3>
+<pre data-id="id47"><code class="pycon" data-noescape="" data-trim="">&gt;&gt;&gt; root_logger.setLevel(logging.DEBUG)
+&gt;&gt;&gt; logging.getLevelName(root_logger.level)
+'DEBUG'</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">子のロガーの <strong>実効レベルを切り替え</strong> られている</h3>
+<a class="reference internal image-reference" href="../_images/pyconjp-root-setlevel-debug.drawio.png"><img alt="../_images/pyconjp-root-setlevel-debug.drawio.png" src="../_images/pyconjp-root-setlevel-debug.drawio.png" style="width: 318.0px; height: 253.2px;"/>
+</a>
+<pre data-id="id48"><code class="pycon" data-noescape="" data-trim="">&gt;&gt;&gt; logging.getLevelName(httpx_logger.getEffectiveLevel())
+'DEBUG'</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🥟 ロガーのレベルはどう決まる？</h2>
+<ul>
+<li><p>ライブラリのロガーのレベルは <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>何もしなければ、ルートロガーと同じ <code class="docutils literal notranslate"><span class="pre">WARNING</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>ルートロガーのレベルを変えると、子のロガーの実効レベルも変わる</strong> （これを利用💡）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Chapter 3: ルートロガーでロギングしよう - propagate（伝播）</h2>
+<p>ロガーの親子関係で重要なものは、<code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> レベルの他にもう1つ</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの <a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.propagate" rel="noreferrer" target="_blank">propagate</a> 属性</h2>
+<blockquote>
+<div><p>この属性が真と評価された場合、このロガーに記録されたイベントは、このロガーに取り付けられた全てのハンドラに加え、上位 (祖先) ロガーのハンドラにも渡されます。</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">getLogger</span></code> すると <code class="docutils literal notranslate"><span class="pre">propagate</span></code> は <code class="docutils literal notranslate"><span class="pre">True</span></code></h3>
+<pre data-id="getlogger-propagate-true"><code class="pycon" data-noescape="" data-trim="">&gt;&gt;&gt; import logging
+&gt;&gt;&gt; httpx_logger = logging.getLogger("httpx")
+&gt;&gt;&gt; httpx_logger.propagate
+True</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの親子関係（再び）</h3>
+<a class="reference internal image-reference" href="../_images/pyconjp-logger-ancestors-part.drawio.png"><img alt="../_images/pyconjp-logger-ancestors-part.drawio.png" src="../_images/pyconjp-logger-ancestors-part.drawio.png" style="width: 229.2px; height: 217.2px;"/>
+</a>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">propagate（伝播）</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">httpx</span></code> ロガーのロギングレベル以上のメソッドが呼ばれた</p></li>
+<li><p>そのログレコードは <strong>親のルートロガーに伝播</strong> し、親のハンドラにも渡る</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">propagateでログレコードは <strong>親ロガーのハンドラへ</strong></h3>
+<a class="reference internal image-reference" href="../_images/pyconjp-logger-propagate-handlers.drawio.png"><img alt="../_images/pyconjp-logger-propagate-handlers.drawio.png" src="../_images/pyconjp-logger-propagate-handlers.drawio.png" style="width: 373.2px; height: 217.2px;"/>
+</a>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">📌伝播では <strong>親ロガーのレベルは見ない</strong> <a class="footnote-reference brackets" href="#reload1" id="id54" role="doc-noteref"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="reload1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a href="#id54" role="doc-backlink">1</a>,<a href="#id65" role="doc-backlink">2</a>)</span>
+<p>読み込めてなさそうならリロードを。 <a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#logging-flow" rel="noreferrer" target="_blank">Logging Flow</a>  (Logger flow)の簡略版（なお省略しましたが、親ロガーのフィルタも見ません）</p>
+</aside>
+</aside>
+<pre class="mermaid" data-zoom-id="id-8ad0d99c-73fd-4fac-b7c3-193eada2b237">
+        ---
+config:
+  themeVariables:
+    lineColor: '#fff'
+
+---
+flowchart LR
+    START[ロギング&lt;br/&gt;呼び出し] --&gt;|"例 logger.info(...)"| cond1{ロガーの&lt;br/&gt;レベル以上の&lt;br/&gt;呼び出しか};
+    cond1 --&gt;|はい&lt;br/&gt;=有効| node1[LogRecord&lt;br/&gt;作成];
+    node1 --&gt; node2[現在のロガーの&lt;br/&gt;ハンドラへ&lt;br/&gt;渡す];
+    node2 --&gt; cond3{現在のロガーの&lt;br/&gt;propagate属性は&lt;br/&gt;Trueか};
+    cond3 --&gt;|はい=true&lt;br/&gt;=伝播する| cond4{親のロガー&lt;br/&gt;はあるか};
+    cond4 --&gt;|はい=親ロガー&lt;br/&gt;がある| node3[親ロガーを現在の&lt;br/&gt;ロガーとする];
+    node3 --&gt; node2;
+
+    </pre><p>右側のループで、親ロガーのレベルを見ていません</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">💡ルートロガーにハンドラをつければロギングできる！</h2>
+<div class="literal-block-wrapper docutils container" id="id116">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/ftnext/2025-slides/blob/6f6b360b8b884f5dce9b62e2cd37055c0313db25/samplecode/python-logging/library_logger/root_logging_hard.py" rel="noreferrer" target="_blank">本トークで示すロギングの1つの型</a></span></div>
+<pre><code class="python" data-line-numbers="1,4,9" data-noescape="" data-trim="">root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+console_handler.setFormatter(detailed_formatter)
+root_logger.addHandler(console_handler)
+</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ハンドラにフォーマッタをとりつけ</h3>
+<pre data-id="id57"><code class="python" data-line-numbers="4,5,6,7,8" data-noescape="" data-trim="">root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+console_handler.setFormatter(detailed_formatter)
+root_logger.addHandler(console_handler)
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>全て</strong> のロガーのログ出力 <a class="footnote-reference brackets" href="#httpx-guide-logging" id="id58" role="doc-noteref"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></a></h3>
+<div class="literal-block-wrapper docutils container" id="id117">
+<div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">httpx</span></code> ロガーも <code class="docutils literal notranslate"><span class="pre">httpcore</span></code> ロガーも実効レベルが <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code></span></div>
+<pre><code class="default" data-noescape="" data-trim="">2025-09-25 00:21:51,724 | DEBUG (httpcore.connection) | _trace.py:trace:47 - connect_tcp.started host='peps.python.org' port=443 local_address=None timeout=5.0 socket_options=None
+2025-09-25 00:21:51,775 | DEBUG (httpcore.connection) | _trace.py:trace:47 - connect_tcp.complete return_value=&lt;httpcore._backends.sync.SyncStream object at 0x104ed2c50&gt;
+2025-09-25 00:21:51,775 | DEBUG (httpcore.connection) | _trace.py:trace:47 - start_tls.started ssl_context=&lt;ssl.SSLContext object at 0x105433020&gt; server_hostname='peps.python.org' timeout=5.0
+2025-09-25 00:21:51,795 | DEBUG (httpcore.connection) | _trace.py:trace:47 - start_tls.complete return_value=&lt;httpcore._backends.sync.SyncStream object at 0x1056354d0&gt;
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - send_request_headers.started request=&lt;Request [b'GET']&gt;
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - send_request_headers.complete
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - send_request_body.started request=&lt;Request [b'GET']&gt;
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - send_request_body.complete
+2025-09-25 00:21:51,795 | DEBUG (httpcore.http11) | _trace.py:trace:47 - receive_response_headers.started request=&lt;Request [b'GET']&gt;
+2025-09-25 00:21:51,984 | DEBUG (httpcore.http11) | _trace.py:trace:47 - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Connection', b'keep-alive'), (b'Content-Length', b'55103'), (b'Server', b'GitHub.com'), (b'Content-Type', b'application/json; charset=utf-8'), (b'Last-Modified', b'Wed, 24 Sep 2025 07:35:56 GMT'), (b'Access-Control-Allow-Origin', b'*'), (b'ETag', b'W/"68d39f5c-608b4"'), (b'expires', b'Wed, 24 Sep 2025 14:48:25 GMT'), (b'Cache-Control', b'max-age=600'), (b'Content-Encoding', b'gzip'), (b'x-proxy-cache', b'MISS'), (b'X-GitHub-Request-Id', b'2DE8:A7B6E:48D19B:4D3D5F:68D40260'), (b'Via', b'1.1 varnish, 1.1 varnish'), (b'X-Fastly-Request-ID', b'f2e5f538ee8eb9b0521c0076beb66f992dee747e'), (b'Fastly-Debug-States', b'DELIVER'), (b'Accept-Ranges', b'bytes'), (b'Age', b'0'), (b'Date', b'Wed, 24 Sep 2025 15:21:51 GMT'), (b'X-Served-By', b'cache-tyo11951-TYO, cache-tyo11950-TYO'), (b'X-Cache', b'MISS, HIT'), (b'X-Cache-Hits', b'0, 0'), (b'X-Timer', b'S1758727312.797979,VS0,VE173'), (b'Vary', b'Accept-Encoding'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload')])
+2025-09-25 00:21:51,984 | INFO (httpx) | _client.py:_send_single_request:1025 - HTTP Request: GET https://peps.python.org/api/peps.json "HTTP/1.1 200 OK"
+2025-09-25 00:21:51,984 | DEBUG (httpcore.http11) | _trace.py:trace:47 - receive_response_body.started request=&lt;Request [b'GET']&gt;
+2025-09-25 00:21:52,006 | DEBUG (httpcore.http11) | _trace.py:trace:47 - receive_response_body.complete
+2025-09-25 00:21:52,006 | DEBUG (httpcore.http11) | _trace.py:trace:47 - response_closed.started
+2025-09-25 00:21:52,006 | DEBUG (httpcore.http11) | _trace.py:trace:47 - response_closed.complete
+2025-09-25 00:21:52,006 | DEBUG (httpcore.connection) | _trace.py:trace:47 - close.started
+2025-09-25 00:21:52,006 | DEBUG (httpcore.connection) | _trace.py:trace:47 - close.complete
+</code></pre>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="httpx-guide-logging" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id58" role="doc-backlink">14</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://www.python-httpx.org/logging/" rel="noreferrer" target="_blank">https://www.python-httpx.org/logging/</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">🍰 <a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.basicConfig" rel="noreferrer" target="_blank">logging.basicConfig()</a> でルートロガーを簡単に設定</h3>
+<pre data-id="id60"><code class="python" data-noescape="" data-trim="">logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s",
+)
+</code></pre>
+<ul class="simple">
+<li><p>ルートロガーにハンドラ設定（デフォルトで <code class="docutils literal notranslate"><span class="pre">StreamHandler</span></code>）</p></li>
+<li><p>そのハンドラにフォーマッタも設定（<code class="docutils literal notranslate"><span class="pre">format</span></code> 引数）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">多い出力には、フィルタ</h3>
+<ul class="simple">
+<li><p>（ルートロガーではなく） <strong>ルートロガーのハンドラにフィルタ</strong> を設定</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">httpx</span></code> ロガーによるログだけを出力</p></li>
+</ul>
+<pre data-id="id61"><code class="python" data-noescape="" data-trim="">console_handler.addFilter(logging.Filter("httpx"))
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">なぜハンドラにフィルタをつける？ <a class="footnote-reference brackets" href="#reload2" id="id62" role="doc-noteref"><span class="fn-bracket">[</span>15<span class="fn-bracket">]</span></a></h3>
+<pre class="mermaid">
+        ---
+config:
+  themeVariables:
+    lineColor: '#fff'
+
+---
+flowchart LR
+    START[ログレコード&lt;br/&gt;が渡る] --&gt; cond1{ハンドラの&lt;br/&gt;レベル以上の&lt;br/&gt;呼び出しか};
+    cond1 --&gt;|はい&lt;br/&gt;=有効| cond2[ハンドラの&lt;br/&gt;フィルタは&lt;br/&gt;却下するか];
+    cond1 --&gt;|いいえ&lt;br/&gt;| END[停止];
+    cond2 --&gt;|いいえ&lt;br/&gt;=通過| node1[排出（フォーマッタ込み）];
+    cond2 --&gt;|はい&lt;br/&gt;| END[停止];
+
+    </pre><p><strong>ハンドラのレベルとフィルタ</strong> は確認される</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="reload2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id62" role="doc-backlink">15</a><span class="fn-bracket">]</span></span>
+<p>読み込めてなさそうならリロードを。 <a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#logging-flow" rel="noreferrer" target="_blank">Logging Flow</a> (Handler flow)</p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">伝播では親ロガーのレベル（とフィルタ）は見ない</h3>
+<pre class="mermaid" data-zoom-id="id-b5deb9f9-551f-47c3-b9f1-13c574a9a269">
+        ---
+config:
+  themeVariables:
+    lineColor: '#fff'
+
+---
+flowchart LR
+    START[ロギング&lt;br/&gt;呼び出し] --&gt;|"例 logger.info(...)"| cond1{ロガーの&lt;br/&gt;レベル以上の&lt;br/&gt;呼び出しか};
+    cond1 --&gt;|はい&lt;br/&gt;=有効| node1[LogRecord&lt;br/&gt;作成];
+    node1 --&gt; node2[現在のロガーの&lt;br/&gt;ハンドラへ&lt;br/&gt;渡す];
+    node2 --&gt; cond3{現在のロガーの&lt;br/&gt;propagate属性は&lt;br/&gt;Trueか};
+    cond3 --&gt;|はい=true&lt;br/&gt;=伝播する| cond4{親のロガー&lt;br/&gt;はあるか};
+    cond4 --&gt;|はい=親ロガー&lt;br/&gt;がある| node3[親ロガーを現在の&lt;br/&gt;ロガーとする];
+    node3 --&gt; node2;
+
+    </pre><ul class="simple">
+<li><p>ルートロガーのフィルタは見ない（再掲した図） <a class="footnote-reference brackets" href="#reload1" id="id65" role="doc-noteref"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></a></p></li>
+<li><p>ルートロガーの <strong>ハンドラのフィルタ</strong> は見る（前頁）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🥟 ルートロガーでロギング</h2>
+<ul class="simple">
+<li><p>ライブラリ（例：HTTPX）のロガーの実効レベルは、ルートロガーと同じ（<code class="docutils literal notranslate"><span class="pre">NOTSET</span></code>）</p></li>
+<li><p>ライブラリのロガーは <code class="docutils literal notranslate"><span class="pre">propagate=True</span></code> （ルートロガーに伝播）</p></li>
+<li><p>ルートロガーに <strong>ハンドラ・フォーマッタ・フィルタを取り付け</strong> てロギングできる！</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーでロギングの例 <a class="footnote-reference brackets" href="#appendix-note" id="id67" role="doc-noteref"><span class="fn-bracket">[</span>16<span class="fn-bracket">]</span></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> と <code class="docutils literal notranslate"><span class="pre">propagate</span></code> を使った <strong>2例</strong> 紹介</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="appendix-note" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id67" role="doc-backlink">16</a><span class="fn-bracket">]</span></span>
+<p>本発表はルートロガーの設定で話しますが、ルートロガーの代わりに、特定モジュールのトップレベルのロガーに設定しても同じ議論と思います</p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">例1️⃣ ルートロガーに <strong>複数ハンドラ</strong></h2>
+<p>例「<code class="docutils literal notranslate"><span class="pre">INFO</span></code> 以上はファイルにロギング、<code class="docutils literal notranslate"><span class="pre">ERROR</span></code> 以上はコンソールにも出力」</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ERROR</span></code> レベルの <code class="docutils literal notranslate"><span class="pre">StreamHandler</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INFO</span></code> レベルの <code class="docutils literal notranslate"><span class="pre">FileHandler</span></code></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> 以上をファイルに、<code class="docutils literal notranslate"><span class="pre">INFO</span></code> 以上をコンソールに</h3>
+<div class="literal-block-wrapper docutils container" id="id118">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/root_logging_multi_handlers.py" rel="noreferrer" target="_blank">ルートロガーに複数ハンドラの例</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(detailed_formatter)
+
+rotate_handler = logging.handlers.TimedRotatingFileHandler(
+    "app.log", when="D", backupCount=7, encoding="utf-8"
+)
+rotate_handler.setLevel(logging.DEBUG)
+rotate_handler.setFormatter(detailed_formatter)
+
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
+root_logger.addHandler(console_handler)
+root_logger.addHandler(rotate_handler)
+</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> 以上をファイルに</h3>
+<pre data-id="debug"><code class="python" data-line-numbers="9,10,11,12,13" data-noescape="" data-trim="">detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(detailed_formatter)
+
+rotate_handler = logging.handlers.TimedRotatingFileHandler(
+    "app.log", when="D", backupCount=7, encoding="utf-8"
+)
+rotate_handler.setLevel(logging.DEBUG)
+rotate_handler.setFormatter(detailed_formatter)
+
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
+root_logger.addHandler(console_handler)
+root_logger.addHandler(rotate_handler)
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">INFO</span></code> 以上をコンソールに</h3>
+<pre data-id="info"><code class="python" data-line-numbers="5,6,7" data-noescape="" data-trim="">detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(detailed_formatter)
+
+rotate_handler = logging.handlers.TimedRotatingFileHandler(
+    "app.log", when="D", backupCount=7, encoding="utf-8"
+)
+rotate_handler.setLevel(logging.DEBUG)
+rotate_handler.setFormatter(detailed_formatter)
+
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
+root_logger.addHandler(console_handler)
+root_logger.addHandler(rotate_handler)
+</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">例2️⃣ JSON形式でロギング <a class="footnote-reference brackets" href="#json-format-blog" id="id70" role="doc-noteref"><span class="fn-bracket">[</span>17<span class="fn-bracket">]</span></a></h2>
+<ul class="simple">
+<li><p>ルートロガーのハンドラのフォーマッタを <strong>JSON出力するものに差し替え</strong> るだけ</p></li>
+<li><p><a class="reference external" href="https://github.com/nhairs/python-json-logger" rel="noreferrer" target="_blank">python-json-logger</a> の <code class="docutils literal notranslate"><span class="pre">JsonFormatter</span></code></p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="json-format-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id70" role="doc-backlink">17</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-json-logger-formatter-for-json-logging-quickstart" rel="noreferrer" target="_blank">PythonでログをJSON形式で出力したいなら、python-json-logger があるじゃな〜い！と思い出して触ったメモ</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">JsonFormatter</span></code> に差し替え</h3>
+<div class="literal-block-wrapper docutils container" id="id119">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/root_logging_jsonformat.py" rel="noreferrer" target="_blank">JSONでロギングする例</a></span></div>
+<pre><code class="python" data-line-numbers="7" data-noescape="" data-trim="">from pythonjsonlogger.json import JsonFormatter
+
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+json_formatter = JsonFormatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+console_handler.setFormatter(json_formatter)
+root_logger.addHandler(console_handler)
+console_handler.addFilter(logging.Filter("httpx"))
+</code></pre>
+</div>
+<pre data-id="jsonformatter"><code class="json" data-noescape="" data-trim="">{"asctime": "2025-09-25 00:27:41,332", "levelname": "INFO", "name": "httpx", "filename": "_client.py", "funcName": "_send_single_request", "lineno": 1025, "message": "HTTP Request: GET https://peps.python.org/api/peps.json \"HTTP/1.1 200 OK\""}</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーでロギング 2例</h2>
+<ul class="simple">
+<li><p>レベルによる出力先 の振り分け ➡️ 複数ハンドラ</p></li>
+<li><p>JSON形式 ➡️ フォーマッタを差し替え</p></li>
+<li><p>IMO：レゴブロックの組合せ（型）から <strong>特定のパーツだけいじっている</strong> 感</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">logging の構成要素を押さえると美しい、のですが</h3>
+<ul class="simple">
+<li><p>HTTPXのようなロギングは、 <strong>現実世界ではまれ</strong> 😢</p></li>
+<li><p>ルートロガーでロギングという紹介した型が簡単に適用できないライブラリは多い（経験談）。皆さんにも武器を配ります</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Chapter 4: 伸びしろのあるロギング実装と、対処術</h2>
+<p>📣「2事例を他山の石とし、ライブラリ <strong>ユーザにハックが必要ない</strong> ようにロギングを実装してくださいね」</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">事例1：<code class="docutils literal notranslate"><span class="pre">print</span></code> するものはロギングではありません <a class="footnote-reference brackets" href="#anti-pattern-print" id="id73" role="doc-noteref"><span class="fn-bracket">[</span>18<span class="fn-bracket">]</span></a></h2>
+<div class="literal-block-wrapper docutils container" id="id120">
+<div class="code-block-caption"><span class="caption-text">色付きでストリームに出力するロガー（<a class="reference external" href="https://github.com/unclecode/crawl4ai/blob/v0.4.24/crawl4ai/async_logger.py#L147" rel="noreferrer" target="_blank">crawl4ai v0.4.24</a>）</span></div>
+<pre><code class="python" data-noescape="" data-trim="">class AsyncLogger:
+    def _log(
+        self,
+        level: LogLevel,
+        message: str,
+    ):
+        if self.verbose or kwargs.get("force_verbose", False):
+            print(log_line)</code></pre>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="anti-pattern-print" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id73" role="doc-backlink">18</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/use-logger-instead-of-print-in-python-libraries" rel="noreferrer" target="_blank">組み込み関数 print の呼び出しは、決してロギングではありません</a> （拙ブログ）</p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ログにはprintでなくloggerを使う</h3>
+<p>『<a class="reference external" href="https://gihyo.jp/book/2020/978-4-297-11197-7" rel="noreferrer" target="_blank">自走プログラマー</a>』 <a class="reference external" href="https://jisou-programmer.beproud.jp/%E3%83%AD%E3%82%AE%E3%83%B3%E3%82%B0/72-%E3%83%AD%E3%82%B0%E3%81%AB%E3%81%AFprint%E3%81%A7%E3%81%AA%E3%81%8Flogger%E3%82%92%E4%BD%BF%E3%81%86.html" rel="noreferrer" target="_blank">72:ログにはprintでなくloggerを使う</a></p>
+<blockquote>
+<div><p>ロギングを使えば、表示をやめたり、ファイルに出力したり、ログを残した日時を残したりできます。</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">print と logger <a class="footnote-reference brackets" href="#when-to-use-logging" id="id74" role="doc-noteref"><span class="fn-bracket">[</span>19<span class="fn-bracket">]</span></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="when-to-use-logging" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id74" role="doc-backlink">19</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging" rel="noreferrer" target="_blank">logging を使うとき（基本 logging チュートリアル）</a></p>
+</aside>
+</aside>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>タスク</p></td>
+<td><p>最適なツール</p></td>
+</tr>
+<tr class="row-even"><td><p>コマンドラインスクリプトやプログラムで普通に使う、コンソール出力の表示</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">print()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>プログラムの通常の操作中に発生したイベントの報告</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">logger.info()</span></code> （や <code class="docutils literal notranslate"><span class="pre">logger.debug()</span></code>）</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">logger.info("メッセージ")</span></code> は <code class="docutils literal notranslate"><span class="pre">print</span></code> と違って</h3>
+<ul class="simple">
+<li><p><strong>ロガーのレベル</strong> の指定で、出力なしにできる</p></li>
+<li><p><strong>ハンドラ</strong> を変えて、ファイルに出力できる</p></li>
+<li><p>ログレコードの <strong>asctime属性</strong> で日時を記録できる（フォーマッタ）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">色付きロギングの選択肢</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/Textualize/rich/blob/master/README.ja.md" rel="noreferrer" target="_blank">Rich</a> の <code class="docutils literal notranslate"><span class="pre">RichHandler</span></code> <a class="footnote-reference brackets" href="#rich-handler-blog" id="id76" role="doc-noteref"><span class="fn-bracket">[</span>20<span class="fn-bracket">]</span></a></p></li>
+<li><p>レベルに色が付く uvicorn のロギング（<a class="reference external" href="https://github.com/Kludex/uvicorn/blob/0.37.0/uvicorn/logging.py#L14-L65" rel="noreferrer" target="_blank">自作Formatter</a>）にならう</p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="rich-handler-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id76" role="doc-backlink">20</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-colorful-console-logging-by-richhandler" rel="noreferrer" target="_blank">Python でコンソールに色付きでロギングしたいときの選択肢、Rich の Logging Handler を触る</a></p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">事例2： <strong>ライブラリで</strong> ルートロガーを触ってはいけません</h2>
+<p>DON'T🙅‍♂️ ライブラリで <code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code> のヒミツ</h3>
+<blockquote>
+<div><p>(略) ルートロガーに設定されたハンドラがあれば何もしません。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.basicConfig" rel="noreferrer" target="_blank">logging.basicConfig()</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">実験スクリプト</h3>
+<pre data-id="id78"><code class="python" data-noescape="" data-trim="">import logging
+
+# 先にimportされるライブラリコードを想定
+logging.basicConfig(level=logging.INFO)
+logging.info("想定通り")
+logging.warning("ちょっとヤバいよ")
+
+# ライブラリユーザの設定の想定
+logging.basicConfig(level=logging.WARNING)  # 効きません😭
+logging.info("想定通り")
+logging.warning("ちょっとヤバいよ")</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーを設定するのは「一度だけ」</h3>
+<div class="literal-block-wrapper docutils container" id="id121">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/python/cpython/blob/v3.13.7/Lib/logging/__init__.py#L2082" rel="noreferrer" target="_blank">basicConfig() の実装</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">def basicConfig(**kwargs):
+
+    if len(root.handlers) == 0:
+        ...</code></pre>
+</div>
+<p>ライブラリがルートロガーにハンドラを設定してしまうと、 <strong>アプリケーションコードで呼び出しても何も起こらない</strong> 😭</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">logging.warning()</span></code> なども全部 <code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code> を呼んでます</h3>
+<blockquote>
+<div><p>（補足：ルートロガーがハンドラを持たない場合は）ルートロガーの <code class="docutils literal notranslate"><span class="pre">debug</span></code> メソッドを呼び出す前に <code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code> が呼ばれます。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.debug" rel="noreferrer" target="_blank">logging.debug()</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code> 同様にライブラリで使ってはいけません</h3>
+<div class="literal-block-wrapper docutils container" id="id122">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/python/cpython/blob/v3.13.7/Lib/logging/__init__.py#L2198" rel="noreferrer" target="_blank">logging.debug() の実装</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">def debug(msg, *args, **kwargs):
+    if len(root.handlers) == 0:
+        basicConfig()
+    root.debug(msg, *args, **kwargs)</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">あのGoogleのライブラリでもやってる😭</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/googleapis/python-genai" rel="noreferrer" target="_blank">google-genai</a> （<a class="reference external" href="https://github.com/googleapis/python-genai/issues/278" rel="noreferrer" target="_blank">修正済み</a>） <a class="footnote-reference brackets" href="#google-genai-issue-blog" id="id81" role="doc-noteref"><span class="fn-bracket">[</span>21<span class="fn-bracket">]</span></a></p></li>
+<li><p><a class="reference external" href="https://github.com/google/adk-python" rel="noreferrer" target="_blank">google-adk</a> <a class="footnote-reference brackets" href="#google-adk-issue-blog" id="id82" role="doc-noteref"><span class="fn-bracket">[</span>22<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<p>プルリク送ってこ！</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="google-genai-issue-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id81" role="doc-backlink">21</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/google-genai-fixed-issue-call-logging-info-not-logger-info" rel="noreferrer" target="_blank">google-genaiよ、ライブラリはルートロガーを触ってはいけません (v1.3.0で解消済み)</a></p>
+</aside>
+<aside class="footnote brackets" id="google-adk-issue-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id82" role="doc-backlink">22</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/google-adk-python-cli-debug-logging-noisy-and-workaround" rel="noreferrer" target="_blank">Agent Development Kit (1.10.0) のWeb UIやAPIサーバは DEBUG レベルでロギングして送られているプロンプトを確認できますが、その実装には伸びしろがあります（Workaroundを添えて）</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">workaround: <code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code> の <code class="docutils literal notranslate"><span class="pre">force</span></code> 引数</h3>
+<pre data-id="workaround-basicconfig-force"><code class="python" data-line-numbers="7" data-noescape="" data-trim="">import logging
+
+logging.basicConfig(level=logging.INFO)
+logging.info("想定通り")
+logging.warning("ちょっとヤバいよ")
+
+logging.basicConfig(level=logging.WARNING, force=True)
+logging.info("想定通り")
+logging.warning("ちょっとヤバいよ")</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">📣 <strong>ライブラリではルートロガーは触らない</strong></h3>
+<blockquote>
+<div><p>あなたのライブラリから <em>ルートロガーへ直接ログを記録しない</em> ことを強く推奨します。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library" rel="noreferrer" target="_blank">ライブラリのためのロギングの設定</a> の注釈</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Chapter 5: 落穂拾い</h2>
+<ol class="arabic simple">
+<li><p>最終手段ハンドラ</p></li>
+<li><p>設定方法の選択肢（ファイルでの設定含む）</p></li>
+<li><p>標準ライブラリ logging 以外の選択肢（loguruなど）</p></li>
+</ol>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">1️⃣ 最終手段ハンドラ</h2>
+<div class="literal-block-wrapper docutils container" id="id123">
+<div class="code-block-caption"><span class="caption-text">ライブラリでwarningのロギング</span></div>
+<pre><code class="python" data-noescape="" data-trim="">import logging
+
+logger = logging.getLogger(__name__)
+
+
+def example():
+    logger.warning("ちょっとヤバいよ")
+</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">実は <code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code> なしでロギングできます</h3>
+<div class="literal-block-wrapper docutils container" id="id124">
+<div class="code-block-caption"><span class="caption-text">ルートロガーを設定しないアプリケーションコード</span></div>
+<pre><code class="python" data-noescape="" data-trim="">from mylib import example
+
+example()
+</code></pre>
+</div>
+<pre data-id="id85"><code class="txt" data-noescape="" data-trim="">ちょっとヤバいよ</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーにハンドラを指定しないとき</h3>
+<blockquote>
+<div><p>イベントは、 <code class="docutils literal notranslate"><span class="pre">lastResort</span></code> に格納された「最終手段ハンドラ」を使用して出力されます。</p>
+<p>ハンドラのレベルは <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> にセットされ、(略)</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#what-happens-if-no-configuration-is-provided" rel="noreferrer" target="_blank">環境設定が与えられないとどうなるか</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">最終手段ハンドラを使わないなら <code class="docutils literal notranslate"><span class="pre">NullHandler</span></code></h3>
+<blockquote>
+<div><p>何らかの理由でロギング設定がなされていないときにメッセージを表示 <em>させたくない</em> のであれば、ライブラリのトップレベルのロガーに何もしないハンドラを取り付けられます。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library" rel="noreferrer" target="_blank">ライブラリのためのロギングの設定</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> 以外を取り付けてはいけません🙅‍♂️</h3>
+<ul class="simple">
+<li><p>ライブラリロガーのハンドラで出力</p></li>
+<li><p>親のルートロガーに伝播（propagate）し、 ルートロガーのハンドラでも処理して <strong>2重</strong> 出力</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">2️⃣ 設定方法の選択肢</h2>
+<pre data-id="id88"><code class="python" data-noescape="" data-trim="">root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+detailed_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+)
+console_handler.setFormatter(detailed_formatter)
+root_logger.addHandler(console_handler)
+console_handler.addFilter(logging.Filter("httpx"))
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://docs.python.org/ja/3/library/logging.config.html#logging.config.dictConfig" rel="noreferrer" target="_blank">dictConfig</a></h3>
+<div class="literal-block-wrapper docutils container" id="id125">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/ftnext/2025-slides/blob/6f6b360b8b884f5dce9b62e2cd37055c0313db25/samplecode/python-logging/library_logger/root_logging_dictconfig.py" rel="noreferrer" target="_blank">ルートロガーでロギング dictConfig版</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">import logging.config
+logging.config.dictConfig(
+    {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "root": {
+            "level": "DEBUG",
+            "handlers": ["console"],
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "detailed",
+                "filters": ["httpx"],
+            },
+        },
+        "formatters": {
+            "detailed": {
+                "format": "%(asctime)s | %(levelname)s (%(name)s) | %(filename)s:%(funcName)s:%(lineno)d - %(message)s"
+            },
+        },
+        "filters": {
+            "httpx": {
+                "name": "httpx",
+            },
+        },
+    }
+)
+</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">コードの代わりに <a class="reference external" href="https://docs.python.org/ja/3/library/logging.config.html#logging.config.fileConfig" rel="noreferrer" target="_blank">fileConfig</a></h3>
+<ul>
+<li><p><a class="reference external" href="https://docs.python.org/ja/3/library/configparser.html" rel="noreferrer" target="_blank">configparser</a> 形式ファイルで設定 <a class="footnote-reference brackets" href="#configparser-file" id="id91" role="doc-noteref"><span class="fn-bracket">[</span>23<span class="fn-bracket">]</span></a></p>
+<blockquote>
+<div><p>ファイルには、 [loggers], [handlers], [formatters] といったセクションが入っていなければならず、（<a class="reference external" href="https://docs.python.org/ja/3/library/logging.config.html#configuration-file-format" rel="noreferrer" target="_blank">環境設定ファイルの書式</a>）</p>
+</div></blockquote>
+</li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="configparser-file" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id91" role="doc-backlink">23</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#configuring-logging" rel="noreferrer" target="_blank">ロギングの環境設定</a> で見られます</p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">💡YAMLファイル + <code class="docutils literal notranslate"><span class="pre">dictConfig</span></code> <a class="footnote-reference brackets" href="#yaml-dictconfig-blog" id="id92" role="doc-noteref"><span class="fn-bracket">[</span>24<span class="fn-bracket">]</span></a></h3>
+<div class="literal-block-wrapper docutils container" id="id126">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/ftnext/2025-slides/blob/6f6b360b8b884f5dce9b62e2cd37055c0313db25/samplecode/python-logging/library_logger/root_logging_yamlconfig.py" rel="noreferrer" target="_blank">ルートロガーでロギング ファイルから辞書で読み込み版</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">config_path = Path(__file__).parent / "config.yml"
+with config_path.open() as f:
+    config = yaml.safe_load(f)
+logging.config.dictConfig(config)
+</code></pre>
+</div>
+<p>uvicornのロギングの実装で学びました</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="yaml-dictconfig-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id92" role="doc-backlink">24</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger-logging-config-dict-or-yaml" rel="noreferrer" target="_blank">Pythonのライブラリに用意されたロガーをlogging.configで設定する（httpxを例に、辞書やYAMLで設定）</a></p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">3️⃣ 標準ライブラリ logging 以外の選択肢</h2>
+<p><a class="reference external" href="https://github.com/vinta/awesome-python?tab=readme-ov-file#logging" rel="noreferrer" target="_blank">vinta/awesome-pythonのLogging</a> にリスト</p>
+<ul class="simple">
+<li><p>loguru</p></li>
+<li><p>structlog</p></li>
+</ul>
+<p>IMO：それぞれ我の強い世界観を持っている</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://github.com/Delgan/loguru" rel="noreferrer" target="_blank">loguru</a></h3>
+<blockquote>
+<div><p>Python logging made (stupidly) simple</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>HTTPX の logging を使ったログを loguru で出力できます</p></li>
+<li><p><a class="reference external" href="https://github.com/Delgan/loguru/tree/0.7.3?tab=readme-ov-file#entirely-compatible-with-standard-logging" rel="noreferrer" target="_blank">Entirely compatible with standard logging</a> より、<em>InterceptHandler</em> を実装して、ルートロガーのハンドラに設定（次頁）</p></li>
+</ul>
+</section>
+<section>
+<div class="literal-block-wrapper docutils container" id="id127">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/loguru_example.py" rel="noreferrer" target="_blank">loguru でロギングする例</a> <a class="footnote-reference brackets" href="#loguru-with-logging-blog" id="id95" role="doc-noteref"><span class="fn-bracket">[</span>25<span class="fn-bracket">]</span></a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">class InterceptHandler(logging.Handler):
+    def emit(self, record: logging.LogRecord) -&gt; None:
+        try:
+            level: str | int = logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+
+        frame, depth = inspect.currentframe(), 0
+        while frame:
+            filename = frame.f_code.co_filename
+            is_logging = filename == logging.__file__
+            is_frozen = "importlib" in filename and "_bootstrap" in filename
+            if depth &gt; 0 and not (is_logging or is_frozen):
+                break
+            frame = frame.f_back
+            depth += 1
+
+        logger.opt(depth=depth, exception=record.exc_info).log(
+            level, record.getMessage()
+        )
+</code></pre>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="loguru-with-logging-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id95" role="doc-backlink">25</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/loguru-compatibility-with-stdlib-logging-example-httpx" rel="noreferrer" target="_blank">HTTPX を例に、標準ライブラリ logging によるログを loguru で出力するには</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://github.com/hynek/structlog" rel="noreferrer" target="_blank">structlog</a></h3>
+<blockquote>
+<div><p>Simple, powerful, and fast logging for Python.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>標準ライブラリ logging から置き換えられるが、<a class="reference external" href="https://www.structlog.org/en/stable/standard-library.html#suggested-configurations" rel="noreferrer" target="_blank">互換でもある</a> （<em>structlog.stdlib.ProcessorFormatter</em>）</p></li>
+<li><p>PyCon JP 2024「<a class="reference external" href="https://2024.pycon.jp/en/talk/RRRAAT" rel="noreferrer" target="_blank">実践structlog</a>」</p></li>
+</ul>
+</section>
+<section>
+<div class="literal-block-wrapper docutils container" id="id128">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/ftnext/2025-slides/blob/f3901a2f5d7fa3bdf3f11e0c83c515781d51c116/samplecode/python-logging/library_logger/structlog_example.py" rel="noreferrer" target="_blank">structlog でロギングする例</a> <a class="footnote-reference brackets" href="#structlog-with-logging-blog" id="id97" role="doc-noteref"><span class="fn-bracket">[</span>26<span class="fn-bracket">]</span></a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">shared_processors = [
+    structlog.stdlib.add_logger_name,
+    structlog.stdlib.add_log_level,
+    structlog.stdlib.PositionalArgumentsFormatter(),
+    add_millisecond_timestamp,  # TimeStamper(fmt="iso")よりもstdlib loggingに寄せる
+    structlog.processors.StackInfoRenderer(),
+    structlog.processors.format_exc_info,
+    structlog.processors.UnicodeDecoder(),
+    structlog.processors.CallsiteParameterAdder(
+        {
+            structlog.processors.CallsiteParameter.FILENAME,
+            structlog.processors.CallsiteParameter.FUNC_NAME,
+            structlog.processors.CallsiteParameter.LINENO,
+        }
+    ),
+]
+
+formatter = structlog.stdlib.ProcessorFormatter(
+    foreign_pre_chain=shared_processors,
+    processors=[
+        structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+        structlog.dev.ConsoleRenderer(),
+    ],
+)
+</code></pre>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="structlog-with-logging-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id97" role="doc-backlink">26</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/structlog-integration-with-stdlib-logging-example-httpx" rel="noreferrer" target="_blank">HTTPX を例に、標準ライブラリ logging によるログを structlog で出力するには</a></p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">One more thing</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong class="command">uvx --with happy-python-logging[flake8] flake8</strong></h3>
+<ul class="simple">
+<li><p>自作 <a class="reference external" href="https://pypi.org/project/happy-python-logging/" rel="noreferrer" target="_blank">https://pypi.org/project/happy-python-logging/</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.basicConfig()</span></code> の使用を <strong>リンターで指摘</strong> する案の実装に着手</p></li>
+</ul>
+<pre data-id="uvx-with-happy-python-logging-flake8-flake8"><code class="txt" data-noescape="" data-trim="">src/antipattern_logging/call_basic_config.py:3:1: HPL101 Don't configure the root logger in your library</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">🌯最初の質問：自信を持って標準ライブラリのloggingを使えそうですか？</h2>
+<ul class="simple">
+<li><p>ロガーの <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> レベル：<strong>ルートロガーと同じ実効レベル</strong> で使える</p></li>
+<li><p>ルートロガーへの伝播（propagate）：<strong>ルートロガーのハンドラで出力</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯：標準ライブラリのlogging、レゴブロックのように組合せてロギングできることを理解しよう！</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> とpropagateから導かれる1つの <strong>型</strong> （ルートロガーでロギング）を紹介</p></li>
+<li><p>ライブラリの <strong>利用者</strong> が <strong>望むフォーマット、出力先</strong> でロギング</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">🌯ライブラリの <strong>作者</strong> はロガーの呼び出しのみ</h3>
+<ul class="simple">
+<li><p><strong>イベント記録だけ</strong> したい</p></li>
+<li><p>ロギングのフォーマットや出力先には関心がない（利用者が自由に設定している前提で）</p></li>
+<li><p>ゆえに「ライブラリでルートロガーを触ってはいけません」</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">HTTPXのようなライブラリではない <strong>手元のスクリプト</strong> でも</h3>
+<div class="literal-block-wrapper docutils container" id="id129">
+<div class="code-block-caption"><span class="caption-text">ルートロガーの設定は一箇所で、関数の中ではロガーを呼ぶだけ</span></div>
+<pre><code class="python" data-noescape="" data-trim="">def awesome():
+    # logger呼び出し（イベント記録のみ）
+def fabulous():
+    # logger呼び出し（イベント記録のみ）
+def main():
+    logging.basicConfig(...)  # ルートロガーにレベル、ハンドラ、フォーマッタ
+    awesome()
+    fabulous()</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました！</h3>
+<p>Happy Python Logging♪</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Appendix</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">元にした先行発表</h3>
+<ul class="simple">
+<li><p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logging-developing-library-take-advantage-nullhandler-and-propagate" rel="noreferrer" target="_blank">Pythonで標準ライブラリloggingを使って自作ライブラリの中でロギングしたい未来の私へ</a></p></li>
+<li><p>2月のPyCon mini Shizuoka 2024 continue <a class="reference external" href="https://ftnext.github.io/2025-slides/pyconshizu/logging-with-nullhandler.html#/1" rel="noreferrer" target="_blank">ライブラリ開発者に贈る「ロギングで NullHandler 以外はいけません」</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ 補足</h3>
+<ul class="simple">
+<li><p><span class="fab fa-twitter"></span> <a class="reference external" href="https://twitter.com/ftnext" rel="noreferrer" target="_blank">@ftnext</a> ／ 登壇 <a class="reference external" href="https://github.com/ftnext/2025-slides" rel="noreferrer" target="_blank">2025</a> <a class="reference external" href="https://github.com/ftnext/2024-slides" rel="noreferrer" target="_blank">2024</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/" rel="noreferrer" target="_blank">ブログ</a> を1000日書いてます</p></li>
+<li><p>毎月の <a class="reference external" href="https://startpython.connpass.com/" rel="noreferrer" target="_blank">みんなのPython勉強会</a> スタッフ</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Special Thanks attakeiさん <a class="footnote-reference brackets" href="#thanks-footnotes" id="id105" role="doc-noteref"><span class="fn-bracket">[</span>27<span class="fn-bracket">]</span></a></h3>
+<p>attakeiさんの <a class="reference external" href="https://pypi.org/project/sphinx-revealjs/" rel="noreferrer" target="_blank">sphinx-revealjs</a> に以下の <strong>自作拡張</strong> を組み合わせて実現</p>
+<ul class="simple">
+<li><p>私の代表作： <a class="reference external" href="https://pypi.org/project/sphinx-new-tab-link/" rel="noreferrer" target="_blank">sphinx-new-tab-link</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/sphinx-revealjs-copycode/" rel="noreferrer" target="_blank">sphinx-revealjs-copycode</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/sphinx-revealjs-ext-codeblock/" rel="noreferrer" target="_blank">sphinx-revealjs-ext-codeblock</a></p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="thanks-footnotes" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id105" role="doc-backlink">27</a><span class="fn-bracket">]</span></span>
+<p>脚注の機能追加、誠にありがとうございます！</p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">EOF</h2>
+</section>
+</section>
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

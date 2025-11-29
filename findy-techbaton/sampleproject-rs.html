@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Rustで作るPythonパッケージの例 sampleproject-rs の紹介</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/findy-techbaton/sampleproject-rs.html">
+    <meta property="og:title" content="Rustで作るPythonパッケージの例 sampleproject-rs の紹介">
+    <meta property="og:description" content="Pythonの多様性 深掘りLT Night">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/findy-techbaton-python.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">Rustで作るPythonパッケージの例 sampleproject-rs の紹介</h1>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Rustで作るPythonパッケージの例 <strong>sampleproject-rs</strong> の紹介</h2>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pythonの多様性 深掘りLT Night</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/10/22 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ？</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー） <span class="fab fa-twitter"></span> <span class="fab fa-github"></span> @ftnext</p></li>
+<li><p>PyCon JP 2025 では <a class="reference external" href="https://2025.pycon.jp/en/timetable/talk/Z8ZYFA" rel="noreferrer" target="_blank">標準ライブラリloggingの話</a> をしました</p></li>
+<li><p>機械学習エンジニア。 <a class="reference external" href="https://www.uzabase.com/jp/info/20250901/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">宣伝（運営に関わっているもの）</h3>
+<ul>
+<li><p>毎月くらいで開催中、みんなのPython勉強会（オンライン開催）</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>10月は明日23日(木) <a class="reference external" href="https://startpython.connpass.com/event/371646/" rel="noreferrer" target="_blank">https://startpython.connpass.com/event/371646/</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>10/30(木)31(金) <a class="reference external" href="https://aid.connpass.com/event/367697/" rel="noreferrer" target="_blank">AI駆動開発カンファレンス 2025秋</a>、オンライン枠あります！</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Rustで書かれたPythonパッケージを <strong>作れる</strong> ようになりたい</h2>
+<dl class="field-list simple">
+<dt class="field-odd">uv, Ruff<span class="colon">:</span></dt>
+<dd class="field-odd"><p>RustをバイナリにしてPyPIで配布</p>
+</dd>
+<dt class="field-even">Pydantic<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rustで書いたコードをPythonから呼び出せる</p>
+</dd>
+</dl>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">目標に近づくために sampleproject-rs で素振り💪</h3>
+<p><a class="reference external" href="https://pypi.org/project/sampleproject-rs/" rel="noreferrer" target="_blank">https://pypi.org/project/sampleproject-rs/</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">sampleproject、知っている方？🙋</h2>
+<p><a class="reference external" href="https://pypi.org/project/sampleproject/" rel="noreferrer" target="_blank">https://pypi.org/project/sampleproject/</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">☝️ <strong class="command">uvx --from sampleproject sample</strong></h3>
+<pre data-id="uvx-from-sampleproject-sample"><code class="console" data-noescape="" data-trim="">% uvx --from sampleproject sample
+Call your main application code here</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">✌️ <code class="docutils literal notranslate"><span class="pre">sample.simple.add_one()</span></code></h3>
+<pre data-id="sample-simple-add-one"><code class="console" data-noescape="" data-trim="">% uv run --with sampleproject \
+    python -c "from sample import simple; print(simple.add_one(1))"
+2</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Python <strong>パッケージのサンプル</strong></h3>
+<ul class="simple">
+<li><p>PyPA（Python Packaging Authority）が作ってます：<a class="reference external" href="https://github.com/pypa/sampleproject/" rel="noreferrer" target="_blank">https://github.com/pypa/sampleproject/</a></p></li>
+<li><p>チュートリアル <a class="reference external" href="https://packaging.python.org/en/latest/tutorials/packaging-projects/" rel="noreferrer" target="_blank">Packaging Python Projects</a></p></li>
+<li><p>Pythonパッケージを作りたい方におすすめ</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">私のsampleproject-rs</h2>
+<p>sampleprojectにインスパイアされ、爆誕させた</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">☝️ <strong class="command">uvx --from sampleproject-rs sample</strong></h3>
+<pre data-id="uvx-from-sampleproject-rs-sample"><code class="console" data-noescape="" data-trim="">% uvx --from sampleproject-rs sample
+Call your main application code here</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">✌️ <code class="docutils literal notranslate"><span class="pre">sample.simple.add_one()</span></code></h3>
+<pre data-id="id5"><code class="console" data-noescape="" data-trim="">% uv run --with sampleproject-rs \
+    python -c "from sample import simple; print(simple.add_one(1))"
+2</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>Rust実装</strong> で完全再現です！！</h3>
+<p><a class="reference external" href="https://github.com/ftnext/sampleproject-rs" rel="noreferrer" target="_blank">https://github.com/ftnext/sampleproject-rs</a></p>
+<pre data-id="rust"><code class="rust" data-noescape="" data-trim="">fn main() {
+    println!("Call your main application code here");
+}
+
+#[pyfunction]
+fn add_one(number: i32) -&gt; i32 {
+    number + 1
+}</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">sampleproject-rs からの学び</h2>
+<ul class="simple">
+<li><p><em>maturin</em></p></li>
+<li><p><em>PyO3</em></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">1️⃣ <strong class="command">maturin build</strong> でPythonパッケージになる <a class="footnote-reference brackets" href="#maturin-first-blog" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></h2>
+<ul class="simple">
+<li><p>maturinは、Rustで書かれたビルドバックエンド</p></li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text"><code class="file docutils literal notranslate"><span class="pre">pyproject.toml</span></code></span></div>
+<pre><code class="toml" data-noescape="" data-trim="">[build-system]
+requires = ["maturin&gt;=1.8,&lt;2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+bindings = "bin"  # バイナリの指定
+strip = true</code></pre>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="maturin-first-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id7" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/maturin-bindings-bin-python-package-from-rust-binary" rel="noreferrer" target="_blank">Rustプログラムから作ったバイナリは、maturinでPythonパッケージにできる！！</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Rustによるバイナリがパッケージに</h3>
+<pre data-id="id8"><code class="console" data-noescape="" data-trim="">% # git checkout 0.1.0
+% cargo run --quiet
+Call your main application code here
+% file target/debug/sample
+target/debug/sample: Mach-O 64-bit executable arm64
+% target/debug/sample
+Call your main application code here</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Python製パッケージと違って <strong>環境ごとのビルド</strong> が必要 <a class="footnote-reference brackets" href="#maturin-impression" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="maturin-impression" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id9" role="doc-backlink">2</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/try-maturin-pypi-upload-confuse-binary-each-environment" rel="noreferrer" target="_blank">Rust プログラムから作ったバイナリを PyPI にアップロードしてみて</a></p>
+</aside>
+</aside>
+<ul class="simple">
+<li><p>GitHub Actions（Ubuntu環境）で <code class="docutils literal notranslate"><span class="pre">maturin</span> <span class="pre">build</span></code> してPyPIに上げたら、<strong>macOSでは実行できず</strong></p></li>
+</ul>
+<pre data-id="id10"><code class="console" data-noescape="" data-trim="">% uvx --from sampleproject-rs sample
+× No solution found when resolving tool dependencies:
+╰─▶ Because only sampleproject-rs==0.0.1 is available and
+    sampleproject-rs==0.0.1 has no wheels with a matching platform tag
+    (e.g., `macosx_14_0_arm64`), we can conclude that all versions of
+    sampleproject-rs cannot be used.</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">2️⃣ <strong>PyO3</strong> でRustプログラムをPythonから呼び出せるようにした</h2>
+<pre data-id="pyo3-rustpython"><code class="rust" data-noescape="" data-trim="">use pyo3::prelude::*;
+
+#[pyfunction]
+fn add_one(number: i32) -&gt; i32 {
+    number + 1
+}
+
+#[pymodule]
+mod sample {
+    use super::*;
+
+    #[pymodule]
+    mod simple {
+        #[pymodule_export]
+        use super::add_one;
+    }
+}</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">合わせて <code class="docutils literal notranslate"><span class="pre">sample</span></code> コマンドはPythonスクリプトに変更 <a class="footnote-reference brackets" href="#pyo3-first-blog" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="pyo3-first-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id11" role="doc-backlink">3</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/rust-maturin-cli-and-import-support-python-library" rel="noreferrer" target="_blank">Rust プログラムから作った Python パッケージで、エントリポイントスクリプトも import もサポートするには</a></p>
+</aside>
+</aside>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text"><code class="file docutils literal notranslate"><span class="pre">pyproject.toml</span></code></span></div>
+<pre><code class="toml" data-noescape="" data-trim="">[project.scripts]
+sample = "sample:main"
+
+[tool.maturin]
+bindings = "pyo3"  # "bin"から変更</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯：Rustで作るPythonパッケージの例 sampleproject-rs の紹介</h2>
+<p>Rustで書いたプログラムは</p>
+<ul class="simple">
+<li><p><strong>maturin</strong> でバイナリとしてPyPIから配布できる</p></li>
+<li><p><strong>PyO3</strong> でPythonプログラム中で呼び出せる</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<p>Happy Python development🫶</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Appendix：関連発表 <a class="footnote-reference brackets" href="#pyfukuoka4" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></h3>
+<iframe height="480" src="https://ftnext.github.io/2025-slides/python-fukuoka/why-we-can-run-rust-package-cli#/1" title="Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？" width="800"></iframe><aside class="footnote-list brackets">
+<aside class="footnote brackets" id="pyfukuoka4" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id14" role="doc-backlink">4</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://youtu.be/9P8Cq63S1eM?si=qMZBYxiCTyAVTdYw&amp;t=3967" rel="noreferrer" target="_blank">アーカイブ動画</a></p>
+</aside>
+</aside>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>
