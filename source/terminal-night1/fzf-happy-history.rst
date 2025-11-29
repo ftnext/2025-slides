@@ -27,6 +27,8 @@ fzfと履歴の話
 
 :kbd:`Ctrl` - :kbd:`R`
 
+.. image:: ../_static/terminal-night1/fzf-happy-history.png
+
 ※ **個人の感想** です
 
 .. python を入力する例
@@ -156,12 +158,14 @@ scoring scheme
 * :command:`fzf --zsh` などを使って、あなたの履歴はより幸せになれます！
 * Z Shell分からないなりに実装を読むの楽しい。 ``fzf`` のオプションいくつも知れた🙌
 
-ご清聴ありがとうございました (**Happy** development!)
-------------------------------------------------------------
+ご清聴ありがとうございました [#fzf_special_thanks]_  (**Happy** development!)
+------------------------------------------------------------------------------------------
 
 * nikkie（にっきー）・Python使い・:fab:`github` `@ftnext <https://github.com/ftnext>`__ `sphinx-deck <https://github.com/ftnext/sphinx-deck>`__ など
 * 機械学習エンジニア。 `Speeda AI Agent <https://www.uzabase.com/jp/info/20250901/>`__ 開発（`We're hiring! <https://hrmos.co/pages/uzabase/jobs/1829077236709650481>`__）
 
 .. image:: ../_static/uzabase-white-logo.png
+
+.. [#fzf_special_thanks] Special thanks: ``fzf --zsh`` を教えてくださった同僚Aさん
 
 .. --wrap-sign
