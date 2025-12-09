@@ -1,3 +1,9 @@
+:ogp_title: 忘年 2025（AIエージェント躍進の一年）
+:ogp_event_name: saikyo_dev1
+:ogp_slide_name: ai-agent-year
+:ogp_description: 埼京.dev #1【忘年LT会】
+:ogp_image_name: saikyo-dev1
+
 ======================================================================
 忘年 2025
 ======================================================================
