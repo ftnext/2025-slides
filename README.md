@@ -1,5 +1,6 @@
 # 2025-slides
 
+* [忘年 2025](https://ftnext.github.io/2025-slides/saikyo_dev1/ai-agent-year.html) @[埼京.dev #1 (2025/12)](https://sai-kyo.connpass.com/event/375062/)
 * [fzfと履歴の話](https://ftnext.github.io/2025-slides/terminal-night1/fzf-happy-history.html) @[Terminal Night #1 (2025/11)](https://kichijojipm.connpass.com/event/373896/)
 * [Codex CLIで加速するコードリーディング](https://ftnext.github.io/2025-slides/lunchwithai-codex2/invincible-code-reading.html) @[爆速開発LT：Codex編 Vol.2 (2025/11)](https://lancersagent.connpass.com/event/373333/)
 * [Pythonを"理解"しているコーディングエージェントが欲しい！！](https://ftnext.github.io/2025-slides/yapc-fukuoka/lt-agent-who-understand-python.html#/2) @[YAPC::Fukuoka 企画LT「あなたが本気で欲しいAI Agent」(2025/11)](https://blog.yapcjapan.org/entry/2025/10/24/170000)
