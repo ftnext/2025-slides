@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Pythonを&#34;理解&#34;しているコーディングエージェントが欲しい！！</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/yapc-fukuoka/lt-agent-who-understand-python.html">
+    <meta property="og:title" content="Pythonを"理解"しているコーディングエージェントが欲しい！！">
+    <meta property="og:description" content="YAPC::Fukuoka 2025 企画LT「あなたが本気で欲しいAI Agent」">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/yapc-fukuoka.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">Pythonを"理解"しているコーディングエージェントが欲しい！！</h1>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">デモ準備</h2>
+<ul class="simple">
+<li><p>/plugin disable （/hooks ローカルだけに）</p></li>
+<li><p>過去に作ったスクリプトは消す</p></li>
+<li><p>PS1</p></li>
+<li><p>tree -a</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Pythonを"理解"しているコーディングエージェントが欲しい！！</h2>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>YAPC::Fukuoka 企画LT「あなたが本気で欲しいAI Agent」</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/11/14 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">コーディングエージェント</h2>
+<ul class="simple">
+<li><p>Claude Code（本LTの主役）</p></li>
+<li><p>Codex CLI</p></li>
+<li><p>Gemini CLI</p></li>
+<li><p>etc. etc. <a class="footnote-reference brackets" href="#other-code-agents" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="other-code-agents" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id4" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
+<p>Cursor, Windsurf, GitHub Copilot CLI などなどカキキレナイヨー</p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">君たちは圧倒的に <strong>速い</strong> 🚄</h3>
+<p>人件費に比べて <strong>安い</strong> 💰</p>
+<p>私は Python を書かせることが多いです</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">でも、Pythonのこと分かってます？</h3>
+<p>ClaudeがPythonを <strong>理解しているようには見えない</strong> んです</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">分かっていない一例：f-string</h3>
+<ul class="simple">
+<li><p>フォーマット済み文字列リテラル</p></li>
+<li><p><strong>式</strong> を含められる</p></li>
+</ul>
+<pre data-id="f-string"><code class="pycon" data-noescape="" data-trim="">&gt;&gt;&gt; name = "りせ"
+&gt;&gt;&gt; f"こんにちは、{name}さん！"
+'こんにちは、りせさん！'
+&gt;&gt;&gt; print(f"2 + 3 = {2 + 3}")
+2 + 3 = 5</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">🤖「全部f-stringでええやろ！」</h3>
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">Claudeが書いたロギング</span></div>
+<pre><code class="python" data-noescape="" data-trim="">logger.info(f"{user} - Something happened")
+logger.error(f"Python version: {sys.version}")</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">違う、そうじゃない</h3>
+<div class="literal-block-wrapper docutils container" id="id25">
+<div class="code-block-caption"><span class="caption-text">f-stringの代わりに%-formatと <strong>使い分け</strong></span></div>
+<pre><code class="python" data-noescape="" data-trim="">logger.info("%s - Something happened", user)
+logger.error("Python version: %s", sys.version)</code></pre>
+</div>
+<p>📣私が決して書かないPythonを、私の名前でコミットしないで！</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">💡そうだ、リンタで指摘しよう</h3>
+<ul>
+<li><p>例：Ruff</p></li>
+<li><p><a class="reference external" href="https://docs.astral.sh/ruff/rules/logging-f-string/" rel="noreferrer" target="_blank">logging-f-string (G004)</a></p>
+<blockquote>
+<div><p>Logging statement uses f-string</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Claude Codeの <strong>フック</strong> を設定</h2>
+<ul class="simple">
+<li><p>Pythonを書いたときにリンタを実行する（ロギングのf-stringを含む <strong>600超</strong> のルール）</p></li>
+<li><p>リンタのエラー出力を繰り返しClaudeに見せる（逃 し ま せ ん）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ</h3>
+<blockquote>
+<div><p>エラトステネスの篩をPythonで書いて</p>
+</div></blockquote>
+<p>Claude Code v2.0.37</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">追記：応援ありがとうございました</h3>
+<div class="literal-block-wrapper docutils container" id="id26">
+<div class="code-block-caption"><span class="caption-text">本番アドリブの3往復</span></div>
+<pre><code class="txt" data-noescape="" data-trim="">&gt; エラトステネスの篩をPythonで書いて
+⏺ エラトステネスの篩をPythonで実装します。
+
+&gt; いいね、ファイルに書いてみよっか
+⏺ ファイルに書き込みます。どのファイル名にしますか？例えば sieve_of_eratosthenes.py などでしょうか？
+
+&gt; それで
+⏺ わかりました。sieve_of_eratosthenes.py として保存します。</code></pre>
+</div>
+<p>セッション全体 <a class="reference external" href="https://gist.github.com/ftnext/58d17133b3b282831f136864ac770c28" rel="noreferrer" target="_blank">https://gist.github.com/ftnext/58d17133b3b282831f136864ac770c28</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">追記：フックの様子</h3>
+<pre data-id="id12"><code class="txt" data-noescape="" data-trim="">⎿ PostToolUse:Write hook returned blocking error: [jq -r '.tool_input.file_path' | { read file_path; if echo "$file_path" | grep -q
+    '\.py$'; then "$CLAUDE_PROJECT_DIR"/.claude/hooks/python_format.sh "$file_path"; fi; }]: cmd [1] | ruff check --config
+    '/.../hatch/env/.internal/hatch-static-analysis/.config/ukmfGEkg/ruff_defaults.toml' --fix
+    /.../2025-slides/samplecode/claude-code-harness/sieve_of_eratosthenes.py
+    sieve_of_eratosthenes.py:11:12: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+    sieve_of_eratosthenes.py:14:20: RUF003 Comment contains ambiguous `（` (FULLWIDTH LEFT PARENTHESIS). Did you mean `(` (LEFT
+    PARENTHESIS)?
+    sieve_of_eratosthenes.py:14:25: RUF003 Comment contains ambiguous `）` (FULLWIDTH RIGHT PARENTHESIS). Did you mean `)` (RIGHT
+    PARENTHESIS)?
+    sieve_of_eratosthenes.py:27:12: RET504 Unnecessary assignment to `primes` before `return` statement
+    sieve_of_eratosthenes.py:34:5: T201 `print` found
+    sieve_of_eratosthenes.py:35:5: T201 `print` found
+    Found 6 errors.
+    No fixes available (3 hidden fixes can be enabled with the `--unsafe-fixes` option).
+
+⏺ ruffのチェックでいくつかエラーが出ているので、修正します。</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">追記：リントをパスしたエラトステネスの篩</h3>
+<pre data-id="id13"><code class="python" data-noescape="" data-trim="">MIN_PRIME = 2
+
+
+def sieve_of_eratosthenes(n):
+    """
+    エラトステネスの篩を使ってn以下の素数を求める
+
+    Args:
+        n: 素数を求める上限値
+
+    Returns:
+        n以下の素数のリスト
+    """
+    if n &lt; MIN_PRIME:
+        return []
+
+    # 最初は全てTrueで初期化(素数候補)
+    is_prime = [True] * (n + 1)
+    is_prime[0] = is_prime[1] = False  # 0と1は素数ではない
+
+    # 2からsqrt(n)まで処理
+    for i in range(MIN_PRIME, int(n**0.5) + 1):
+        if is_prime[i]:
+            # iの倍数を全て合成数としてマーク
+            for j in range(i * i, n + 1, i):
+                is_prime[j] = False
+
+    # 素数のリストを生成
+    return [i for i in range(n + 1) if is_prime[i]]
+
+
+# 使用例
+if __name__ == "__main__":
+    import sys
+
+    n = 100
+    primes = sieve_of_eratosthenes(n)
+    sys.stdout.write(f"{n}以下の素数: {primes}\n")
+    sys.stdout.write(f"個数: {len(primes)}\n")</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">配布しています <a class="footnote-reference brackets" href="#prerequisite" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></h3>
+<pre data-id="id15"><code class="shell" data-noescape="" data-trim="">/plugin marketplace add https://github.com/ftnext/claude-code
+/plugin install opinionated-python-hook@nikkie-marketplace</code></pre>
+<p><a class="reference external" href="https://github.com/ftnext/claude-code" rel="noreferrer" target="_blank">https://github.com/ftnext/claude-code</a></p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="prerequisite" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id14" role="doc-backlink">2</a><span class="fn-bracket">]</span></span>
+<p>uvが必要です <a class="reference external" href="https://docs.astral.sh/uv/getting-started/installation/" rel="noreferrer" target="_blank">https://docs.astral.sh/uv/getting-started/installation/</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">💡サブエージェントの出番では</h3>
+<ul class="simple">
+<li><p><strong>Pythonを書くサブエージェント</strong> を用意した（<a class="reference external" href="https://github.com/ftnext/2025-slides/tree/5341f0021698527deea5195184aa69ebc9765a87/samplecode/claude-code-harness-v2/.claude" rel="noreferrer" target="_blank">設定例</a>）</p></li>
+<li><p>メインの Claude Code のコンテキストにリントエラーとその修正過程は不要</p></li>
+<li><p>サブエージェントがPythonを書いた後、フックのリントエラーを見て修正していって <em>そう</em> <a class="footnote-reference brackets" href="#apologies" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="apologies" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id17" role="doc-backlink">3</a><span class="fn-bracket">]</span></span>
+<p>動作の様子からの判断です。ドキュメントの裏とり間に合わず🙏</p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯 Pythonを"理解"しているコーディングエージェントが欲しい！！</h2>
+<ul class="simple">
+<li><p>私の名前でコミットするからには、Pythonを理解して書いてもらおう</p></li>
+<li><p>Claude Codeのフックにリンタを設定して 逃 が さ な い（<em>自走</em> させる）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<ul class="simple">
+<li><p>nikkie（にっきー）・Python使い・<span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext" rel="noreferrer" target="_blank">@ftnext</a> <a class="reference external" href="https://github.com/ftnext/sphinx-deck" rel="noreferrer" target="_blank">sphinx-deck</a> など</p></li>
+<li><p>機械学習エンジニア。 <a class="reference external" href="https://www.uzabase.com/jp/info/20250901/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Appendix</h2>
+<ul class="simple">
+<li><p>逃がさないフック設定詳細</p></li>
+<li><p>自走について先行発表</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Claude Codeのフック設定</h2>
+<p>概要</p>
+<ul class="simple">
+<li><p>Pythonを書いたら＝PostToolUse</p></li>
+<li><p>フックの終了コードは2、標準エラー出力へ</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>ローカル</strong> のプロジェクトに設定</h3>
+<pre data-id="id21"><code class="text" data-noescape="" data-trim="">.claude/
+├── hooks/
+│   └── python_format.sh
+└── settings.local.json</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">PostToolUseフック</h3>
+<p>EditまたはWriteでPythonファイルを書いたら</p>
+<pre data-id="posttooluse"><code class="json" data-noescape="" data-trim="">{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read file_path; if echo \"$file_path\" | grep -q '\\.py$'; then \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/python_format.sh \"$file_path\"; fi; }"
+          }
+        ]
+      }
+    ]
+  }
+}
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="file docutils literal notranslate"><span class="pre">python_format.sh</span></code></h3>
+<pre data-id="python-format-sh"><code class="bash" data-noescape="" data-trim="">#!/usr/bin/env bash
+set -u
+
+uvx hatch fmt "$1" 1&gt;&amp;2
+exit_code=$?
+if [ $exit_code -eq 1 ]; then
+    exit 2
+else
+    exit $exit_code
+fi
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">フックのエラーメッセージをClaudeに見せるために</h3>
+<ul class="simple">
+<li><p><code class="file docutils literal notranslate"><span class="pre">python_format.sh</span></code> の終了コードを <strong>2</strong> にする（Claude Codeをブロック）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hatch</span> <span class="pre">fmt</span></code> の出力を <strong>stderr</strong> へ（Claudeが見る）</p></li>
+</ul>
+<p>リファレンスの「<a class="reference external" href="https://docs.claude.com/ja/docs/claude-code/hooks#hook%E5%87%BA%E5%8A%9B" rel="noreferrer" target="_blank">Hook出力</a>」参照 <a class="footnote-reference brackets" href="#claude-code-hook-article" id="id22" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="claude-code-hook-article" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id22" role="doc-backlink">4</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/claude-code-hooks-run-hatch-fmt-good-python-code" rel="noreferrer" target="_blank">フックでリンタ（hatch fmt）のエラーを Claude Code に見せて、Python を理解している実装をさせる</a></p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">コーディングエージェントの自走</h2>
+<p>先行する発表</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">AI Coding Agent Enablement in TypeScript</h3>
+<iframe allowfullscreen="true" class="speakerdeck-iframe" data-ratio="1.7777777777777777" frameborder="0" src="https://speakerdeck.com/player/1b717ecfee8a4833a8ac0999900753d5?slide=29" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" title="AI Coding Agent Enablement in TypeScript"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">関数型でTypeScriptを書かせる試み</h3>
+<iframe allowfullscreen="true" class="speakerdeck-iframe" data-ratio="1.7777777777777777" frameborder="0" src="https://speakerdeck.com/player/baf1965843b549f49f31703cc697b5b6?slide=1" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" title="LintのみでAIに開発スタイルを叩き込めるのか？"></iframe></section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">EOF</h2>
+</section>
+</section>
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

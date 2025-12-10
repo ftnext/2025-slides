@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Codex CLIで 加速 するコードリーディング</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/lunchwithai-codex2/invincible-code-reading.html">
+    <meta property="og:title" content="Codex CLIで加速するコードリーディング">
+    <meta property="og:description" content="爆速開発LT：Codex編 Vol.2">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/lunchwithai-codex2.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">Codex CLIで <strong>加速</strong> するコードリーディング</h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>爆速開発LT：Codex編 Vol.2 <code class="docutils literal notranslate"><span class="pre">#Lancers_AI_LT</span></code></p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/11/26 nikkie（スライド <strong>スクショOK</strong>）</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ？（<strong>Python使い</strong> の自己紹介）</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー） @ftnext</p></li>
+<li><p>好きなことは、Python製ライブラリのソースコードを読むこと</p></li>
+<li><p>コーディングエージェントに対して強い <strong>思想</strong> を持つ</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">思想1：コンテキスト、教えて？（10月発表）</h3>
+<iframe height="480" src="https://ftnext.github.io/2025-slides/aidd-codex1/codex-rs-telemetry.html#/4" title="ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？" width="800"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">思想2：フックでClaude Code自走（11月発表）</h3>
+<iframe height="480" src="https://ftnext.github.io/2025-slides/yapc-fukuoka/lt-agent-who-understand-python.html#/4" title="Pythonを'理解'しているコーディングエージェントが欲しい！！" width="800"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ？（続き）</h3>
+<ul class="simple">
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p><a class="reference external" href="https://www.uzabase.com/jp/info/20250901/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">宣伝：書籍『<a class="reference external" href="https://publishing.newspicks.com/books/9784910063447" rel="noreferrer" target="_blank">サム・アルトマン</a>』、いかがですか？</h3>
+<a class="reference internal image-reference" href="../_images/sama-book.jpg"><img alt="../_images/sama-book.jpg" src="../_images/sama-book.jpg" style="width: 80%;"/>
+</a>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">私とCodex CLI</h2>
+<ul class="simple">
+<li><p><strong>コードリーディング</strong> に使っている</p></li>
+<li><p>コードはほとんど書かせていない <a class="footnote-reference brackets" href="#swe-15" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
+<li><p><a class="reference external" href="https://chatgpt.com/codex" rel="noreferrer" target="_blank">Codex Cloud</a> でBest-of-Nはごくたまにやる</p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="swe-15" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id6" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
+<p>Windsurfの爆速なSWE-1.5を愛用</p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">こいつ、できる</h3>
+<ul class="simple">
+<li><p>codex-rsにOTel計装のための <a class="reference external" href="https://crates.io/crates/logfire" rel="noreferrer" target="_blank">logfire</a> を追加（10月登壇ネタ）したらビルドエラー</p></li>
+<li><p>Codex CLIが <strong>インストールされたlogfireのソースを読んで</strong> 解決</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">読める、読めるぞ！</h3>
+<ul class="simple">
+<li><p>OSSのライブラリでどう実装してるか気になったら、cloneして <strong class="command">codex</strong> 起動</p></li>
+<li><p>Codex CLIと一緒ならJavaScriptやRustも <strong>Pythonと同じくらい</strong> 読めてる感覚</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">実践：今回codex-rsをいくつか読んできました</h2>
+<ul class="simple">
+<li><p>Codex CLIを使ってCodex CLIの実装（codex-rs）を読んだ</p></li>
+<li><p>ソースを読んだことで、Codex CLIの仕組みの理解が深まった</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">環境情報</h3>
+<ul class="simple">
+<li><p>macOS</p></li>
+<li><p>codex-cli 0.63.0 <a class="footnote-reference brackets" href="#brew-codex" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
+<li><p>gpt-5.1-codex（デフォルトモデル）</p></li>
+<li><p>Codex CLIには（Tier上げで余ってる）APIキー（発表準備で2ドル）</p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="brew-codex" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id10" role="doc-backlink">2</a><span class="fn-bracket">]</span></span>
+<p>Homebrewでアップデートできなかった際に救われた：<a class="reference external" href="https://gri.jp/media/entry/37479" rel="noreferrer" target="_blank">CodexのHomebrewアップグレードが効かない件──原因と対処、そしてnpm版への移行について</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">調査依頼例 <a class="footnote-reference brackets" href="#other-prompts" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></h3>
+<blockquote>
+<div><p>OpenAI Codexのリポジトリです。 codex-rs/ 下からデフォルトのモデルはどう決まっているかまず教えてください</p>
+</div></blockquote>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="other-prompts" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id11" role="doc-backlink">3</a><span class="fn-bracket">]</span></span>
+<p>Appendixを参照ください</p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">調査中のCodex CLIの表示</h3>
+<img alt="../_images/codex-screen.png" src="../_images/codex-screen.png"/>
+<p>何をしている？</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">セッション履歴</h3>
+<ul class="simple">
+<li><p><code class="file docutils literal notranslate"><span class="pre">~/.codex/sessions</span></code> に <a class="reference external" href="https://developers.openai.com/codex/cli/reference/#codex-resume" rel="noreferrer" target="_blank">resume</a> に使う <strong>JSON Lines</strong> がある <a class="footnote-reference brackets" href="#session-file-name" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<pre data-id="id14"><code class="json" data-noescape="" data-trim="">{"payload":{"type":"reasoning","summary":[{"type":"summary_text","text":"**Planning search for default model**"}],"content":null}}
+{"payload":{"type":"function_call","name":"shell_command","arguments":"{\"command\":\"ls\",\"workdir\":\"/.../openai-codex\"}","call_id":"call_Twy3ilTyWGpBGYlOS46CmYj6"}}
+{"payload":{"type":"function_call_output","call_id":"call_Twy3ilTyWGpBGYlOS46CmYj6","output":"Exit code: 0\nWall time: 0 seconds\nOutput:\nAGENTS.md\nCHANGELOG.md\nLICENSE\nNOTICE\nPNPM.md\nREADME.md\ncliff.toml\ncodex-cli\ncodex-rs\ndocs\nflake.lock\nflake.nix\npackage.json\npnpm-lock.yaml\npnpm-workspace.yaml\nscripts\nsdk\nshell-tool-mcp\n"}}</code></pre>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="session-file-name" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id15" role="doc-backlink">4</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://github.com/openai/codex/blob/rust-v0.63.0/codex-rs/core/src/rollout/recorder.rs#L315-L333" rel="noreferrer" target="_blank">https://github.com/openai/codex/blob/rust-v0.63.0/codex-rs/core/src/rollout/recorder.rs#L315-L333</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">実は <strong>シェルコマンドのみ</strong></h3>
+<ul class="simple">
+<li><p>調査では <code class="docutils literal notranslate"><span class="pre">shell_command</span></code> ツールしか使っていない</p></li>
+</ul>
+<pre data-id="id16"><code class="json" data-noescape="" data-trim="">{"payload":{"type":"function_call","name":"shell_command","arguments":"{\"command\":\"ls\",\"workdir\":\"/.../openai-codex\"}","call_id":"call_Twy3ilTyWGpBGYlOS46CmYj6"}}
+{"payload":{"type":"function_call","name":"shell_command","arguments":"{\"command\":\"rg -n \\\"default model\\\" -n\",\"workdir\":\"/.../openai-codex\"}","call_id":"call_k3OzGR9tqWa8Zs6eG3JkVBCF"}}
+{"payload":{"type":"function_call","name":"shell_command","arguments":"{\"command\":\"sed -n '1,200p' codex-rs/common/src/oss.rs\",\"workdir\":\"/.../openai-codex\"}","call_id":"call_lfIgOhegI4MhHP2B6DgDhe31"}}</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Codex CLIの中のLLMの気持ち</h2>
+<ul class="simple">
+<li><p>ユーザから「調査して」とプロンプトを与えられた</p></li>
+<li><p>今いるディレクトリだけは分かる。そこに何があるかすら不明</p></li>
+<li><p><strong>シェルコマンドを入力すると結果が返ってくるツールだけ</strong> がある</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">要は <strong>調べ方を分かっている</strong> ということ</h3>
+<ul class="simple">
+<li><p><strong class="command">ls</strong> から始めてディレクトリ構造を掴む</p></li>
+<li><p><strong class="command">rg</strong> で該当する可能性のあるファイル群を掴む</p></li>
+<li><p>中身を確認（<strong class="command">sed -n '1,200p'</strong>）</p></li>
+<li><p>List, Search, Readを繰り返す</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Listの例</h3>
+<pre data-id="list"><code class="bash" data-noescape="" data-trim="">% ls
+AGENTS.md           cliff.toml              package.json
+CHANGELOG.md        codex-cli               pnpm-lock.yaml
+LICENSE             codex-rs                pnpm-workspace.yaml
+NOTICE              docs                    scripts
+PNPM.md             flake.lock              sdk
+README.md           flake.nix               shell-tool-mcp</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Searchの例</h3>
+<div class="literal-block-wrapper docutils container" id="id28">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/BurntSushi/ripgrep" rel="noreferrer" target="_blank">ripgrep</a></span></div>
+<pre><code class="bash" data-noescape="" data-trim="">% rg -n "default model"
+codex-rs/tui/src/app.rs
+678:                                .add_error_message(format!("Failed to save default model: {err}"));
+
+codex-rs/core/src/codex.rs
+310:    /// If not specified, server will use its default model.
+
+codex-rs/common/src/oss.rs
+7:/// Returns the default model for a given OSS provider.
+
+codex-rs/common/src/model_presets.rs
+42:    /// Whether this is the default model for new users.</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Readの例</h3>
+<pre data-id="read"><code class="bash" data-noescape="" data-trim="">% sed -n '300,350p' codex-rs/core/src/codex.rs
+            .as_deref()
+            .unwrap_or(compact::SUMMARIZATION_PROMPT)
+    }
+}
+
+#[derive(Clone)]
+pub(crate) struct SessionConfiguration {
+    /// Provider identifier ("openai", "openrouter", ...).
+    provider: ModelProviderInfo,</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Codex CLIのコンテキストはどうなってる？</h2>
+<ul class="simple">
+<li><p>システムプロンプトは？ 他のツールは？</p></li>
+<li><p>👉 <strong>Responses API</strong> のリクエストを見る <a class="footnote-reference brackets" href="#rust-log-article" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="rust-log-article" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id19" role="doc-backlink">5</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/codex-cli-rust-log-env-var-responses-api-request-json" rel="noreferrer" target="_blank">【速報】nikkie氏、ついに Codex CLI から Responses API へのリクエストを覗くことに成功！</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Responses APIのリクエスト</h3>
+<ul>
+<li><p>全容 <a class="reference external" href="https://gist.github.com/ftnext/7b0caeec056188da387e8333e30be749" rel="noreferrer" target="_blank">https://gist.github.com/ftnext/7b0caeec056188da387e8333e30be749</a></p></li>
+<li><p>システムプロンプト（100行） <a class="reference external" href="https://github.com/openai/codex/blob/rust-v0.63.0/codex-rs/core/gpt_5_codex_prompt.md" rel="noreferrer" target="_blank">gpt_5_codex_prompt.md</a></p>
+<blockquote>
+<div><p>prefer using <code class="docutils literal notranslate"><span class="pre">rg</span></code> or <code class="docutils literal notranslate"><span class="pre">rg</span> <span class="pre">--files</span></code> respectively</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Codex CLIのツールは <code class="docutils literal notranslate"><span class="pre">shell_command</span></code> に加えて</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">update_plan</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply_patch</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">view_image</span></code></p></li>
+<li><p>MCP関連3つ</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Gemini CLIと比べると</h3>
+<div class="literal-block-wrapper docutils container" id="id29">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/google-gemini/gemini-cli/blob/v0.17.1/packages/core/src/tools/tool-names.ts#L11-L22" rel="noreferrer" target="_blank">https://github.com/google-gemini/gemini-cli/blob/v0.17.1/packages/core/src/tools/tool-names.ts#L11-L22</a></span></div>
+<pre><code class="javascript" data-line-numbers="" data-noescape="" data-trim="">export const GLOB_TOOL_NAME = 'glob';
+export const WRITE_TODOS_TOOL_NAME = 'write_todos';
+export const WRITE_FILE_TOOL_NAME = 'write_file';
+export const WEB_SEARCH_TOOL_NAME = 'google_web_search';
+export const WEB_FETCH_TOOL_NAME = 'web_fetch';
+export const EDIT_TOOL_NAME = 'replace';
+export const SHELL_TOOL_NAME = 'run_shell_command';
+export const GREP_TOOL_NAME = 'search_file_content';
+export const READ_MANY_FILES_TOOL_NAME = 'read_many_files';
+export const READ_FILE_TOOL_NAME = 'read_file';
+export const LS_TOOL_NAME = 'list_directory';
+export const MEMORY_TOOL_NAME = 'save_memory';</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Codex CLIの実装は、想像とはぜんぜん違った</h3>
+<ul class="simple">
+<li><p>Codex CLIは <strong>ツールを絞って</strong> いる</p></li>
+<li><p>コードベースの調査は <code class="docutils literal notranslate"><span class="pre">shell_command</span></code> でやってのける</p></li>
+<li><p>裏のモデル（gpt-5.1-codex）が調査方法を分かっている</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">もう1つ <a class="reference external" href="https://developers.openai.com/codex/guides/slash-commands#highlight-files-with-mention" rel="noreferrer" target="_blank">/mention</a></h2>
+<ul class="simple">
+<li><p>Slash Command の1つ</p></li>
+<li><p><strong>@になるだけ</strong>。ファイルパスのヒントが出て入力しやすい</p></li>
+<li><p>gpt-5.1-codex たちはファイルパスがあればReadするのだろう</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Gemini CLI</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">@</span></code> でファイルパスを指定する機能がある</p></li>
+<li><p>指定した <strong>ファイルのコンテンツ</strong> がモデルに <strong>渡されて</strong> いた</p></li>
+<li><p>Codex CLIはこれをやっていない（きめ細かくReadしたいから？） <a class="footnote-reference brackets" href="#compare-article" id="id23" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="compare-article" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id23" role="doc-backlink">6</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/coding-agent-at-mark-codex-cli-vs-gemini-cli" rel="noreferrer" target="_blank">Codex CLIの@(/mention)、Gemini CLIの@</a></p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯 Codex CLIで加速するコードリーディング</h2>
+<ul class="simple">
+<li><p>Codex CLIはコードベースを <strong>シェルコマンド</strong> （<code class="docutils literal notranslate"><span class="pre">shell_command</span></code> ツール）だけで巧みに調査する</p></li>
+<li><p>List・Search・Readの繰り返し。gpt-5.1-codexは超優秀なエンジニア感</p></li>
+<li><p>ファイルパスや行数を指定してより調べやすく（ファイルに書き出して依頼してます）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<p>Enjoy code reading with Codex!</p>
+<p>Appendixが続きます</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">他の依頼事項</h3>
+<ul class="simple">
+<li><p>OpenAI Codexのソースコードが codex-rs 下にあります。codexを使うと、$HOME/.codex/sessions/yyyy/mm/dd にJSONLファイルができているのですが、これはどのような処理で作られていますか？</p></li>
+<li><p>OpenAIのCodex CLIのリポジトリです。Sessionについて、OpenAIのエンドポイントにどのようなリクエストを送っているかを知りたいです。codex-rs/下にある実装を調査してください</p></li>
+<li><p>OpenAI Code CLIの実装が codex-rs/ 下にあります。Slash commandの中の/mentionってどんな実装ですか？</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">実装を見て同意見です</h3>
+<blockquote class="twitter-tweet" data-dnt="true" data-lang="ja"><p dir="ltr" lang="ja">ここ数日、敢えてGemini 3だけで生活してみたけどまだ同じ感想です。<br/>前と比べるとかなり良くなってるのは事実なんだけど、それでもなんか『勢いに任せて玉石混交の情報をぶちまけてるだけ』というのが変わってない。<br/>GPTが『賢い』のに対してGeminiは『賢い情報も含んでる』みたいな感じ。… <a href="https://t.co/5hcT1n0XCA">https://t.co/5hcT1n0XCA</a></p>— 炎鎮🔥 - ₿onochin - (@super_bonochin) <a href="https://twitter.com/super_bonochin/status/1992832807283130798?ref_src=twsrc%5Etfw">2025年11月24日</a></blockquote> <script async="" charset="utf-8" src="https://platform.twitter.com/widgets.js"></script></section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">EOF</h2>
+</section>
+</section>
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

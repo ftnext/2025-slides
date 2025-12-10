@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>ライブラリ開発者に贈る「ロギングで NullHandler 以外はいけません」</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
+</script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/pyconshizu/logging-with-nullhandler.html">
+    <meta property="og:title" content="ライブラリ開発者に贈る「ロギングで NullHandler 以外はいけません」">
+    <meta property="og:description" content="PyCon mini Shizuoka 2024 continue">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/pyconshizu.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリ開発者に贈る「ロギングで <code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> 以外はいけません」</h1>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリ開発者に贈る「ロギングで <code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> 以外はいけません」</h2>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PyCon mini Shizuoka 2024 <strong>continue</strong></p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/02/08 nikkie</p>
+</dd>
+</dl>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">振替開催、誠にありがとうございます🫶</h3>
+<p>引き続き盛り上がって参りましょう！</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ（👉Appendix）</h2>
+<ul class="simple">
+<li><p>nikkie ／ <span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext" rel="noreferrer" target="_blank">@ftnext</a> ／ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/" rel="noreferrer" target="_blank">ブログ</a> 連続 <strong>810</strong> 日突破</p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p>Python歴は7年。PyConで登壇多数</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">アンケート（何度でも挙げよう）</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.warning()</span></code> や <code class="docutils literal notranslate"><span class="pre">logging.error()</span></code> したことある🙋‍♂️</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.basicConfig()</span></code> したことある🙋‍♀️</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.getLogger()</span></code> したことある🙋</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">本トークの対象者</h3>
+<ul class="simple">
+<li><p>Python標準ライブラリのloggingモジュールを <strong>触ったことがある</strong></p></li>
+<li><p>loggingモジュールの中身はよく分からなくて全然OK👌</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">皆さんに質問です</h2>
+<ul class="simple">
+<li><p>あなたはPythonで <code class="docutils literal notranslate"><span class="pre">import</span></code> して使いたいコードを書いています（例：ライブラリ）</p></li>
+<li><p>その中で <strong>ロギング</strong> 、どう実装しますか？</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">import</span></code> する予定のコードの中でのロギング</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.warning()</span></code> （など）❓</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.basicConfig()</span></code> ❓</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.getLogger()</span></code> ❓</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">結論：「<code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> 以外はいけません」</h3>
+<pre data-id="id8"><code class="python" data-noescape="" data-trim="">import logging
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+</code></pre>
+<p>公式ドキュメント📄「<a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library" rel="noreferrer" target="_blank">ライブラリのためのロギングの設定</a>」</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">すべて <strong>公式ドキュメント</strong> に書いてあります！</h3>
+<ul class="simple">
+<li><p>しかし、観測範囲ではライブラリ作成者に気づかれていない印象...😫</p></li>
+<li><p>📄の付いたリンクは、公式ドキュメントへのリンク</p></li>
+<li><p>（別のemoji：🏃‍♂️は本編では飛ばします）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Logging クックブックの「避けるべきパターン」にも</h3>
+<ul>
+<li><p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging-cookbook.html#adding-handlers-other-than-nullhandler-to-a-logger-in-a-library" rel="noreferrer" target="_blank">ライブラリ内でロガーに NullHandler 以外のハンドラーを追加する</a> 📄</p>
+<blockquote>
+<div><p>(略) ログ出力をカスタマイズするのはライブラリ開発者ではなく、アプリケーション開発者の責務です。</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリではオススメしません（ぶっぶー🙅‍♂️）🏃‍♂️</h3>
+<pre data-id="id10"><code class="python" data-noescape="" data-trim="">logging.basicConfig()</code></pre>
+<pre data-id="id10"><code class="python" data-noescape="" data-trim="">logging.warning()</code></pre>
+<pre data-id="id10"><code class="python" data-line-numbers="2" data-noescape="" data-trim="">logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">本トークのメッセージ（<strong>Takeaway</strong>）</h2>
+<ul class="simple">
+<li><p>ライブラリ開発者は <em>ロガー</em> を用意し、 <em>何もしないハンドラ</em> を設定しよう</p></li>
+<li><p>アプリケーション開発者は <em>ルートロガー</em> を設定し、 <em>propagate</em> を利用してログを表示しよう</p></li>
+</ul>
+<p>斜体を解説していきます</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">本トークの構成</h3>
+<ol class="arabic simple">
+<li><p>ライブラリ開発者へ</p></li>
+<li><p>アプリケーション開発者へ</p></li>
+<li><p>落ち穂拾い</p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">本トークで扱うloggingモジュール</h3>
+<ul class="simple">
+<li><p><em>ロガー</em></p></li>
+<li><p><em>ハンドラ</em></p></li>
+<li><p><em>フォーマッタ</em></p></li>
+<li><p>フィルタ（Appendixのみ）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">先行発表：loggingの構成要素（<a class="reference external" href="https://youtu.be/ahaslerbm_g?si=uymzSa4NdoeyqRcU" rel="noreferrer" target="_blank">🎥 <svg aria-hidden="true" height="1.0em" style="display: inline-block; vertical-align: middle; fill: currentColor;" version="1.1" viewbox="0 0 16 16" width="1.0em"><path d="M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.854-1h4.146a.25.25 0 0 1 .25.25v4.146a.25.25 0 0 1-.427.177L13.03 4.03 9.28 7.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.75-3.75-1.543-1.543A.25.25 0 0 1 10.604 1Z"></path></svg></a>）🏃‍♂️</h3>
+<iframe allowfullscreen="true" class="speakerdeck-iframe" data-ratio="1.7777777777777777" frameborder="0" src="https://speakerdeck.com/player/645f81e8b8144b1ba894a9bf5e78263e?slide=16" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" title="Loggingモジュールではじめるログ出力入門 / Introduction to Python Logging"></iframe></section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">1️⃣ライブラリ開発におけるロギングの実装</h2>
+<p>あなたが作るライブラリにロギングをどう仕込むか</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">このパートで扱うloggingモジュール</h3>
+<ul class="simple">
+<li><p><strong>ロガー</strong></p>
+<ul>
+<li><p>レベル</p></li>
+<li><p>ログレコード</p></li>
+</ul>
+</li>
+<li><p><strong>ハンドラ</strong></p></li>
+<li><p><em>フォーマッタ</em></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library" rel="noreferrer" target="_blank">ライブラリのためのロギングの設定</a> 📄の2点</h3>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.getLogger(...)</span></code> （ロガー）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logger.addHandler(...)</span></code> （ハンドラ）</p></li>
+</ol>
+<pre data-id="id19"><code class="python" data-noescape="" data-trim="">logging.getLogger(__name__).addHandler(logging.NullHandler())</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">1️⃣-1️⃣ <a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.getLogger" rel="noreferrer" target="_blank">logging.getLogger(...)</a> 📄</h2>
+<blockquote>
+<div><p>指定された名前のロガーを返します。</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの持つメソッド</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">debug()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">info()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">warning()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">error()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">critical()</span></code></p></li>
+</ul>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging" rel="noreferrer" target="_blank">logging を使うとき</a> 📄（基本 logging チュートリアル）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">開発者は <strong>ロガーを操作</strong> すればOK</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">getLogger(...)</span></code> でロガーインスタンスを得る</p></li>
+<li><p>ロガーインスタンスのメソッドを呼び出してロギング</p></li>
+</ul>
+<pre data-id="ok"><code class="python" data-noescape="" data-trim="">logger.warning("ちょっとヤバいよ")
+logger.error("ヤバイよ。マジヤバイよ")</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">「ちょっとヤバいよ」はいけません 🏃‍♂️</h3>
+<ul class="simple">
+<li><p>ログのメッセージに <em>どんな情報を含めるか</em> は、このトークの範囲外</p></li>
+<li><p>参考 JJUG CCC 2024 Fall <a class="reference external" href="https://speakerdeck.com/irof/yi-li-turokuniqu-rizu-mou" rel="noreferrer" target="_blank">役立つログに取り組もう</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">そもそも、なぜロギングする？</h2>
+<div class="literal-block-wrapper docutils container" id="id114">
+<div class="code-block-caption"><span class="caption-text">ロギングのイメージ</span></div>
+<pre><code class="python" data-noescape="" data-trim="">try:
+    大事な処理()
+except Exception as ex:
+    logger.warning("Raised %s", repr(ex))</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">開発者は <strong>イベントの発生を記録</strong> する</h3>
+<blockquote>
+<div><p>ソフトウェアの開発者は、特定のイベントが発生したことを示す logging の呼び出しをコードに加えます。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#basic-logging-tutoriala" rel="noreferrer" target="_blank">基本 logging チュートリアル</a> 📄</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">イベントには <strong>レベル（重要性）</strong> も含む</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">イベントには、開発者がそのイベントに定めた重要性も含まれます。</div>
+<div class="line">重要性は、レベル (level) や 重大度 (severity) とも呼ばれます。</div>
+</div>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#basic-logging-tutoriala" rel="noreferrer" target="_blank">基本 logging チュートリアル</a> 📄</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロギングレベル 5つ</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DEBUG</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INFO</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ERROR</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CRITICAL</span></code></p></li>
+</ul>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#when-to-use-logging" rel="noreferrer" target="_blank">logging を使うとき</a> 📄（基本 logging チュートリアル）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">開発者はイベントを重要性込みで記録</h3>
+<ul class="simple">
+<li><p>ロガーには重要性（レベル）を冠したメソッド</p></li>
+<li><p>開発者はイベントを表す <em>ログメッセージ</em> を渡す</p></li>
+</ul>
+<pre data-id="id27"><code class="python" data-noescape="" data-trim="">logger.warning("ちょっとヤバいよ")
+logger.error("ヤバイよ。マジヤバイよ")</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーもレベルを持つ</h3>
+<ul>
+<li><p>ログが記録されるのは、 <strong>ロガーの持つレベル以上</strong> の重要性のイベント</p>
+<blockquote>
+<div><p>level よりも深刻でないログメッセージは無視されます（<a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel" rel="noreferrer" target="_blank">Logger.setLevel</a> 📄）</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">例：ログが記録される場合</h3>
+<p><code class="docutils literal notranslate"><span class="pre">WARNING</span></code> レベルのロガー <code class="docutils literal notranslate"><span class="pre">logger</span></code> は</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">logger.warning()</span></code> は記録する</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logger.info()</span></code> は記録しない</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">開発者は記録したくても、記録されない場合がある！？</h3>
+<ul class="simple">
+<li><p>例：<code class="docutils literal notranslate"><span class="pre">WARNING</span></code> レベルのロガーに <code class="docutils literal notranslate"><span class="pre">logger.info()</span></code></p></li>
+<li><p>ポイントは <strong>ロガーのレベルは外から変えられる</strong> ということ（後述）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ログレコード 🏃‍♂️</h3>
+<blockquote>
+<div><p>LogRecord インスタンスは、何かをログ記録するたびに Logger によって生成されます。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logrecord-objects" rel="noreferrer" target="_blank">LogRecord オブジェクト</a> 📄</p>
+<p>ロガーに渡されるログメッセージ（文字列）は、 <strong>ログレコードとなって処理される</strong></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの名前について</h2>
+<p><code class="docutils literal notranslate"><span class="pre">getLogger(__name__)</span></code> という呼び出し方の話</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ドット（ピリオド）区切り</h3>
+<blockquote>
+<div><p>ロガー名は、何でも望むものにでき、ロギングされたメッセージが発生した場所を指し示します。（<a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial" rel="noreferrer" target="_blank">上級ロギングチュートリアル</a> 📄）</p>
+</div></blockquote>
+<pre data-id="id33"><code class="python" data-noescape="" data-trim="">logging.getLogger("spam")
+logging.getLogger("spam.ham")  # 名前には . も使えます</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの親子関係</h3>
+<pre data-id="id34"><code class="python" data-noescape="" data-trim="">logger = logging.getLogger("spam.ham")</code></pre>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">spam.ham</span></code> ロガーの <strong>親</strong> にあたるのが <code class="docutils literal notranslate"><span class="pre">spam</span></code> ロガー</p></li>
+<li><p>すべてのロガーの親 <em>ルートロガー</em> （引数渡さず <code class="docutils literal notranslate"><span class="pre">logging.getLogger()</span></code>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの親子関係</h3>
+<a class="reference internal image-reference" href="../_images/logger-ancestors.drawio.png"><img alt="../_images/logger-ancestors.drawio.png" src="../_images/logger-ancestors.drawio.png" style="width: 433.2px; height: 361.2px;"/>
+</a>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">logging.getLogger(__name__)</span></code></h3>
+<ul>
+<li><p>このコードで <strong>モジュールレベルのロガー</strong> インスタンスを得た</p>
+<blockquote>
+<div><p>ロガー名だけで、どこでイベントのログが取られたか、直感的に明らかになります。（<a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial" rel="noreferrer" target="_blank">上級ロギングチュートリアル</a> 📄）</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">__name__</span></code></h3>
+<ul class="simple">
+<li><p>モジュールの名前（<a class="reference external" href="https://docs.python.org/ja/3/reference/datamodel.html#modules" rel="noreferrer" target="_blank">3.2.9. モジュール</a> 📄）</p></li>
+<li><p>『<a class="reference external" href="https://www.oreilly.co.jp/books/9784814400461/" rel="noreferrer" target="_blank">Python Distilled</a>』1.18</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">mylib</span></code> ➡️ <code class="docutils literal notranslate"><span class="pre">"mylib"</span></code> （ドットつなぎになりえる）</p></li>
+<li><p>スクリプトとして実行 ➡️ <code class="docutils literal notranslate"><span class="pre">"__main__"</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">同名のロガー 🏃‍♂️</h3>
+<blockquote>
+<div><p>与えられた名前に対して、この関数はどの呼び出しでも同じロガーインスタンスを返します。 (<a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.getLogger" rel="noreferrer" target="_blank">logging.getLogger(...)</a> 📄)</p>
+</div></blockquote>
+<p><strong>シングルトン</strong> なので都度 <code class="docutils literal notranslate"><span class="pre">getLogger</span></code> ！（<a class="reference external" href="https://docs.python.org/ja/3/howto/logging-cookbook.html#using-loggers-as-attributes-in-a-class-or-passing-them-as-parameters" rel="noreferrer" target="_blank">避けるべきパターン</a> 📄も参照）</p>
+<pre data-id="id35"><code class="pycon" data-noescape="" data-trim="">&gt;&gt;&gt; logging.getLogger("mylib") is logging.getLogger("mylib")
+True</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ロガー まとめ🥟 ここまでで <strong>ロギングできます</strong></h2>
+<pre data-id="id36"><code class="python" data-noescape="" data-trim="">import logging
+
+logger = logging.getLogger(__name__)
+
+
+def example():
+    logger.warning("ちょっとヤバいよ")
+</code></pre>
+<pre data-id="id36"><code class="python" data-noescape="" data-trim="">from mylib import example
+
+example()
+</code></pre>
+<pre data-id="id36"><code class="txt" data-noescape="" data-trim="">ちょっとヤバいよ</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">1️⃣-2️⃣ <code class="docutils literal notranslate"><span class="pre">logger.addHandler(...)</span></code></h2>
+<blockquote>
+<div><p>ハンドラは、(ロガーによって生成された) ログ記録を適切な送信先に送ります。（<a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial" rel="noreferrer" target="_blank">上級ロギングチュートリアル</a> 📄）</p>
+</div></blockquote>
+<p>ログ記録＝ログレコード（原語 <em>log records</em>）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーはハンドラを持つ</h3>
+<ul>
+<li><p>1つのロガーが <strong>0個以上のハンドラを持つ</strong></p></li>
+<li><p>ハンドラはログレコードを出力先に振り分ける</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ストリーム</p></li>
+<li><p>ファイル</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#handlers" rel="noreferrer" target="_blank">ハンドラ（上級ロギングチュートリアル）</a> 📄</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ログメッセージの流れ 🏃‍♂️</h3>
+<pre data-id="id38"><code class="python" data-noescape="" data-trim="">logger.warning("&lt;ログメッセージ&gt;")</code></pre>
+<ul class="simple">
+<li><p>開発者はロガーのメソッドを呼び出してイベントを記録</p></li>
+<li><p>ロガーの持つレベル以上の呼び出しのとき、ロガーは <strong>ログレコード</strong> を作成</p></li>
+<li><p>ロガーはハンドラにログレコードを渡し、ハンドラがログを出力</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ログの出力先に応じたハンドラ</h3>
+<ul class="simple">
+<li><p>ストリーム <a class="reference external" href="https://docs.python.org/ja/3/library/logging.handlers.html#logging.StreamHandler" rel="noreferrer" target="_blank">StreamHandler</a></p></li>
+<li><p>ファイル <a class="reference external" href="https://docs.python.org/ja/3/library/logging.handlers.html#logging.FileHandler" rel="noreferrer" target="_blank">FileHandler</a></p></li>
+<li><p>まだまだあります：<a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#useful-handlers" rel="noreferrer" target="_blank">便利なハンドラ</a> 📄（ログファイルのローテーションなど）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">先のコードはなぜロギングできたか</h2>
+<pre data-id="id40"><code class="python" data-noescape="" data-trim="">import logging
+
+logger = logging.getLogger(__name__)
+
+
+def example():
+    logger.warning("ちょっとヤバいよ")
+</code></pre>
+<p>ロガーにハンドラを指定していない</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ハンドラを指定しないとき</h3>
+<blockquote>
+<div><p>イベントは、 lastResort に格納された「最終手段ハンドラ」を使用して出力されます。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#what-happens-if-no-configuration-is-provided" rel="noreferrer" target="_blank">環境設定が与えられないとどうなるか</a> 📄</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>最終手段ハンドラ</strong> によるログ出力</h3>
+<pre data-id="id42"><code class="txt" data-noescape="" data-trim="">ちょっとヤバいよ</code></pre>
+<ul class="simple">
+<li><p>レベル <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> 以上のログメッセージが、標準エラー出力に表示される</p></li>
+<li><p>フォーマットはなし</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">常に最終手段ハンドラを使わなきゃいけない？</h3>
+<blockquote>
+<div><p>何らかの理由でロギング設定がなされていないときにメッセージを表示 させたくない のであれば、ライブラリのトップレベルのロガーに何もしないハンドラを取り付けられます。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library" rel="noreferrer" target="_blank">ライブラリのためのロギングの設定</a> 📄</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">NullHandler</span></code></h2>
+<ul class="simple">
+<li><p><strong>何もしない</strong> ハンドラ</p></li>
+</ul>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.handlers.html#logging.NullHandler" rel="noreferrer" target="_blank">https://docs.python.org/ja/3/library/logging.handlers.html#logging.NullHandler</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">最終手段ハンドラの出番にはしたくない</h3>
+<ul class="simple">
+<li><p>ライブラリのロガーになにかハンドラを持たせよう</p></li>
+<li><p><strong>何もしないハンドラ</strong> （<code class="docutils literal notranslate"><span class="pre">NullHandler</span></code>）の出番！</p></li>
+</ul>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library" rel="noreferrer" target="_blank">ライブラリのためのロギングの設定</a> 📄</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">最終手段ハンドラの出番はなく、ログ出力はない</h3>
+<div class="literal-block-wrapper docutils container" id="id115">
+<div class="code-block-caption"><span class="caption-text"><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/conclusion/mylib.py" rel="noreferrer" target="_blank">mylib.py</a></span></div>
+<pre><code class="python" data-line-numbers="4" data-noescape="" data-trim="">import logging
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+
+
+def awesome():
+    logger.warning("ちょっとヤバいよ")
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🥟 ライブラリ開発におけるロギングの実装</h2>
+<pre data-id="id47"><code class="python" data-noescape="" data-trim="">logging.getLogger(__name__).addHandler(logging.NullHandler())</code></pre>
+<ul class="simple">
+<li><p>あなたのライブラリ用のロガーインスタンスを得よう</p></li>
+<li><p>最終手段ハンドラを望まない場合、 <code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> を持たせよう</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">2️⃣アプリケーション開発におけるロギングの実装</h2>
+<p>ロギングが仕込まれたライブラリをどう使うか</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">このパートで扱うloggingモジュール</h3>
+<ul class="simple">
+<li><p>ロガー</p>
+<ul>
+<li><p><strong>ルートロガー</strong></p></li>
+<li><p><strong>propagate</strong></p></li>
+</ul>
+</li>
+<li><p>ハンドラ</p></li>
+<li><p><strong>フォーマッタ</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">アプリケーション開発者がログ出力を <strong>カスタマイズ</strong>！</h3>
+<blockquote>
+<div><p>ハンドラーやフォーマッター (略) を追加してログ出力をカスタマイズするのは (略)、アプリケーション開発者の責務です。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging-cookbook.html#adding-handlers-other-than-nullhandler-to-a-logger-in-a-library" rel="noreferrer" target="_blank">ライブラリ内でロガーに NullHandler 以外のハンドラーを追加する</a> 📄（再掲）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ログ出力のカスタマイズ 2通り</h3>
+<ol class="arabic simple">
+<li><p><strong>ルートロガーを設定</strong> （👈主な話題）</p></li>
+<li><p>ライブラリのロガーを触る</p></li>
+</ol>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーを設定する</h2>
+<p>アプリケーション開発者に提供される手段が <code class="docutils literal notranslate"><span class="pre">logging.basicConfig()</span></code></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.basicConfig" rel="noreferrer" target="_blank">logging.basicConfig()</a> 📄</h3>
+<blockquote>
+<div><p>デフォルトの Formatter を持つ StreamHandler を生成してルートロガーに追加し、ロギングシステムの基本的な環境設定を行います。</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">logging.basicConfig()</span></code> にここで関わる概念</h3>
+<ul class="simple">
+<li><p>ロギングレベル</p></li>
+<li><p>フォーマッタ</p></li>
+</ul>
+<p>他の要素は公式ドキュメントをどうぞ</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーのレベルを設定</h3>
+<pre data-id="id56"><code class="python" data-noescape="" data-trim="">logging.basicConfig(level=logging.WARNING)</code></pre>
+<ul class="simple">
+<li><p>ロガーの持つレベル以上の重要性のイベントがログに記録される（再掲）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">フォーマッタ</h3>
+<pre data-id="id57"><code class="python" data-noescape="" data-trim="">logging.basicConfig(format="%(levelname)s:%(name)s:%(message)s")</code></pre>
+<ul class="simple">
+<li><p>ハンドラは1つのフォーマッタを持つ</p></li>
+<li><p>ハンドラの出力に適用される <strong>書式の設定</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">書式設定に使える属性名 🏃‍♂️</h3>
+<pre data-id="id58"><code class="python" data-noescape="" data-trim="">format="%(asctime)s | %(levelname)s | %(name)s:%(funcName)s:%(lineno)d - %(message)s"</code></pre>
+<p>時刻や関数名など、ログメッセージより情報が多い！（<strong>ログレコードをフォーマット</strong> するため）</p>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logrecord-attributes" rel="noreferrer" target="_blank">LogRecord 属性</a> 📄</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーをカスタマイズ</h3>
+<p>アプリケーション開発者 <strong>（ライブラリを使う側）が好きに</strong> 決められます</p>
+<ul class="simple">
+<li><p>ロギングレベル</p></li>
+<li><p>ハンドラ &amp; フォーマッタ</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ルートロガーを設定してライブラリのログを出力</h2>
+<p><strong>propagate</strong> （伝播）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの <a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.propagate" rel="noreferrer" target="_blank">propagate</a> 属性📄</h3>
+<blockquote>
+<div><p>この属性が真と評価された場合、このロガーに記録されたイベントは、このロガーに取り付けられた全てのハンドラに加え、上位 (祖先) ロガーのハンドラにも渡されます。</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーの親子関係（再び）</h3>
+<a class="reference internal image-reference" href="../_images/logger-ancestors-part.drawio.png"><img alt="../_images/logger-ancestors-part.drawio.png" src="../_images/logger-ancestors-part.drawio.png" style="width: 385.2px; height: 361.2px;"/>
+</a>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">propagate（伝播）</h3>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">spam</span></code> ロガーのロギングレベル以上のメソッドが呼ばれた</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>例：ロガーのレベルは <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> で、 <code class="docutils literal notranslate"><span class="pre">warning()</span></code> メソッドが呼ばれた</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>そのログレコードは <strong>親のロガーに伝播</strong> し、親のハンドラにも渡る</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">📌 <code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> + <code class="docutils literal notranslate"><span class="pre">basicConfig</span></code> + propagate</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mylib</span></code> ロガーのロギングレベル以上のメソッドが呼ばれた</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mylib</span></code> ロガーのハンドラ（<code class="docutils literal notranslate"><span class="pre">NullHandler</span></code>）が処理（するが出力はない）</p></li>
+<li><p>親のルートロガーに伝播し、 <strong>ルートロガーのハンドラで処理して出力される</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ドキュメント <a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.propagate" rel="noreferrer" target="_blank">propagate</a> の注釈📄より</h3>
+<blockquote>
+<div><p>一般的なシナリオでは、ハンドラをルートロガーに対してのみ接続し、残りは propagate にすべて委ねます。</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="`https://docs.python.org/ja/3/howto/logging.html#loggers`" rel="noreferrer" target="_blank">ロガー</a> 📄（上級ロギングチュートリアル）🏃‍♂️</h3>
+<blockquote>
+<div><p>子ロガーはメッセージを親ロガーのハンドラに伝えます。(略) トップレベルのロガーのためのハンドラだけ設定しておいて必要に応じて子ロガーを作成すれば十分です。</p>
+</div></blockquote>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">待って🤚 ライブラリのロガーのレベルって？</h2>
+<p>今一度 <strong>ライブラリ開発者向け</strong> の話になります</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> 以外はいけません（結論・再掲）</h3>
+<pre data-id="id68"><code class="python" data-noescape="" data-trim="">import logging
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+</code></pre>
+<p>ライブラリのロガーに <strong>ロギングレベルは設定していない</strong></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">レベルを設定していないライブラリロガーのレベルは❓</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DEBUG</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INFO</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ERROR</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CRITICAL</span></code></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロギングレベル <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code></h3>
+<blockquote>
+<div><p>ロガーが生成された際、レベルは NOTSET (略) に設定されます。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel" rel="noreferrer" target="_blank">Logger.setLevel</a> 📄より</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> とは</h3>
+<blockquote>
+<div><p>もしロガーのレベルが NOTSET ならば、祖先ロガーの系列の中を NOTSET 以外のレベルの祖先を見つけるかルートに到達するまで辿っていく</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.setLevel" rel="noreferrer" target="_blank">Logger.setLevel</a> 📄より（「<em>親ロガーに委譲</em>」）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> のイメージ</h3>
+<a class="reference internal image-reference" href="../_images/logger-level.drawio.png"><img alt="../_images/logger-level.drawio.png" src="../_images/logger-level.drawio.png" style="width: 397.2px; height: 337.2px;"/>
+</a>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリのロガーにロギングレベルを設定したいとき</h3>
+<ul class="simple">
+<li><p>親をそのまた親へとたどっていき、最初に見つかった <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> 以外のレベルになる、ということ（<a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging-levels" rel="noreferrer" target="_blank">ロギングレベル</a> 📄）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mylib</span></code> ロガーは、親の <strong>ルートロガーに設定したレベル</strong> となる！</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">拙ブログより ロギングレベル <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> 🏃‍♂️</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-configuring-logging-for-library-log-level-notset" rel="noreferrer" target="_blank">自作のPythonライブラリでloggingを使うとき、ロガーにsetLevelしない？ ログレベルNOTSETのロガーの動きを理解する</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logger-repr-effective-level" rel="noreferrer" target="_blank">Pythonの対話モードで確認できるロガーのレベルは、ロガーが持つレベルそのものではなく、実効（effective）レベル</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">propagate まとめ🥟 ライブラリのロギング</h2>
+<div class="literal-block-wrapper docutils container" id="id116">
+<div class="code-block-caption"><span class="caption-text"><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/conclusion/mylib.py" rel="noreferrer" target="_blank">mylib.py</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">import logging
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+
+
+def awesome():
+    logger.info("想定通り")
+</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">例：ルートロガーのロギングレベルが <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> だと出力されない</h3>
+<div class="literal-block-wrapper docutils container" id="id117">
+<div class="code-block-caption"><span class="caption-text"><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/conclusion/warning_app.py" rel="noreferrer" target="_blank">app.py</a></span></div>
+<pre><code class="python" data-line-numbers="5" data-noescape="" data-trim="">import logging
+
+from mylib import awesome
+
+logging.basicConfig(level=logging.WARNING)
+
+awesome()
+</code></pre>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">mylib</span></code> ロガーも <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> レベル</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">例：ルートロガーのロギングレベルが <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> だと <strong>出力される</strong></h3>
+<div class="literal-block-wrapper docutils container" id="id118">
+<div class="code-block-caption"><span class="caption-text"><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/conclusion/debug_app.py" rel="noreferrer" target="_blank">app.py</a></span></div>
+<pre><code class="python" data-line-numbers="5" data-noescape="" data-trim="">import logging
+
+from mylib import awesome
+
+logging.basicConfig(level=logging.DEBUG)
+
+awesome()
+</code></pre>
+</div>
+<pre data-id="debug"><code class="txt" data-noescape="" data-trim="">INFO:mylib:想定通り</code></pre>
+<p><code class="docutils literal notranslate"><span class="pre">mylib</span></code> ロガーも <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> レベル</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>違いはルートロガーのロギングレベル</strong></h3>
+<ul class="simple">
+<li><p>ライブラリのコードは同じ</p></li>
+<li><p>ライブラリのロガーはレベル <code class="docutils literal notranslate"><span class="pre">NOTSET</span></code> で、ルートロガーのレベルを参照</p></li>
+<li><p>ライブラリを利用するアプリケーションコードでカスタマイズした</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🥟 アプリケーション開発におけるロギングの実装</h2>
+<pre data-id="id76"><code class="python" data-noescape="" data-trim="">logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(name)s:%(message)s")</code></pre>
+<ul class="simple">
+<li><p>ライブラリを使う側の都合で、ルートロガーを設定</p></li>
+<li><p>ライブラリのロガーは <strong>ルートロガーのレベルを参照</strong> し、propagateで <strong>ルートロガーのハンドラでログ出力</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">propagateは <strong>親ロガーのレベルによらない</strong> 🏃‍♂️</h3>
+<blockquote>
+<div><p>メッセージは、祖先ロガーのハンドラに直接渡されます - 今問題にしている祖先ロガーのレベルもフィルタも、どちらも考慮されません。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Logger.propagate" rel="noreferrer" target="_blank">propagate</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">propagateで祖先ロガーのレベルが考慮されない例 🏃‍♂️</h3>
+<div class="literal-block-wrapper docutils container" id="id119">
+<div class="code-block-caption"><span class="caption-text"><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext/2025-slides/blob/3aa1f5c3a314aa41d8b9695a156a4a26d4ec0ede/samplecode/python-logging/propagate/app.py" rel="noreferrer" target="_blank">app.py</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">import logging
+
+from mylib import example
+
+logging.basicConfig(
+    level=logging.WARNING,
+    format="%(asctime)s | %(levelname)s | %(name)s:%(funcName)s:%(lineno)d - %(message)s",
+)
+
+logger = logging.getLogger("mylib")
+logger.setLevel(logging.INFO)
+
+example()
+</code></pre>
+</div>
+<pre data-id="id78"><code class="txt" data-noescape="" data-trim="">2025-02-07 12:16:19,804 | INFO | mylib:example:7 - 想定通り
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリのロガーを触る 🏃‍♂️</h3>
+<blockquote>
+<div><p>ロガーは、アプリケーションコードが直接使うインターフェースを公開します。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#advanced-logging-tutorial" rel="noreferrer" target="_blank">上級ロギングチュートリアル</a> 📄</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリのロガーを触ってログ出力をカスタマイズ 🏃‍♂️</h3>
+<ul class="simple">
+<li><p>アプリケーションコードで <code class="docutils literal notranslate"><span class="pre">getLogger("mylib")</span></code> し、レベル・ハンドラ・フォーマッタを設定</p></li>
+<li><p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger" rel="noreferrer" target="_blank">Pythonのライブラリに用意されたロガーを設定してログを出力する（httpxを例に）</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">3️⃣落ち穂拾い</h2>
+<ul class="simple">
+<li><p>ライブラリで <code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> を使わない（アンチパターン）</p></li>
+<li><p>Logging Flow</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">3️⃣-1️⃣ ライブラリのロギングのアンチパターン</h2>
+<p>なぜ「<code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> 以外はいけません」なのか</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">⚠️ <code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> 以外のハンドラを設定してみる</h3>
+<div class="literal-block-wrapper docutils container" id="id120">
+<div class="code-block-caption"><span class="caption-text"><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/libs/antipattern-logging/src/antipattern_logging/add_non_nullhandler.py" rel="noreferrer" target="_blank">mylib.py</a></span></div>
+<pre><code class="python" data-line-numbers="4" data-noescape="" data-trim="">import logging
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">2重出力😱</h3>
+<div class="literal-block-wrapper docutils container" id="id121">
+<div class="code-block-caption"><span class="caption-text"><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/tragedies/non_nullhandler_twice_log.py" rel="noreferrer" target="_blank">app.py</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s | %(levelname)s | %(name)s:%(funcName)s:%(lineno)d - %(message)s",
+)</code></pre>
+</div>
+<pre data-id="id84"><code class="txt" data-noescape="" data-trim="">想定通り
+2024-08-31 14:16:34,968 | INFO | antipattern_logging.add_non_nullhandler:awesome:8 - 想定通り</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">2重出力の裏にpropagate</h3>
+<ul class="simple">
+<li><p>ライブラリロガーのロギングレベル以上のメソッドが呼ばれた</p></li>
+<li><p>ライブラリロガーのハンドラ（<code class="docutils literal notranslate"><span class="pre">StreamHandler</span></code>）が処理して出力</p></li>
+<li><p>親のルートロガーに伝播し、 <strong>ルートロガーのハンドラでも処理</strong> して出力</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library" rel="noreferrer" target="_blank">ライブラリのためのロギングの設定</a> の注釈📄</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">ライブラリのロガーには、 NullHandler 以外のハンドラを追加しない ことを強く推奨します。</div>
+<div class="line">これは、ハンドラの設定が、あなたのライブラリを使うアプリケーション開発者にも伝播するからです。</div>
+</div>
+</div></blockquote>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">もう1例：ライブラリがルートロガーを触る</h2>
+<p>これもやってはいけません</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">⚠️ ライブラリで <code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code></h3>
+<div class="literal-block-wrapper docutils container" id="id122">
+<div class="code-block-caption"><span class="caption-text"><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext/python-logging-practice/blob/c20b32ff8970695d4c1d0eca9699b7586a1424c6/libs/antipattern-logging/src/antipattern_logging/call_basic_config.py" rel="noreferrer" target="_blank">mylib.py</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">import logging
+
+logging.basicConfig(
+    level=logging.DEBUG, format="%(levelname)s:%(name)s:%(message)s"
+)</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code> がルートロガーを設定するのは「一度だけ」</h3>
+<blockquote>
+<div><p>(略) ルートロガーに設定されたハンドラがあれば何もしません。(<a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.basicConfig" rel="noreferrer" target="_blank">logging.basicConfig()</a> 📄)</p>
+</div></blockquote>
+<p>ライブラリがルートロガーにハンドラを設定してしまうと、 <strong>アプリケーションコードで呼び出しても何も起こらない</strong> 😭（詳しくは <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logging-basicconfig-configure-root-logger-without-handler" rel="noreferrer" target="_blank">ブログ記事</a> に）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>ライブラリではルートロガーは触らない</strong></h3>
+<blockquote>
+<div><p>あなたのライブラリから ルートロガーへ直接ログを記録しない ことを強く推奨します。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#configuring-logging-for-a-library" rel="noreferrer" target="_blank">ライブラリのためのロギングの設定</a> 📄</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">logging.warning()</span></code> なども全部 <code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code> を呼んでます</h3>
+<blockquote>
+<div><p>（補足：ルートロガーがハンドラを持たない場合は）ルートロガーの debug メソッドを呼び出す前に basicConfig() が呼ばれます。 (📄 <a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.debug" rel="noreferrer" target="_blank">logging.debug()</a>)</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">basicConfig()</span></code> 同様にライブラリで使ってはいけません</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">3️⃣-2️⃣ Logging Flow</h2>
+<p><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#logging-flow" rel="noreferrer" target="_blank">Logging Flow</a> 📄を読み解く</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">loggingモジュールの構成要素</h3>
+<ul class="simple">
+<li><p>ロガー</p></li>
+<li><p>ハンドラ</p></li>
+<li><p>フォーマッタ</p></li>
+<li><p>フィルタ（👉 <em>Appendix</em>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ロガーを構成する要素</h3>
+<ul class="simple">
+<li><p>ロギングレベル</p></li>
+<li><p>ハンドラ（0個以上）</p></li>
+<li><p><em>フィルタ</em> （0個以上）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ハンドラを構成する要素</h3>
+<ul class="simple">
+<li><p><em>ロギングレベル</em> （👉 <em>Appendix</em>）</p></li>
+<li><p>フォーマッタ（1個）</p></li>
+<li><p><em>フィルタ</em> （0個以上）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">なぜこんなに構成要素がある？</h3>
+<ul class="simple">
+<li><p>組合せることで <strong>柔軟なロギング</strong> を提供</p></li>
+<li><p>IMO：まさにsimple（<a class="reference external" href="https://ftnext.github.io/2024-slides/ooc/software-lessons.html#/6/1" rel="noreferrer" target="_blank">simpleはeasyのことではありません</a>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">柔軟なロギングの例</h3>
+<ul>
+<li><p>例：ロガーに複数のハンドラを設定。ハンドラのロギングレベルを使って、レベルごとに異なる出力先へ出し分ける</p>
+<blockquote>
+<div><p>それぞれのハンドラで設定されるレベルは、そのハンドラがどのメッセージを転送するべきか決めます。(<a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#handlers" rel="noreferrer" target="_blank">ハンドラ（上級ロギングチュートリアル）</a> 📄)</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://docs.python.org/ja/3/howto/logging.html#logging-flow" rel="noreferrer" target="_blank">Logging Flow</a></h2>
+<p>構成要素がどのように組み合わさって動くかを示す</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">一例：propagate（ただし抜粋）</h3>
+<ul class="simple">
+<li><p>ライブラリのロガーのレベル以上の呼び出し</p></li>
+<li><p>そのロガーのハンドラがログレコードを処理</p></li>
+<li><p>ライブラリのロガーの親のハンドラにもログレコードが渡る（親のレベルは見ない）</p></li>
+</ul>
+</section>
+<section data-background-color="white">
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">propagate 抜粋して簡易版</h3>
+<pre class="mermaid">
+        flowchart LR
+    START[ロギング&lt;br/&gt;呼び出し] --&gt;|"例 logger.info(...)"| cond1{ロガーの&lt;br/&gt;レベル以上の&lt;br/&gt;呼び出しか};
+    cond1 --&gt;|はい&lt;br/&gt;=有効| node1[LogRecord&lt;br/&gt;作成];
+    node1 --&gt; node2[現在のロガーの&lt;br/&gt;ハンドラへ&lt;br/&gt;渡す];
+    node2 --&gt; cond3{現在のロガーの&lt;br/&gt;propagate属性は&lt;br/&gt;Trueか};
+    cond3 --&gt;|はい=true&lt;br/&gt;=伝播する| cond4{親のロガー&lt;br/&gt;はあるか};
+    cond4 --&gt;|はい=親ロガー&lt;br/&gt;がある| node3[親ロガーを現在の&lt;br/&gt;ロガーとする];
+    node3 --&gt; node2;
+
+    </pre><p>読み込めてなさそうならリロードを。 <a class="reference external" href="https://gist.github.com/ftnext/9944017bd5c827b512a675b3ee0388f0" rel="noreferrer" target="_blank">完全版</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯 ライブラリ開発者に贈る「ロギングで <code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> 以外はいけません」</h2>
+</section>
+<section>
+<pre data-id="id99"><code class="python" data-noescape="" data-trim="">import logging
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+</code></pre>
+<p>📣ライブラリのユーザが自由にロギングをカスタマイズできるようにしよう</p>
+<ul class="simple">
+<li><p>そのための <code class="docutils literal notranslate"><span class="pre">NullHandler</span></code></p></li>
+<li><p>propagateを使って、 <strong>ユーザが設定するルートロガーのハンドラでログ出力</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">メッセージ（Takeaway）再掲 🏃‍♂️</h3>
+<ul class="simple">
+<li><p>ライブラリ開発者はロガーを用意し、 <strong>何もしないハンドラを設定</strong> しよう</p></li>
+<li><p>アプリケーション開発者はルートロガーを設定し、 <strong>propagateを利用してログを表示</strong> しよう</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<div class="literal-block-wrapper docutils container" id="id123">
+<div class="code-block-caption"><span class="caption-text">One more thing...</span></div>
+<pre><code class="pycon" data-noescape="" data-trim="">% uv run --python 3.12 --with happy-python-logging python -q
+&gt;&gt;&gt; from happy_python_logging import getLoggerForLibrary
+&gt;&gt;&gt; logger = getLoggerForLibrary("mylib")
+&gt;&gt;&gt; logger.handlers
+[&lt;NullHandler (NOTSET)&gt;]</code></pre>
+</div>
+<p>Enjoy <a class="reference external" href="https://pypi.org/project/happy-python-logging/" rel="noreferrer" target="_blank">happy-python-logging</a> ❤️</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Appendix</h2>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ（詳細版）</h2>
+<ul class="simple">
+<li><p><span class="fab fa-twitter"></span> <a class="reference external" href="https://twitter.com/ftnext" rel="noreferrer" target="_blank">@ftnext</a> ／ 登壇 <a class="reference external" href="https://github.com/ftnext/2025-slides" rel="noreferrer" target="_blank">2025</a> <a class="reference external" href="https://github.com/ftnext/2024-slides" rel="noreferrer" target="_blank">2024</a></p></li>
+<li><p>PyCon JP 2021 座長</p></li>
+<li><p>毎月の <a class="reference external" href="https://startpython.connpass.com/" rel="noreferrer" target="_blank">みんなのPython勉強会</a> スタッフ</p></li>
+<li><p><a class="reference external" href="https://github.com/Uberi/speech_recognition" rel="noreferrer" target="_blank">Uberi/speech_recognition</a> 8.4k⭐️ メンテナ</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">スライドの秘密 〜お前、誰よ 補足〜</h3>
+<p>attakeiさんの <a class="reference external" href="https://pypi.org/project/sphinx-revealjs/" rel="noreferrer" target="_blank">sphinx-revealjs</a> に以下の <strong>自作拡張</strong> を組み合わせて実現</p>
+<ul class="simple">
+<li><p>私の代表作： <a class="reference external" href="https://pypi.org/project/sphinx-new-tab-link/" rel="noreferrer" target="_blank">sphinx-new-tab-link</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/sphinx-revealjs-copycode/" rel="noreferrer" target="_blank">sphinx-revealjs-copycode</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/sphinx-revealjs-ext-codeblock/" rel="noreferrer" target="_blank">sphinx-revealjs-ext-codeblock</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ハンドラのロギングレベル</h2>
+<ul>
+<li><p>結論のコード、<code class="docutils literal notranslate"><span class="pre">NullHandler</span></code> のレベルは NOTSET</p>
+<blockquote>
+<div><p>ハンドラが生成された際、レベルは NOTSET (すべてのメッセージが処理される) に設定されます。</p>
+</div></blockquote>
+</li>
+</ul>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Handler.setLevel" rel="noreferrer" target="_blank">Handler.setLevel</a> 📄</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">フィルタ</h2>
+<ul class="simple">
+<li><p>ロガーやハンドラに取り付けられる</p></li>
+</ul>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#filter" rel="noreferrer" target="_blank">https://docs.python.org/ja/3/library/logging.html#filter</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">フィルタは何をするのか</h3>
+<blockquote>
+<div><p>(略) name はロガーの名前を表します。指定されたロガーとその子ロガーのイベントがフィルタを通過できるようになります。(<a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#logging.Filter" rel="noreferrer" target="_blank">logging.Filter()</a> 📄)</p>
+</div></blockquote>
+<p>ロガーの階層構造が関係</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">例： <code class="docutils literal notranslate"><span class="pre">logging.Filter("A.B")</span></code></h3>
+<blockquote>
+<div><p>例えば、'A.B' で初期化されたフィルタは、ロガー 'A.B', 'A.B.C', 'A.B.C.D', 'A.B.D' 等によって記録されたイベントは許可しますが、'A.BB', 'B.A.B' などは許可しません。</p>
+</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.html#filter" rel="noreferrer" target="_blank">フィルタオブジェクト</a> 📄</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">環境設定（このトークではスコープアウト）</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/ja/3/library/logging.config.html" rel="noreferrer" target="_blank">logging.config</a> 📄</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dictConfig</span></code> や <code class="docutils literal notranslate"><span class="pre">fileConfig</span></code></p></li>
+<li><p>最初に読むなら『<a class="reference external" href="https://gihyo.jp/book/2022/978-4-297-12576-9" rel="noreferrer" target="_blank">Python実践レシピ</a>』17.4</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリのロガーを触ってログ出力をカスタマイズ</h3>
+<ul class="simple">
+<li><p>本編で飛ばした🏃‍♂️ 拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger" rel="noreferrer" target="_blank">Pythonのライブラリに用意されたロガーを設定してログを出力する（httpxを例に）</a></p></li>
+<li><p>logging.config版 <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/configure-python-librarys-logger-logging-config-dict-or-yaml" rel="noreferrer" target="_blank">Pythonのライブラリに用意されたロガーをlogging.configで設定する（httpxを例に、辞書やYAMLで設定）</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">標準ライブラリ logging 以外の選択肢</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/vinta/awesome-python?tab=readme-ov-file#logging" rel="noreferrer" target="_blank">vinta/awesome-pythonのLogging</a></p></li>
+<li><p>標準ライブラリ logging</p></li>
+<li><p>loguru</p></li>
+<li><p>logbook</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">loguru</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/Delgan/loguru" rel="noreferrer" target="_blank">https://github.com/Delgan/loguru</a></p></li>
+<li><p>「<em>Python logging made (stupidly) simple</em>」と謳う</p></li>
+<li><p>IMO：simpleというより <strong>easy</strong> 。未検証だがアプリケーション向けのような</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">これまでのlogging関連アウトプット</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">2023年3月みんなのPython勉強会（資料公開のみ）</h3>
+<iframe height="480" src="https://ftnext.github.io/2023-slides/stapy-march/logging-introduction.html" title="Pythonのlogging入門" width="800"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">拙ブログより、logging関連エントリ 1/4</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logging-root-logger-and-chain-propagation" rel="noreferrer" target="_blank">Pythonのloggingを よ う や く 完全に理解しました 〜revChatGPTでdebugレベルログを出そうとした試行錯誤を題材に〜</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logging-the-simplest-example-under-the-hood" rel="noreferrer" target="_blank">Pythonのloggingモジュールのドキュメントの「もっとも単純な例」を説明する 〜logging.warningの裏側で起こっていること〜</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">拙ブログより、logging関連エントリ 2/4</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logging-filter-with-propagation-too-difficult" rel="noreferrer" target="_blank">Pythonのloggingモジュールで、ロガーのフィルタと、ロガーのハンドラのフィルタとで、伝播されたログに対する挙動が違うことにハマりました</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logging-handwriting-logging-flow" rel="noreferrer" target="_blank">Pythonのloggingモジュールのチュートリアルの中のフローチャートを、理解を深めるために写経する</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">拙ブログより、logging関連エントリ 3/4</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logging-developing-library-take-advantage-nullhandler-and-propagate" rel="noreferrer" target="_blank">Pythonで標準ライブラリloggingを使って自作ライブラリの中でロギングしたい未来の私へ</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logging-docs-improvement-bye-logging-functions-welcome-getlogger" rel="noreferrer" target="_blank">Pythonのloggingモジュールのドキュメント、実は小さく改善しています！👏 ようこそgetLogger()</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">拙ブログより、logging関連エントリ 4/4</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-logging-flow-detailed-logger-level-filter-handler" rel="noreferrer" target="_blank">Pythonでライブラリのロガーを使ったロギングをLogging Flowに沿って、かつフィルタやハンドラの設定にも注意を払って説明する</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">2024年8月バージョン</h3>
+<iframe height="480" src="https://ftnext.github.io/2024-slides/pyconshizu/logging-with-nullhandler.html#/2" title="ライブラリ開発者に贈る「ロギングで NullHandler 以外はいけません」（2024/08）" width="800"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">2024年8月時点での発表</h3>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/UZWE7OjIWII?si=0Xv1N2yRpXlNUGar" title="YouTube video player" width="560"></iframe></section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">EOF</h2>
+</section>
+</section>
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

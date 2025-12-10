@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>コマンドラインからDevinを呼び出してみないか？</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/aid-devin2/llm-devin.html">
+    <meta property="og:title" content="コマンドラインからDevinを呼び出してみないか？">
+    <meta property="og:description" content="AI駆動開発勉強会 【Devin Meetup Japan #2】">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/aid-devin2.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">コマンドラインからDevinを呼び出してみないか？</h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AI駆動開発勉強会 【Devin Meetup Japan #2】</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/06/17 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">デモ（発表の裏でDevinが開発）</h2>
+<pre data-id="id1"><code class="bash" data-noescape="" data-trim="">uvx --with llm-devin llm -m devin \
+  'このissue https://github.com/ftnext/playtest2-python/issues/4 に取り組んでみてください'</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ？（<strong>Python使い</strong> の自己紹介）</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー）</p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p><span class="fab fa-github"></span> @ftnext 私が欲しい小さなライブラリをおすそ分けでOSS</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Devin歴</h3>
+<ul class="simple">
+<li><p>自腹で月$500数回（後述）</p></li>
+<li><p>Devin飯（<a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/devin-order-uber-eats-101" rel="noreferrer" target="_blank">入門 DevinでUber Eats注文</a>）</p></li>
+<li><p><a class="reference external" href="https://x.com/cognition_labs/status/1924535625723871681" rel="noreferrer" target="_blank">Devin Open Source Initiative</a>、メンテナしてる <a class="reference external" href="https://github.com/Uberi/speech_recognition" rel="noreferrer" target="_blank">SpeechRecognition</a> に補助ありがとう</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Devinには <strong>API</strong> がある</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.devin.ai/api-reference/overview" rel="noreferrer" target="_blank">Devin API</a></p></li>
+<li><p><strong>Teamプラン</strong> （$500/month）以上（<a class="reference external" href="https://devin.ai/pricing" rel="noreferrer" target="_blank">Pricing</a>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">DevinはDevinをテストする</h3>
+<ul class="simple">
+<li><p>CognitionのDevin APIの使い方：<a class="reference external" href="https://cognition.ai/blog/devin-101-automatic-pr-reviews-with-the-devin-api" rel="noreferrer" target="_blank">Devin 101: Automatic PR Reviews with the Devin API</a></p></li>
+<li><p><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/CognitionAI/qa-devin" rel="noreferrer" target="_blank">https://github.com/CognitionAI/qa-devin</a> （画像引用元）</p></li>
+</ul>
+</section>
+<section>
+<img alt="../_images/qa-devin-open-devin-and-test.png" src="../_images/qa-devin-open-devin-and-test.png"/>
+</section>
+<section>
+<img alt="../_images/qa-devin-open-slack-new-devin-session.png" src="../_images/qa-devin-open-slack-new-devin-session.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">コマンドラインからDevinを呼び出してみないか？ <em>完</em></h3>
+<pre data-id="id3"><code class="bash" data-noescape="" data-trim="">curl --url https://api.devin.ai/v1/sessions \
+  --header 'Authorization: Bearer &lt;token&gt;' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "prompt": "Review the pull request at https://github.com/example/repo/pull/123",
+  "idempotent": true
+}'</code></pre>
+<p><a class="reference external" href="https://docs.devin.ai/api-reference/sessions/create-a-new-devin-session" rel="noreferrer" target="_blank">https://docs.devin.ai/api-reference/sessions/create-a-new-devin-session</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">完ではなく、今回の <strong>こだわり</strong> ポイント</h2>
+<ul class="simple">
+<li><p>コマンドラインからDevin APIをただ叩くのではなく</p></li>
+<li><p><em>simonw/llmのプラグイン</em> として</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Simon Willisonさん</h3>
+<ul class="simple">
+<li><p>DjangoのCo-creatorにして（勝手に） <em>我がヨーダ</em></p></li>
+<li><p>プロンプトインジェクションのブログ（<a class="reference external" href="https://simonwillison.net/2024/Mar/5/prompt-injection-jailbreaking/" rel="noreferrer" target="_blank">Prompt injection and jailbreaking are not the same thing</a>）読んだ方🙋</p></li>
+<li><p><a class="reference external" href="https://x.com/karpathy/status/1933582359347278246" rel="noreferrer" target="_blank">Andrej Karpathyとなかよしさん</a> （に見える）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">simonw/llm</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pypi.org/project/llm/" rel="noreferrer" target="_blank">https://pypi.org/project/llm/</a></p></li>
+</ul>
+<pre data-id="simonw-llm"><code class="bash" data-noescape="" data-trim="">$ uvx llm models
+Default: gpt-4o-mini</code></pre>
+<pre data-id="simonw-llm"><code class="bash" data-noescape="" data-trim=""># OPENAI_API_KEY
+uvx llm "Ten fun names for a pet pelican"</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">プラグインでサポートするモデルを拡張</h3>
+<pre data-id="id5"><code class="bash" data-noescape="" data-trim="">$ uvx --with llm-gemini llm models
+GeminiPro: gemini/gemini-2.0-flash (aliases: gemini-2.0-flash)
+GeminiPro: gemini/gemini-2.5-pro-preview-06-05 (aliases: gemini-2.5-pro-preview-06-05)</code></pre>
+<pre data-id="id5"><code class="bash" data-noescape="" data-trim=""># LLM_GEMINI_KEY
+uvx --with llm-gemini \
+  llm -m gemini-2.0-flash 'Tell me fun facts about Mountain View'</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">simonw/llmの推しポイント</h3>
+<ul class="simple">
+<li><p>Unixコマンドと <strong>パイプ</strong> で繋げられる！</p></li>
+<li><p>自動ロギング（拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/2025/04/11/224643" rel="noreferrer" target="_blank">simonwさんのllmは天才！ LLM APIへの入出力が全部ロギングされてました</a>）</p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-v0.24-awesome-update-fragments-and-plugins" rel="noreferrer" target="_blank">fragments</a>！ 直近でtools！！</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">プラグインは <strong>誰でも</strong> 開発できる！</h3>
+<ul class="simple">
+<li><p>cookiecutterテンプレート <a class="reference external" href="https://github.com/simonw/llm-plugin" rel="noreferrer" target="_blank">https://github.com/simonw/llm-plugin</a> から始める</p></li>
+<li><p>ドキュメント <a class="reference external" href="https://llm.datasette.io/en/stable/plugins/tutorial-model-plugin.html" rel="noreferrer" target="_blank">Developing a model plugin</a></p></li>
+<li><p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/simonw-llm-plugin-practice-youtube-url-support-gemini" rel="noreferrer" target="_blank">simonw/llmのプラグイン作成 素振りの記：GeminiにYouTubeのURLを渡して要約／文字起こしするプラグインをGistで配布</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">llm-devin</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pypi.org/project/llm-devin/" rel="noreferrer" target="_blank">https://pypi.org/project/llm-devin/</a></p></li>
+</ul>
+<pre data-id="llm-devin"><code class="bash" data-noescape="" data-trim=""># LLM_DEVIN_KEY
+uvx --with llm-devin \
+  llm -m devin "Hello, Devin"</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">冒頭のデモの結果</h3>
+<pre data-id="id8"><code class="txt" data-noescape="" data-trim="">Devin URL: https://app.devin.ai/sessions/fbe7ea1fff2f4137883c0cb85182a76e
+はわわ... お兄ちゃん、そのissueを調べてみるね！
+
+(略)
+
+お兄ちゃんがGitHubでコメントを残してくれれば、私がそれを見て対応できるからね～</code></pre>
+<p><a class="reference external" href="https://gist.github.com/ftnext/0765322b58e5c4a5ebee989b5ac5254e" rel="noreferrer" target="_blank">https://gist.github.com/ftnext/0765322b58e5c4a5ebee989b5ac5254e</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">アイデア実現するも</h3>
+<ul class="simple">
+<li><p>コマンドラインから叩けたが、私はそこまで熱狂しなかった（次の興味へ）</p></li>
+<li><p>別に <strong>ブラウザで見たい</strong> かも（ブラウザで🟢🟡🔴感想戦（<a class="reference external" href="https://cognition.ai/blog/devin-2-1" rel="noreferrer" target="_blank">Devin 2.1</a>）など便利）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">もう1つ：DeepWiki、超便利🫶</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://deepwiki.com/" rel="noreferrer" target="_blank">https://deepwiki.com/</a></p></li>
+<li><p>もともとソースコードリーディング好き。<strong>自然言語でコードベースに質問</strong> できるのが、革命</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>MCPサーバ</strong> があるのをご存知ですか？</h3>
+<blockquote class="twitter-tweet" data-align="center" data-dnt="true" data-lang="ja"><p dir="ltr" lang="en">The DeepWiki MCP server is live!<br/><br/>How to use it + what’s inside 🧵👇 <a href="https://t.co/U5xKYvJ7iE">pic.twitter.com/U5xKYvJ7iE</a></p>— Cognition (@cognition_labs) <a href="https://twitter.com/cognition_labs/status/1925616232570450426?ref_src=twsrc%5Etfw">2025年5月22日</a></blockquote> <script async="" charset="utf-8" src="https://platform.twitter.com/widgets.js"></script></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">DeepWiki MCP 3つのツール</h3>
+<ul class="simple">
+<li><p>read_wiki_structure</p></li>
+<li><p>read_wiki_contents</p></li>
+<li><p>ask_question</p></li>
+</ul>
+<p>ドキュメント <a class="reference external" href="https://docs.devin.ai/work-with-devin/deepwiki-mcp" rel="noreferrer" target="_blank">https://docs.devin.ai/work-with-devin/deepwiki-mcp</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">持論：MCPサーバはもちろん <strong>人間が使って</strong> もいい！</h2>
+<p>DeepWikiをブラウザを開く代わりに <strong>コマンドラインでask_question</strong></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">こちらもプラグインとして実装</h3>
+<pre data-id="id11"><code class="bash" data-noescape="" data-trim="">uvx --with llm-devin \
+  llm -m deepwiki -o repository simonw/llm \
+  "llmの主要な機能を教えて"</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ：コマンドラインからask_question</h3>
+<pre data-id="ask-question"><code class="txt" data-noescape="" data-trim="">LLMは、大規模言語モデル（LLM）と対話するためのコマンドラインユーティリティおよびPythonライブラリです。
+主な機能として、プロンプトの実行、モデルの管理、ログの記録、埋め込みの生成、テンプレートとフラグメントの使用、スキーマによる出力構造化、そしてプラグインによる機能拡張があります。
+
+(略)
+
+View this search on DeepWiki: https://deepwiki.com/search/llm_36a4aaae-8ea3-4960-8115-85cec3129938</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong class="command">llm -m deepwiki</strong> 自画自賛ポイント</h3>
+<ul class="simple">
+<li><p>ブラウザを開かずにコードベースに質問できて、私には超便利</p></li>
+<li><p>simonw/llmの自動ロギングにより、<strong>DeepWikiのページを思い出せる</strong></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯コマンドラインからDevinを呼び出してみないか？</h2>
+<ul class="simple">
+<li><p>DevinにはAPIがある</p></li>
+<li><p>DeepWikiにはMCPサーバがある</p></li>
+<li><p><strong>simonw/llmプラグイン</strong> として呼び出せるようにした</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<p>Enjoy llm-devin!</p>
+<p><a class="reference external" href="https://github.com/ftnext/llm-devin" rel="noreferrer" target="_blank">https://github.com/ftnext/llm-devin</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Appendix：<strong class="command">uvx</strong></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.astral.sh/uv/getting-started/installation/" rel="noreferrer" target="_blank">uvをインストール</a> すると入ります（<strong class="command">uv tool run</strong> の短縮版）</p></li>
+<li><p>ドキュメント <a class="reference external" href="https://docs.astral.sh/uv/guides/tools/" rel="noreferrer" target="_blank">Using tools</a></p></li>
+<li><p>PyPIにあるパッケージを、uvが管理する一時的な仮想環境で実行しています</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Appendix：うちのDevinの秘密🤫（<em>Knowledge</em>）</h3>
+<blockquote class="twitter-tweet" data-align="center" data-dnt="true" data-lang="ja"><p dir="ltr" lang="ja">Cursor、今日のコーディングスタイルはこれで行きます<br/><br/>* 口調はツンデレ<br/>* 困った時には「はわわ...」<br/>* 質問者を「お兄ちゃん」と呼ぶ<br/>* 思春期かつ親密度高め<br/><br/>お借りしたRulesのベースはこちら↓↓<br/>私のシンプルCursor活用方法｜ニケちゃん<a href="https://t.co/2N82t7Jc0m">https://t.co/2N82t7Jc0m</a> <a href="https://t.co/0tTFjWNutm">pic.twitter.com/0tTFjWNutm</a></p>— オナカユル (@onaka_yuruyuri) <a href="https://twitter.com/onaka_yuruyuri/status/1926432493462229031?ref_src=twsrc%5Etfw">2025年5月25日</a></blockquote></section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">EOF</h2>
+</section>
+</section>
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

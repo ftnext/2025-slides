@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/aidd-cc1/llm-claude-code.html">
+    <meta property="og:title" content="Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン">
+    <meta property="og:description" content="Claude Code Meetup Japan #1（Claude Code祭り！）">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/aidd-cc1.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン</h1>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン</h2>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Claude Code Meetup Japan #1（Claude Code祭り！）</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/07/08 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ？（<strong>Python使い</strong> の自己紹介）</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー）</p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p><a class="reference external" href="https://www.uzabase.com/jp/info/20250630/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Simon Willison-sanによる <strong class="command">llm</strong> が好き</h3>
+<pre data-id="simon-willison-san-llm"><code class="bash" data-noescape="" data-trim="">uvx --with llm-gemini \
+  llm -m gemini-2.0-flash 'Tell me fun facts about Mountain View'</code></pre>
+<ul class="simple">
+<li><p><strong class="command">llm</strong> コマンドを他のUnixコマンドと <strong>パイプ</strong> で繋げられる！</p></li>
+<li><p>自動ロギング（など）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">simonw/llmのプラグインを <strong>自作</strong></h3>
+<pre data-id="simonw-llm"><code class="bash" data-noescape="" data-trim="">uvx --with llm-devin llm -m devin \
+  'このissue https://github.com/ftnext/playtest2-python/issues/4 に取り組んでみてください'</code></pre>
+<pre data-id="simonw-llm"><code class="bash" data-noescape="" data-trim="">uvx --with llm-devin \
+  llm -m deepwiki -o repository simonw/llm \
+  "llmの主要な機能を教えて"</code></pre>
+<p><a class="reference external" href="https://www.youtube.com/live/hRqZN6YTLGA?si=1SC828p4w3HtN8mO&amp;t=5827" rel="noreferrer" target="_blank">先日のDevin Meetup Japan #2</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">さて、Claude Codeには <strong>SDK</strong> がある</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.anthropic.com/en/docs/claude-code/sdk" rel="noreferrer" target="_blank">Claude Code SDK</a></p></li>
+<li><p>TypeScript</p></li>
+<li><p>Python <a class="reference external" href="https://pypi.org/project/claude-code-sdk/" rel="noreferrer" target="_blank">https://pypi.org/project/claude-code-sdk/</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグインを作ろう！</h2>
+<p><a class="reference external" href="https://github.com/ftnext/llm-claude-code" rel="noreferrer" target="_blank">ftnext/llm-claude-code</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ</h3>
+<pre data-id="id2"><code class="bash" data-noescape="" data-trim="">uvx --with llm-claude-code llm -m cc \
+  '3月18日を1日目として今日が何日目かを数えるPythonスクリプトを書いてください'</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">結論：「それってClaude Codeでよくない？」</h3>
+<pre data-id="claude-code"><code class="bash" data-noescape="" data-trim="">claude -p '3月18日を1日目として今日が何日目かを数えるPythonスクリプトを書いてください'</code></pre>
+<ul class="simple">
+<li><p>反論のしようがございません！🎯🎯🎯</p></li>
+<li><p>simonw/llmの多くの機能は <strong>Claude Codeにもある</strong> （他のコマンドとパイプ、自動ロギング）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">本発表の意義：<strong>Claude CodeでVibe codingして作った</strong></h2>
+<ul class="simple">
+<li><p>Vibe codingしての学びの共有</p></li>
+<li><p>ProプランのClaude 4 Sonnet</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="file docutils literal notranslate"><span class="pre">CLAUDE.md</span></code></h3>
+<ul class="simple">
+<li><p>大いに参考にした <a class="reference external" href="https://note.com/himaratsu/n/nddf0efa67d42" rel="noreferrer" target="_blank">Claude Codeで実用的なWebサービスを作る</a></p></li>
+<li><p>Claude 4 <strong>Opus</strong> に用意してもらう</p></li>
+<li><p>vibe coding中はきりがよいところで更新をお願い</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">🏃‍♂️Claude 4 Opusへのプロンプト</h3>
+<pre data-id="claude-4-opus"><code class="text" data-noescape="" data-trim="">simonw/llm のプラグインとして Claude Code SDK を使ってClaude Codeにpromptを送ってみたいです。
+実装方法について調査し、仕様の不明点は私に質問して、CLAUDE.mdをまず作ってください</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">E2Eテストを用意する</h3>
+<ul class="simple">
+<li><p>コンテキストに必要なものは入れ、基本的にEnterを押し続ける</p></li>
+<li><p>作業が一区切りしたら <strong>コマンドを叩いて</strong> やりたいことが実現されたか確認だけした</p></li>
+</ul>
+<pre data-id="e2e"><code class="bash" data-noescape="" data-trim="">uv run llm -m cc こんにちは</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">便利だったコマンド</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">!</span></code>: シェルの <strong>コマンド打てる</strong>！！ E2Eのコマンド実行に使用</p></li>
+<li><p><kbd class="kbd docutils literal notranslate">Ctrl</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">R</kbd>： <strong>出力展開</strong>。エラーの確認など</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">人間の経験と噛み合った</h3>
+<pre data-id="id4"><code class="python" data-noescape="" data-trim="">def execute(self, prompt, stream, response, conversation=None):</code></pre>
+<ul class="simple">
+<li><p>simonw/llmの <code class="docutils literal notranslate"><span class="pre">prompt</span></code> 変数が <a class="reference external" href="https://github.com/simonw/llm/blob/0.26/llm/models.py#L271" rel="noreferrer" target="_blank">Prompt</a> 型と分かっていない様子のClaude Code</p></li>
+<li><p>プラグイン開発経験から「<code class="docutils literal notranslate"><span class="pre">prompt.prompt</span></code> が文字列」と伝えたことで完成！</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">機能拡張には私がボトルネック</h3>
+<ul class="simple">
+<li><p>Claude Code SDKで <strong>何ができるか</strong> 分かってない</p></li>
+<li><p>追加でやりたいこと、出てこない...（時間もないのでDevinに代わりにSDK触ってレポートしてもらってる）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯：Claude CodeでVibe codingしての学び</h3>
+<ul class="simple">
+<li><p><code class="file docutils literal notranslate"><span class="pre">CLAUDE.md</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!</span></code> と <kbd class="kbd docutils literal notranslate">Ctrl</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">R</kbd> を体得</p></li>
+<li><p>E2Eテスト <strong class="command">!uv run llm -m cc こんにちは</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<p>Enjoy vibe coding!</p>
+<p><a class="reference external" href="https://github.com/ftnext/llm-claude-code" rel="noreferrer" target="_blank">https://github.com/ftnext/llm-claude-code</a></p>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

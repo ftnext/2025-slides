@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>fzfと履歴の話</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/terminal-night1/fzf-happy-history.html">
+    <meta property="og:title" content="fzfと履歴の話">
+    <meta property="og:description" content="Terminal Night #1">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/terminal-night1.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">fzfと履歴の話</h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Terminal Night #1</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/11/28 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ（自己紹介）</h2>
+<ul class="simple">
+<li><p>macOS 14.5</p></li>
+<li><p>Windsurf 1.12.36 (VS Code系)</p></li>
+<li><p>zsh 5.9 (x86_64-apple-darwin23.0)</p></li>
+<li><p>fzf 0.67.0 (Homebrew)</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">あなたの履歴は <strong>幸せ</strong> ですか？</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">私は、幸せ 🎁（デモ）</h3>
+<p><kbd class="kbd docutils literal notranslate">Ctrl</kbd> - <kbd class="kbd docutils literal notranslate">R</kbd></p>
+<img alt="../_images/fzf-happy-history.png" src="../_images/fzf-happy-history.png"/>
+<p>※ <strong>個人の感想</strong> です</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="file docutils literal notranslate"><span class="pre">~/.zshrc</span></code> <a class="footnote-reference brackets" href="#fzf-key-article" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></h3>
+<pre data-id="zshrc"><code class="bash" data-noescape="" data-trim="">source &lt;(fzf --zsh)</code></pre>
+<p><a class="reference external" href="https://github.com/junegunn/fzf?tab=readme-ov-file#setting-up-shell-integration" rel="noreferrer" target="_blank">https://github.com/junegunn/fzf?tab=readme-ov-file#setting-up-shell-integration</a></p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="fzf-key-article" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id4" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/fzf-makes-developers-happy-ctrl-r-history-example" rel="noreferrer" target="_blank">Ctrl + R の履歴を fzf で幸せにする（zsh, bash）</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><kbd class="kbd docutils literal notranslate">Ctrl</kbd> - <kbd class="kbd docutils literal notranslate">R</kbd> だけでなく 🎁</h3>
+<ul class="simple">
+<li><p><kbd class="kbd docutils literal notranslate">Ctrl</kbd> - <kbd class="kbd docutils literal notranslate">T</kbd></p></li>
+<li><p><kbd class="kbd docutils literal notranslate">Alt</kbd> - <kbd class="kbd docutils literal notranslate">C</kbd></p></li>
+</ul>
+<p><a class="reference external" href="https://github.com/junegunn/fzf?tab=readme-ov-file#key-bindings-for-command-line" rel="noreferrer" target="_blank">https://github.com/junegunn/fzf?tab=readme-ov-file#key-bindings-for-command-line</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">fzfはどんな実装をして、<kbd class="kbd docutils literal notranslate">Ctrl</kbd> - <kbd class="kbd docutils literal notranslate">R</kbd> で私を幸せにしてくれている？</h2>
+<p><a class="reference external" href="https://github.com/junegunn/fzf/blob/v0.67.0/shell/key-bindings.zsh" rel="noreferrer" target="_blank">https://github.com/junegunn/fzf/blob/v0.67.0/shell/key-bindings.zsh</a></p>
+<p>シェルは知らないことが多い身ですが、実装を一部読んできました</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><strong class="command">bindkey</strong></h2>
+<pre data-id="bindkey"><code class="bash" data-noescape="" data-trim="">bindkey -M emacs '^R' fzf-history-widget
+bindkey -M vicmd '^R' fzf-history-widget
+bindkey -M viins '^R' fzf-history-widget</code></pre>
+<p><a class="reference external" href="https://github.com/junegunn/fzf/blob/v0.67.0/shell/key-bindings.zsh#L162-L164" rel="noreferrer" target="_blank">https://github.com/junegunn/fzf/blob/v0.67.0/shell/key-bindings.zsh#L162-L164</a></p>
+</section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><strong class="command">bindkey</strong></h2>
+<ul class="simple">
+<li><p>10月の <a class="reference external" href="https://kagurazaka-terminal.connpass.com/event/370095/" rel="noreferrer" target="_blank">神楽坂第1ターミナル</a> <a class="footnote-reference brackets" href="#second-terminal" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> で、もずますさんに教わった <code class="docutils literal notranslate"><span class="pre">bindkey</span></code> だ！</p></li>
+<li><p><a class="reference external" href="https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#index-binding-keys" rel="noreferrer" target="_blank">https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#index-binding-keys</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-M</span></code> で <a class="reference external" href="https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Keymaps" rel="noreferrer" target="_blank">keymap</a> 指定</p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="second-terminal" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id5" role="doc-backlink">2</a><span class="fn-bracket">]</span></span>
+<p>12/15(月) <a class="reference external" href="https://kagurazaka-terminal.connpass.com/event/377098/" rel="noreferrer" target="_blank">神楽坂第2ターミナル</a> 楽しみですね</p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">fzf-history-widget</span></code> の実装</h2>
+<pre data-id="fzf-history-widget"><code class="bash" data-noescape="" data-trim="">FZF_DEFAULT_OPTS=$(__fzf_defaults "" "-n2..,.. --scheme=history --bind=ctrl-r:toggle-sort,alt-r:toggle-raw --wrap-sign '\t↳ ' --highlight-line ${FZF_CTRL_R_OPTS-} --query=${(qqq)LBUFFER} +m")</code></pre>
+<p><a class="reference external" href="https://github.com/junegunn/fzf/blob/v0.67.0/shell/key-bindings.zsh#L143" rel="noreferrer" target="_blank">https://github.com/junegunn/fzf/blob/v0.67.0/shell/key-bindings.zsh#L143</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">fzf</span></code> <strong class="command">--highlight-line</strong> 🎁</h3>
+<p>細かな違い <code class="docutils literal notranslate"><span class="pre">fzf</span></code> vs <code class="docutils literal notranslate"><span class="pre">fzf</span> <span class="pre">--highlight-line</span></code></p>
+<blockquote>
+<div><p>Highlight the whole current line</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">fzf</span></code> <strong class="command">+m</strong></h3>
+<p><code class="docutils literal notranslate"><span class="pre">+m</span></code>, <code class="docutils literal notranslate"><span class="pre">--no-multi</span></code></p>
+<blockquote>
+<div><p>Disable multi-select</p>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">fzf</span></code> <strong class="command">--nth</strong></h3>
+<pre data-id="fzf-nth"><code class="bash" data-noescape="" data-trim="">fzf -n2..,..</code></pre>
+<ul class="simple">
+<li><p>FIELD INDEX EXPRESSION</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">fzf</span></code> <strong class="command">--nth</strong></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">2..</span></code>    From the 2nd field to the last field</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">..</span></code>     All the fields</p></li>
+</ul>
+<p>historyの1列目を検索対象に含めないと思ったが、 <em>全列含めている</em> （<code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">..</span></code> だけでよい？）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">fzf</span></code> <strong class="command">--query=${(qqq)LBUFFER}</strong> 🎁 <a class="footnote-reference brackets" href="#zsh-qqq-article" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></h3>
+<ul class="simple">
+<li><p>コマンドを打っている途中の <kbd class="kbd docutils literal notranslate">Ctrl</kbd> - <kbd class="kbd docutils literal notranslate">R</kbd> もサポート</p></li>
+</ul>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="zsh-qqq-article" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id6" role="doc-backlink">3</a><span class="fn-bracket">]</span></span>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/what-is-qqq-zsh-parameter-expansion-flag-q" rel="noreferrer" target="_blank">Zsh 向けのスクリプトに見つけた qqq って、何？</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">scoring scheme</h3>
+<ul>
+<li><p>default</p></li>
+<li><p>path</p></li>
+<li><p><strong>history</strong></p>
+<blockquote>
+<div><p>suited for command history or any input where chronological ordering is important.</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">--bind</span></code> (KEY/EVENT BINDINGS)</h3>
+<blockquote>
+<div><p>Each binding expression is <strong>KEY:ACTION</strong> or <strong>EVENT:ACTION</strong>.</p>
+</div></blockquote>
+<pre data-id="bind-key-event-bindings"><code class="bash" data-noescape="" data-trim="">--bind=ctrl-r:toggle-sort,alt-r:toggle-raw</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">--bind</span></code> (KEY/EVENT BINDINGS) 🎁</h3>
+<ul>
+<li><p><kbd class="kbd docutils literal notranslate">Ctrl</kbd> - <kbd class="kbd docutils literal notranslate">R</kbd>: toggle-sort（scoringの昇順降順入れ替え）</p></li>
+<li><p><kbd class="kbd docutils literal notranslate">Alt</kbd> - <kbd class="kbd docutils literal notranslate">R</kbd>: toggle-raw（queryにマッチしない項目も表示）</p>
+<blockquote>
+<div><p>toggle raw mode for displaying non-matching items</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯 fzfと履歴の話</h2>
+<ul class="simple">
+<li><p><strong class="command">fzf --zsh</strong> などを使って、あなたの履歴はより幸せになれます！</p></li>
+<li><p>Z Shell分からないなりに実装を読むの楽しい。 <code class="docutils literal notranslate"><span class="pre">fzf</span></code> のオプションいくつも知れた🙌</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました <a class="footnote-reference brackets" href="#fzf-special-thanks" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>  (<strong>Happy</strong> development!)</h3>
+<ul class="simple">
+<li><p>nikkie（にっきー）・Python使い・<span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext" rel="noreferrer" target="_blank">@ftnext</a> <a class="reference external" href="https://github.com/ftnext/sphinx-deck" rel="noreferrer" target="_blank">sphinx-deck</a> など</p></li>
+<li><p>機械学習エンジニア。 <a class="reference external" href="https://www.uzabase.com/jp/info/20250901/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="fzf-special-thanks" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id9" role="doc-backlink">4</a><span class="fn-bracket">]</span></span>
+<p>Special thanks: <code class="docutils literal notranslate"><span class="pre">fzf</span> <span class="pre">--zsh</span></code> を教えてくださった同僚Aさん</p>
+</aside>
+</aside>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>NotebookLMにYouTubeのアニメを入れるのは、いいぞ</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/engineers-anime/notebooklm-audio-overview.html">
+    <meta property="og:title" content="NotebookLMにYouTubeのアニメを入れるのは、いいぞ">
+    <meta property="og:description" content="アニメから得た学びを発表会 (2025/05)">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/engineers-anime-may.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">NotebookLMにYouTubeのアニメを入れるのは、いいぞ</h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>アニメから得た学びを発表会 LT</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/05/16 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー）</p></li>
+<li><p>Pythonとアニメが好き</p></li>
+<li><p>4月から <strong>毎週OSSリリース</strong> 始めました（1つ1つは小さいです）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">すぐアイマスに影響されます</h3>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/KIAdnAEBdJY?si=oaD6kex0jf2Jds1a" title="YouTube video player" width="560"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ルビィちゃん！</h3>
+<p>は～い</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">何が好き？</h3>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/Nz5W0bBVv8c?si=qnOKBOJvrHZ7SZBq" title="YouTube video player" width="560"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>板チョコアイス</strong></h3>
+<ul class="simple">
+<li><p>森永製菓の板チョコアイスを差し入れ（予定）</p></li>
+<li><p>私はレシートが手に入ってウハウハ</p></li>
+<li><p><a class="reference external" href="https://www.morinaga.co.jp/itachoco/idolmaster2025/" rel="noreferrer" target="_blank">https://www.morinaga.co.jp/itachoco/idolmaster2025/</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">本編：みんな〜 <strong>NotebookLM</strong> 使ってる〜？</h3>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">NotebookLM</h2>
+<ul>
+<li><p>IMO: <strong>人類史上最高</strong> の発明</p></li>
+<li><p>2023年のGoogle I/Oで発表（<a class="reference external" href="https://blog.google/technology/ai/notebooklm-google-ai/" rel="noreferrer" target="_blank">ブログ</a>）</p>
+<blockquote>
+<div><p>a new kind of notebook designed to help people learn faster.</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">無料で使える AI notebook</h3>
+<ul class="simple">
+<li><p>GoogleのLLM Geminiが裏にいる</p></li>
+<li><p>読みたい文献を指定（URL指定、ファイルアップロード）</p></li>
+<li><p><strong>Geminiに質問しながら</strong> 読み進められる！</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">DeNA南場さん「<strong>ぶっこむ</strong>」</h3>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/1veMnZUsn4I?si=ZSUPZJhjgpznlNV1&amp;start=111" title="YouTube video player" width="560"></iframe><p><a class="reference external" href="https://fullswing.dena.com/archives/100153/" rel="noreferrer" target="_blank">全文書き起こし</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ぶっこむ</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Perplexityで「その方についての必読記事はなんですか」と言ってですね</div>
+<div class="line">それでそこのURLを全てNotebookLMにぶっこむと (1:57~)</div>
+</div>
+</div></blockquote>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>技術文書</strong> をぶっこむと捗るぞ</h3>
+<ul class="simple">
+<li><p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/google-notebooklm-is-awesome-for-me-reading-pep" rel="noreferrer" target="_blank">NotebookLMを使うことで、硬めの一次情報ドキュメントに挑むの、すっごく楽になりそう</a></p></li>
+<li><p>vさん <a class="reference external" href="https://voluntas.ghost.io/improve-document-by-asking-questions/" rel="noreferrer" target="_blank">ドキュメントに質問して改善していく</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">質問以外にも便利な機能</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://support.google.com/notebooklm/answer/16070070?hl=ja" rel="noreferrer" target="_blank">マインドマップ</a></p></li>
+<li><p><a class="reference external" href="https://support.google.com/notebooklm/answer/15731776?hl=ja" rel="noreferrer" target="_blank">Audio Overviews</a> （<strong>音声概要</strong>）</p></li>
+<li><p><a class="reference external" href="https://support.google.com/notebooklm/answer/16130650?hl=ja" rel="noreferrer" target="_blank">Discover Sources</a> （文献を検索しに行ける）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">音声概要は <strong>日本語</strong> もサポート！</h3>
+<ul class="simple">
+<li><p>2025/04/29 <a class="reference external" href="https://blog.google/technology/google-labs/notebooklm-audio-overviews-50-languages/" rel="noreferrer" target="_blank">NotebookLM Audio Overviews are now available in over 50 languages</a></p></li>
+<li><p>男女2人の話者によるPodcast（5〜9分）</p></li>
+<li><p>プロンプトでカスタマイズできるらしい（未検証）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">💡 <strong>YouTubeのアニメ</strong> もぶっこむ！</h3>
+<ul>
+<li><p>Geminiと一緒にアニメを見る！</p></li>
+<li><p>⚠️Geminiは画を見ていません。 <strong>音声書き起こしのみ</strong> です</p>
+<blockquote>
+<div><p>Only the text transcript will be imported at this moment</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">今回のアニメ：青春ブタ野郎</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://ao-buta.com/" rel="noreferrer" target="_blank">https://ao-buta.com/</a></p></li>
+<li><p>電撃文庫原作、2018年アニメ化</p></li>
+<li><p>じきにミニスカサンタが来ます</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">思春期症候群</h3>
+<ul class="simple">
+<li><p>主人公 梓川咲太 高校2年生</p></li>
+<li><p>思春期特有の不安定な精神状態によって引き起こされる現象数々</p></li>
+<li><p><a class="reference external" href="https://ao-buta.com/tv/introduction/" rel="noreferrer" target="_blank">https://ao-buta.com/tv/introduction/</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">おるすばん妹 篇</h3>
+<ul class="simple">
+<li><p>TVアニメ11話「<a class="reference external" href="https://ao-buta.com/tv/story/11.html" rel="noreferrer" target="_blank">かえでクエスト</a>」〜</p></li>
+<li><p>咲太の妹 かえで のお話（<a class="reference external" href="https://dengekibunko.jp/product/aobuta/321505000278.html" rel="noreferrer" target="_blank">原作</a>）</p></li>
+<li><p>「<em>おうち大好き</em>」の裏にあった思春期症候群。涙なしには見られない😭😭😭</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">凝縮された総集編</h3>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/35qs6aFyf9A?si=G8MxxjSYhhxZGdWC" title="YouTube video player" width="560"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">おるすばん妹総集編をぶっこむ！</h3>
+<img alt="../_images/notebooklm-home-love-sister.png" src="../_images/notebooklm-home-love-sister.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Podcastで語られた おるすばん妹</h3>
+<ul class="simple">
+<li><p>感じた <strong>せつなさが言語化</strong> された！！</p></li>
+<li><p>セリフの文字起こししかないはずなのにすごい</p></li>
+<li><p>ハルシネーションもあります（Not for me な方もいそう）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><em>喪失と再生</em> ：逆説</h3>
+<p>（内容に踏み込むので懇親会で！）</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯：NotebookLMにYouTubeのアニメを入れるのは、いいぞ</h2>
+<ul class="simple">
+<li><p>青ブタ おるすばん妹 総集編をPodcastにしたら、感動が深まった</p></li>
+<li><p>技術文書もYouTubeもガンガンぶっこもう！</p></li>
+<li><p><strong>AIと一緒にアニメを見た</strong> と言えるのでは</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<p>現在 <a class="reference external" href="https://ao-buta.com/tv/onair/" rel="noreferrer" target="_blank">再放送</a> してます！</p>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/python-fukuoka/why-we-can-run-rust-package-cli.html">
+    <meta property="og:title" content="Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？">
+    <meta property="og:description" content="Python Meetup Fukuoka #4 LT (2025/09)">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/python-fukuoka.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？</h1>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？</h2>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Python Meetup Fukuoka #4</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/09/12 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">このLTは、以下ができる理由を自分の言葉で説明するものです</h2>
+<pre data-id="lt"><code class="shell" data-noescape="" data-trim="">$ python -m venv .venv --upgrade-deps
+$ source .venv/bin/activate
+(.venv) $ python -m pip install ruff
+(.venv) $ ruff check --fix --extend-select I</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">本LTのスコープ（パッケージの場合分け）</h3>
+<ul class="simple">
+<li><p>Python製パッケージの場合（例：<a class="reference external" href="https://pypi.org/project/sampleproject/" rel="noreferrer" target="_blank">sampleproject</a>）</p></li>
+<li><p>Rust製パッケージの場合（例：<a class="reference external" href="https://pypi.org/project/ruff/" rel="noreferrer" target="_blank">Ruff</a>）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><strong>Python</strong> 製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？</h2>
+<pre data-id="python"><code class="shell" data-noescape="" data-trim="">$ python -m venv .venv --upgrade-deps  # Python 3.13.0
+$ source .venv/bin/activate
+(.venv) $ python -m pip install sampleproject
+(.venv) $ .venv/bin/sample  # /usr/bin/sample と区別
+Call your main application code here</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">metadata の project.scripts</h3>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/pypa/sampleproject/blob/621e4974ca25ce531773def586ba3ed8e736b3fc/pyproject.toml#L151-L154" rel="noreferrer" target="_blank">sampleproject の pyproject.toml 抜粋</a></span></div>
+<pre><code class="toml" data-noescape="" data-trim="">[project.scripts]
+sample = "sample:main"</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">仮想環境下にスクリプト</h3>
+<pre data-id="id3"><code class="shell" data-noescape="" data-trim="">$ ls -l .venv/bin/sample
+-rwxr-xr-x  1 user  group  211 Sep 12 11:23 .venv/bin/sample
+$ file .venv/bin/sample
+.venv/bin/sample: a /.../.venv/bin/python script text executable, ASCII text
+$ # .venv/bin は仮想環境の有効化で PATH に入っている</code></pre>
+<p>「エントリポイントスクリプト」（『<a class="reference external" href="https://www.oreilly.co.jp/books/9784814400928/" rel="noreferrer" target="_blank">ハイパーモダンPython</a>』2章）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">エントリポイントスクリプトの中身</h3>
+<pre data-id="id4"><code class="python" data-noescape="" data-trim="">#!/.../.venv/bin/python
+import sys
+from sample import main
+if __name__ == '__main__':
+    if sys.argv[0].endswith('.exe'):
+        sys.argv[0] = sys.argv[0][:-4]
+    sys.exit(main())
+</code></pre>
+<p><em>distlib</em> によるらしい (<a class="reference external" href="https://github.com/pypa/pip/blob/24.3.1/src/pip/_vendor/distlib/scripts.py#L40-L49" rel="noreferrer" target="_blank">pip 24.3.1 実装</a>)</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">シバンにPythonのパス</h3>
+<pre data-id="id5"><code class="python" data-noescape="" data-trim="">#!/.../.venv/bin/python
+</code></pre>
+<ul class="simple">
+<li><p><strong>Python処理系で実行</strong>！</p></li>
+<li><p><a class="reference external" href="https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%90%E3%83%B3_(Unix" rel="noreferrer" target="_blank">https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%90%E3%83%B3_(Unix</a>)</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">仮想環境のPython処理系が実行</h3>
+<pre data-id="id6"><code class="python" data-noescape="" data-trim="">import sys
+from sample import main
+if __name__ == '__main__':
+    if sys.argv[0].endswith('.exe'):
+        sys.argv[0] = sys.argv[0][:-4]
+    sys.exit(main())
+</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">🥟Python製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？</h2>
+<ul class="simple">
+<li><p>インストールでテキストファイル（<strong>Pythonスクリプト</strong>）が置かれる</p></li>
+<li><p>シバンにより、Python処理系で実行される</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><strong>Rust</strong> 製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？</h2>
+<pre data-id="id8"><code class="shell" data-noescape="" data-trim="">$ python -m venv .venv --upgrade-deps
+$ source .venv/bin/activate
+(.venv) $ python -m pip install ruff
+(.venv) $ ruff check --fix --extend-select I</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">仮想環境下に <strong>バイナリ</strong></h3>
+<pre data-id="id9"><code class="shell" data-noescape="" data-trim="">$ ls -lh .venv/bin/ruff
+-rwxr-xr-x  1 user  group    30M Sep 12 11:30 .venv/bin/ruff
+$ file .venv/bin/ruff
+.venv/bin/ruff: Mach-O 64-bit executable arm64</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">🔑maturin</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.maturin.rs/#maturin" rel="noreferrer" target="_blank">https://www.maturin.rs/#maturin</a></p></li>
+<li><p><strong>Rustバイナリ</strong> はもちろん、pyo3などバインディングを使ったクレートをPythonパッケージとしてビルド・公開できるツール</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Rust版 sampleproject を今回自作</h3>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text"><code class="file docutils literal notranslate"><span class="pre">src/main.rs</span></code></span></div>
+<pre><code class="rust" data-noescape="" data-trim="">fn main() {
+    println!("Call your main application code here");
+}</code></pre>
+</div>
+<pre data-id="rust-sampleproject"><code class="shell" data-noescape="" data-trim="">$ cargo run --quiet
+Call your main application code here</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="file docutils literal notranslate"><span class="pre">pyproject.toml</span></code> 追加</h3>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">完全版 <a class="reference external" href="https://github.com/ftnext/sampleproject-rs/blob/0.0.2/pyproject.toml" rel="noreferrer" target="_blank">pyproject.toml</a></span></div>
+<pre><code class="toml" data-noescape="" data-trim="">[build-system]
+requires = ["maturin&gt;=1.8,&lt;2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+bindings = "bin"
+strip = true</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ローカルでインストールして実行</h3>
+<pre data-id="id10"><code class="shell" data-noescape="" data-trim="">(.venv) $ uvx maturin build
+(.venv) $ python -m pip install target/wheels/sampleproject_rs-0.0.2-py3-none-macosx_11_0_arm64.whl
+(.venv) $ .venv/bin/sample
+Call your main application code here</code></pre>
+<p>別案：<code class="docutils literal notranslate"><span class="pre">maturin</span> <span class="pre">develop</span></code> なら <cite>.venv/bin/sample</cite> のインストールまで</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">PyPIにも公開</h3>
+<p><a class="reference external" href="https://pypi.org/project/sampleproject-rs/" rel="noreferrer" target="_blank">https://pypi.org/project/sampleproject-rs/</a></p>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">GitHub Codespaces にて</span></div>
+<pre><code class="shell" data-noescape="" data-trim="">$ pipx run --spec sampleproject-rs sample
+Call your main application code here</code></pre>
+</div>
+<p>macOS向けなどのバイナリは今後対応予定</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">bindings = "bin" (<code class="file docutils literal notranslate"><span class="pre">pyproject.toml</span></code>)</h3>
+<blockquote>
+<div><p>Maturin also supports distributing binary applications written in Rust as Python packages using the <code class="docutils literal notranslate"><span class="pre">bin</span></code> bindings.</p>
+</div></blockquote>
+<p><a class="reference external" href="https://www.maturin.rs/bindings#bin" rel="noreferrer" target="_blank">https://www.maturin.rs/bindings#bin</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Ruffの <code class="file docutils literal notranslate"><span class="pre">pyproject.toml</span></code></h3>
+<pre data-id="ruff-pyproject-toml"><code class="toml" data-line-numbers="2" data-noescape="" data-trim="">[tool.maturin]
+bindings = "bin"
+manifest-path = "crates/ruff/Cargo.toml"
+module-name = "ruff"
+python-source = "python"
+strip = true
+exclude = [
+    "crates/ruff_linter/resources/test/fixtures/**/*",
+    "crates/ruff_linter/src/rules/*/snapshots/**/*"
+]</code></pre>
+<p><a class="reference external" href="https://github.com/astral-sh/ruff/blob/0.13.0/pyproject.toml#L46-L55" rel="noreferrer" target="_blank">https://github.com/astral-sh/ruff/blob/0.13.0/pyproject.toml#L46-L55</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">🌯Rust製パッケージをインストールしてコマンドラインから実行できるのは、なぜ？</h2>
+<ul class="simple">
+<li><p>テキストファイルではなく、バイナリが置かれる</p></li>
+<li><p>ビルドバックエンドに maturin を使うと、<strong>Rustで作ったバイナリがPythonパッケージになる</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰だったのよ？</h3>
+<ul class="simple">
+<li><p>nikkie（にっきー）・ <strong>1000日</strong> <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/" rel="noreferrer" target="_blank">ブログ</a> を書きました！（更新中）</p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p><a class="reference external" href="https://www.uzabase.com/jp/info/20250630/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-project-scripts-command-secret-shebang" rel="noreferrer" target="_blank">パッケージを pip install して生えるコマンドの実体は、シバンでPythonを指定したテキストファイルでした</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/maturin-bindings-bin-python-package-from-rust-binary" rel="noreferrer" target="_blank">Rustプログラムから作ったバイナリは、maturinでPythonパッケージにできる！！</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/try-maturin-pypi-upload-confuse-binary-each-environment" rel="noreferrer" target="_blank">Rust プログラムから作ったバイナリを PyPI にアップロードしてみて</a></p></li>
+</ul>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>2025年のPython環境はここまで 簡単 になりました！</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/kichijojipm/python-pavilion-tour.html">
+    <meta property="og:title" content="2025年のPython環境はここまで簡単になりました！ 環境構築ツールパビリオン クイックツアー">
+    <meta property="og:description" content="大吉祥寺.pm 2025 LT (2025/09)">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/kichijojipm.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">2025年のPython環境はここまで <strong>簡単</strong> になりました！</h1>
+<p>環境構築ツールパビリオン クイックツアー</p>
+<p>2025/09/06 大吉祥寺.pm LT nikkie</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">「2025年の今、みんなに聞いてほしいこと」（<a class="reference external" href="https://x.com/kichijojipm/status/1932238845694849063" rel="noreferrer" target="_blank">プロポーザルのテーマ</a>）</h2>
+<ul class="simple">
+<li><p>2025年時点のPython環境が著しく簡単になっていることを全力で伝えます（<a class="reference external" href="https://fortee.jp/dai-kichijojipm-2025/proposal/a9a04d16-766c-4b65-9206-bf4200a136b8" rel="noreferrer" target="_blank">プロポーザル</a>）</p></li>
+<li><p>2025年は <strong>大阪・関西万博</strong> の年です</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">この5分だけ <strong>ここは万博</strong> です</h3>
+<p>「うわ〜！大屋根リングだ〜〜」</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Python環境構築パビリオン🏛️</h2>
+<p>「興奮してきたな。入ってみよう。ウィーン」</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">本パビリオンは、Python環境の <strong>パラダイムシフト</strong> を展示しています</h3>
+<ul class="simple">
+<li><p>前説</p></li>
+<li><p>uvを使った3つの展示</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">前説：Pythonとライブラリ</h2>
+<p>Web開発・機械学習・自動化などなど、便利なライブラリが <a class="reference external" href="https://pypi.org/" rel="noreferrer" target="_blank">PyPI</a> にたくさん公開されているPythonなのですが...</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ライブラリはどこにインストールされるか</h3>
+<ul class="simple">
+<li><p>インストール先は <strong>グローバルに1箇所</strong> （<code class="file docutils literal notranslate"><span class="pre">site-package</span></code>）</p></li>
+<li><p>1つのPython処理系に、同じライブラリのバージョン違いが共存できない</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">仮想環境 という <strong>ディレクトリ</strong></h3>
+<ul class="simple">
+<li><p>💡ライブラリのインストール先（<code class="file docutils literal notranslate"><span class="pre">site-package</span></code>）を都度作る</p></li>
+<li><p>pnpmの <code class="file docutils literal notranslate"><span class="pre">node_modules</span></code> やcomposerの <code class="file docutils literal notranslate"><span class="pre">vendor</span></code> に相当</p></li>
+<li><p>ライブラリの <strong>バージョン違いを可能に</strong> する</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">仮想環境 <strong>人力</strong> 管理の時代💪</h2>
+<pre data-id="id8"><code class="shell" data-noescape="" data-trim="">$ python -m venv .venv --upgrade-deps  # 1
+$ source .venv/bin/activate  # 2
+(.venv) $ python -m pip install openai  # 3</code></pre>
+<p>私が7-8年前に入門したときの方法（<a class="reference external" href="https://docs.python.org/ja/3/tutorial/venv.html" rel="noreferrer" target="_blank">Pythonチュートリアル</a>）</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">1. 仮想環境 <code class="file docutils literal notranslate"><span class="pre">.venv</span></code> ディレクトリを作る</h3>
+<p><strong>Python処理系は前提</strong> で、標準ライブラリの <a class="reference external" href="https://docs.python.org/ja/3/library/venv.html" rel="noreferrer" target="_blank">venv</a> 使用</p>
+<pre data-id="venv"><code class="shell" data-line-numbers="1" data-noescape="" data-trim="">$ python -m venv .venv --upgrade-deps  # 1
+$ source .venv/bin/activate  # 2
+(.venv) $ python -m pip install openai  # 3</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">2. 1でできたシェルスクリプトを <strong>俺たちが毎回叩く</strong>！（人力）</h3>
+<p>環境変数 <code class="docutils literal notranslate"><span class="pre">PATH</span></code> の更新など：「仮想環境を有効化」</p>
+<pre data-id="id9"><code class="shell" data-line-numbers="2" data-noescape="" data-trim="">$ python -m venv .venv --upgrade-deps  # 1
+$ source .venv/bin/activate  # 2
+(.venv) $ python -m pip install openai  # 3</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">3. 依存ライブラリを仮想環境にインストール</h3>
+<p>標準のインストーラ <a class="reference external" href="https://pip.pypa.io/en/stable/" rel="noreferrer" target="_blank">pip</a></p>
+<pre data-id="id10"><code class="shell" data-line-numbers="3" data-noescape="" data-trim="">$ python -m venv .venv --upgrade-deps  # 1
+$ source .venv/bin/activate  # 2
+(.venv) $ python -m pip install openai  # 3</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">（ツール提案の流れの末に）2024年 uv 到来</h2>
+<ul class="simple">
+<li><p>Rustで書かれた、Pythonプロジェクト管理ツール（集大成的）</p></li>
+<li><p>uvだけ入れればよい（Pythonを自動で入れる）</p></li>
+<li><p>開発者が <strong>人力で仮想環境管理からの解放</strong> （パラダイムシフト！）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">uvのインストール</h3>
+<pre data-id="id11"><code class="shell" data-noescape="" data-trim="">$ curl -LsSf https://astral.sh/uv/install.sh | sh
+$ brew install uv
+$ # cargo などなど</code></pre>
+<p><a class="reference external" href="https://docs.astral.sh/uv/getting-started/installation/" rel="noreferrer" target="_blank">https://docs.astral.sh/uv/getting-started/installation/</a></p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">展示1️⃣ 手札は、全PyPI！</h2>
+<ul class="simple">
+<li><p>インストールすることで <strong>コマンドラインツールとしても使えるライブラリ</strong> がある</p></li>
+</ul>
+<pre data-id="pypi"><code class="bash" data-noescape="" data-trim="">% uvx openai api chat.completions.create -g user 'Python環境構築ツールパビリオンを訪れた感想は？' -m gpt-5
+Installed 16 packages in 29ms
+実地で訪れたわけではないので体験談は語れませんが、「Python 環境構築ツール」をテーマにしたパビリオンだと想定すると、こんな点が印象に残りそうです。</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">これまで：人力で仮想環境を用意してそこにインストールしてきた</h3>
+<pre data-id="id12"><code class="shell" data-noescape="" data-trim="">$ python -m venv openai-env --upgrade-deps
+$ source openai-env/bin/activate
+(openai-env) $ python -m pip install openai
+(openai-env) $ openai api chat.completions.create -g user 'Python環境構築ツールパビリオンを訪れた感想は？' -m gpt-5</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">🆕 <strong class="command">uvx</strong></h3>
+<ul class="simple">
+<li><p>uvをインストールしたら使えます（<a class="reference external" href="https://docs.astral.sh/uv/reference/cli/#uv-tool-run" rel="noreferrer" target="_blank">uv tool run</a> のエイリアス）</p></li>
+<li><p>uvが <strong>一時的な仮想環境を作り</strong>、そこにインストールしてコマンドラインツールを実行</p></li>
+<li><p>PyPIにある全てのコマンドラインツール（最大60万）が、仮想環境の人力管理無しで使い放題ってこと！</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">展示2️⃣ inline script metadata</h2>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">ライブラリを使ったスクリプト</span></div>
+<pre><code class="python" data-noescape="" data-trim="">from openai import OpenAI
+client = OpenAI()
+response = client.responses.create(model="gpt-5", input=args.input)
+print(response.output_text)
+</code></pre>
+</div>
+<pre data-id="inline-script-metadata"><code class="shell" data-noescape="" data-trim="">% uv run script.py 'Python環境構築ツールパビリオンを訪れた感想は？'
+Installed 16 packages in 35ms
+実際に会場へ行くことはできませんが、最近の動向を踏まえて「Python環境構築ツールが一堂に会したらこう感じる」という要約です。</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">これまで：依存ライブラリをインストールした仮想環境を人力で用意</h3>
+<pre data-id="id13"><code class="shell" data-noescape="" data-trim="">$ python -m venv script-env --upgrade-deps
+$ source script-env/bin/activate
+(script-env) $ python -m pip install openai  # ここの伝達が人頼み
+(script-env) $ python script.py</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">🆕 <a class="reference external" href="https://peps.python.org/pep-0723/" rel="noreferrer" target="_blank">PEP 723 – Inline script metadata</a></h3>
+<ul class="simple">
+<li><p>Pythonスクリプトにコメントとして <strong>依存ライブラリを示すメタデータ</strong> を書けるようになった</p></li>
+<li><p><strong class="command">uv add openai --script script.py</strong></p></li>
+</ul>
+<pre data-id="pep-723-inline-script-metadata"><code class="python" data-noescape="" data-trim=""># /// script
+# requires-python = "&gt;=3.11"
+# dependencies = [
+#     "openai",
+# ]
+# ///
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong class="command">uv run</strong> &lt;metadata書いたscript&gt;.py</h3>
+<ol class="arabic simple">
+<li><p>uvがmetadataを読む</p></li>
+<li><p>uvが <strong>metadataを満たす仮想環境を用意</strong></p></li>
+<li><p>uvが2の仮想環境でスクリプトを実行</p></li>
+</ol>
+<p>metadataを書いたスクリプトは、別環境でもはるかに動かしやすくなったってこと！</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">展示3️⃣ uvで楽々Pythonプロジェクト管理</h2>
+<p>uvで管理されたPythonプロジェクトであれば <strong class="command">uv sync</strong> だけ！</p>
+<pre data-id="uvpython"><code class="shell" data-line-numbers="3" data-noescape="" data-trim="">$ git clone https://github.com/ftnext/llm-deep-research.git
+$ cd llm-deep-research
+$ uv sync</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">これまで：人力で仮想環境にインストールして環境構築</h3>
+<pre data-id="id14"><code class="shell" data-line-numbers="3,4,5" data-noescape="" data-trim="">$ git clone https://github.com/ftnext/llm-deep-research.git
+$ cd llm-deep-research
+$ python -m venv .venv --upgrade-deps
+$ source .venv/bin/activate
+(.venv) $ python -m pip install -e .</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">🆕 たった1つの <strong class="command">uv sync</strong> だけ</h3>
+<ul class="simple">
+<li><p>uvが仮想環境 <code class="file docutils literal notranslate"><span class="pre">.venv</span></code> を作る</p></li>
+<li><p>そこに <code class="file docutils literal notranslate"><span class="pre">uv.lock</span></code> の通りに依存ライブラリをインストール</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">あとは <strong class="command">uv run</strong> &lt;command&gt; 連打</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span></code> で 仮想環境 <code class="file docutils literal notranslate"><span class="pre">.venv</span></code> を有効にしたうえでコマンド実行</p></li>
+<li><p>人力で有効化（<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">.venv/bin/activate</span></code>）は不要</p></li>
+</ul>
+<pre data-id="uv-run-command"><code class="shell" data-noescape="" data-trim="">$ uv run which python
+/.../llm-deep-research/.venv/bin/python</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">uvでPythonプロジェクトを始める</h3>
+<p>新規プロジェクトにおいては</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.astral.sh/uv/reference/cli/#uv-init" rel="noreferrer" target="_blank">uv init</a></p></li>
+<li><p><a class="reference external" href="https://docs.astral.sh/uv/reference/cli/#uv-add" rel="noreferrer" target="_blank">uv add</a> (uv remove)</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯：2025年のPython環境はここまで簡単になりました！</h2>
+<ul class="simple">
+<li><p>手札は、全PyPI！ <strong class="command">uvx</strong></p></li>
+<li><p>inline script metadata <strong class="command">uv run</strong> &lt;metadata書いたscript&gt;.py</p></li>
+<li><p>Pythonプロジェクトでは <strong class="command">uv sync</strong> して <strong class="command">uv run</strong> &lt;command&gt;</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰だったのよ？</h3>
+<ul class="simple">
+<li><p>nikkie（にっきー）・ <strong>1000日</strong> <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/" rel="noreferrer" target="_blank">ブログ</a> を書きました！（更新中）</p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p><a class="reference external" href="https://www.uzabase.com/jp/info/20250630/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">uvで Python環境 自由✌️（ぶい）</h2>
+<p>ご清聴ありがとうございました</p>
+<p>📣「"仮想環境"を人間が管理する時代は、もう終わりました。ツールに任せて楽してこーぜ！」</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Appendix</h2>
+<ul class="simple">
+<li><p>参考文献</p></li>
+<li><p>本LT（5分）のスコープ外とした事項への補足</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">補足：uvに至る流れ</h3>
+<ul class="simple">
+<li><p>TechRAMEN 2024で発表 <a class="reference external" href="https://ftnext.github.io/2024-slides/techramen/python-package-management-tools.html#/1" rel="noreferrer" target="_blank">one obvious wayを志向するPythonに依存ライブラリ管理ツールがたっくさんある話</a></p></li>
+<li><p>『<a class="reference external" href="https://www.oreilly.co.jp/books/9784814400928/" rel="noreferrer" target="_blank">ハイパーモダンPython</a>』Ⅰ部・Ⅱ部</p></li>
+<li><p>例えば <code class="docutils literal notranslate"><span class="pre">uvx</span></code> には <code class="docutils literal notranslate"><span class="pre">pipx</span> <span class="pre">run</span></code> が先行します</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">uvx（拙ブログ記事）</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/welcome-uvx-world-developers-not-need-to-manage-virtual-environments-for-cli-python-packages" rel="noreferrer" target="_blank">uvx（やpipx）により、Python製CLIツールも開発者による仮想環境管理が不要になってるじゃん！ Sphinxを例に</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/pipx-uv-managed-virtual-envirionment-streamlit-example" rel="noreferrer" target="_blank">pipxやuvで、開発者がPython仮想環境を作らない開発 〜Streamlitを例に〜</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">inline script metadata</h3>
+<ul class="simple">
+<li><p>PyCon JP 2024で発表：<a class="reference external" href="https://2024.pycon.jp/ja/talk/89F3RQ" rel="noreferrer" target="_blank">PEP 723（Inline script metadata）が拓く世界。Pythonスクリプトに必要な仮想環境をツールにおまかせできるんです！</a></p></li>
+<li><p>所属先のブログにも書きました：<a class="reference external" href="https://tech.uzabase.com/entry/2024/06/07/180442" rel="noreferrer" target="_blank">Pythonスクリプトのモジュラリティとポータビリティを高めていく</a></p></li>
+<li><p>補足：さらに進んだ例 <strong class="command">marimo edit --sandbox</strong> （<a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/marimo-awesome-support-inline-script-metadata-as-notebook" rel="noreferrer" target="_blank">拙ブログ</a>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">既存のPythonプロジェクトにuvを入れる</h3>
+<ul class="simple">
+<li><p>uvx <a class="reference external" href="https://github.com/mkniewallner/migrate-to-uv" rel="noreferrer" target="_blank">migrate-to-uv</a></p></li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">pyproject.toml</span></code> がなく動かない場合は、<strong class="command">uv venv</strong> して <strong class="command">uv pip install</strong> のようなworkaround</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">uvは速い（拙ブログ記事）</h3>
+<ul class="simple">
+<li><p>uvはRust実装（バイナリ提供）なので、Python処理系で動かすpipより速い</p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/maturin-bindings-bin-python-package-from-rust-binary" rel="noreferrer" target="_blank">Rustプログラムから作ったバイナリは、maturinでPythonパッケージにできる！！</a></p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/python-project-scripts-command-secret-shebang" rel="noreferrer" target="_blank">パッケージを pip install して生えるコマンドの実体は、シバンでPythonを指定したテキストファイルでした</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">EOF</h2>
+</section>
+</section>
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

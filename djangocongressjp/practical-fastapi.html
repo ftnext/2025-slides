@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>FastAPI の現場から</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/djangocongressjp/practical-fastapi.html">
+    <meta property="og:title" content="FastAPIの現場から">
+    <meta property="og:description" content="DjangoCongress JP 2025">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/djangocongressjp.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;"><strong>FastAPI</strong> の現場から</h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DjangoCongress JP 2025</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/02/22🐈 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー） ※本発表は個人の見解です</p></li>
+<li><p><strong>機械学習</strong> エンジニア</p></li>
+<li><p>プロダクトとして価値を届けるために <strong>Web APIの開発も</strong> します（今回FastAPIの知見を共有）</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/" rel="noreferrer" target="_blank">ブログ</a> 連続 <strong>820</strong> 日突破</p></li>
+<li><p><span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext" rel="noreferrer" target="_blank">@ftnext</a> このスライドで使ってる <a class="reference external" href="https://github.com/ftnext/sphinx-new-tab-link" rel="noreferrer" target="_blank">ftnext/sphinx-new-tab-link</a> など</p></li>
+<li><p>2023年に悪いことしました <a class="reference external" href="https://ftnext.github.io/2023-slides/djangocongressjp/learn-vulnerabilities.html" rel="noreferrer" target="_blank">Djangoアプリに作り込んで学ぶ脆弱性</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">FastAPI、ご存知ですか？</h2>
+<ul class="simple">
+<li><p>聞いたことがある🙋‍♂️</p></li>
+<li><p>使ったことがある🙋‍♀️</p></li>
+</ul>
+<p>トーク14本中FastAPIが登場しそうなのは他に1本</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">PythonコミュニティにおけるFastAPI</h3>
+<p><a class="reference external" href="https://lp.jetbrains.com/python-developers-survey-2023/#frameworks-and-libraries" rel="noreferrer" target="_blank">Python Developers Survey 2023</a> より</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Webフレームワーク 第3位</h3>
+<img alt="../_images/survey-2023-web-framewarks.drawio.png" src="../_images/survey-2023-web-framewarks.drawio.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>データサイエンス</strong> で使われる</h3>
+<a class="reference internal image-reference" href="../_images/survey-2023-data-science-web.drawio.png"><img alt="../_images/survey-2023-data-science-web.drawio.png" src="../_images/survey-2023-data-science-web.drawio.png" style="width: 731.2px; height: 547.2px;"/>
+</a>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">FastAPI</h2>
+<div class="literal-block-wrapper docutils container" id="id65">
+<div class="code-block-caption"><span class="caption-text">Tutorialの <a class="reference external" href="https://fastapi.tiangolo.com/tutorial/first-steps/" rel="noreferrer" target="_blank">First Steps</a></span></div>
+<pre><code class="python" data-noescape="" data-trim="">from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+</code></pre>
+</div>
+<p>Djangoの <code class="file docutils literal notranslate"><span class="pre">urls.py</span></code> のところの話</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">path <code class="docutils literal notranslate"><span class="pre">/</span></code> に GET <code class="docutils literal notranslate"><span class="pre">operation</span></code> が来たら</h3>
+<pre data-id="path-get-operation"><code class="python" data-line-numbers="6" data-noescape="" data-trim="">from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">root</span></code> 関数を実行してレスポンスを返す</h3>
+<pre data-id="root"><code class="python" data-line-numbers="7,8" data-noescape="" data-trim="">from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+</code></pre>
+<p>この延長に機械学習モデルをサーブするAPI</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">他方 Django REST Framework</h3>
+<div class="literal-block-wrapper docutils container" id="id66">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://www.django-rest-framework.org/tutorial/quickstart/" rel="noreferrer" target="_blank">Quickstart</a> にある <strong>認証付きAPI</strong></span></div>
+<pre><code class="txt" data-noescape="" data-trim="">bash: curl -u admin -H 'Accept: application/json; indent=4' http://127.0.0.1:8000/users/
+Enter host password for user 'admin':
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "url": "http://127.0.0.1:8000/users/1/",
+            "username": "admin",
+            "email": "admin@example.com",
+            "groups": []
+        }
+    ]
+}</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">記事 <a class="reference external" href="https://www.david-dahan.com/blog/comparing-fastapi-and-django" rel="noreferrer" target="_blank">Django vs. FastAPI, An Honest Comparison</a></h3>
+<ul class="simple">
+<li><p>Batteries includedか、 <strong>自分で組み合わせる</strong> 必要があるか</p></li>
+<li><p>非同期対応の度合い（部分的か、fullyか）</p></li>
+<li><p>IMO：それぞれ得意分野が異なる</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">FastAPIの現場から</h2>
+<ul class="simple">
+<li><p>社内向けの <strong>小さなWeb API</strong> をチームで開発（認証機能はなし）</p></li>
+<li><p>FastAPIのチュートリアルを皆で参照しながら</p></li>
+<li><p>見聞きしていたPyConのトークも手がかりに（👉今回の知見共有。熟知はしてないです）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">手がかり（個々に取り上げます）🏃‍♂️</h3>
+<ul class="simple">
+<li><p>記事 <a class="reference external" href="https://www.rhoboro.com/2021/06/12/async-fastapi-sqlalchemy.html" rel="noreferrer" target="_blank">FastAPI+SQLAlchemyで非同期WebAPI</a></p></li>
+<li><p><a class="reference external" href="https://2021.pycon.jp/time-table?id=272415" rel="noreferrer" target="_blank">PyCon JP 2021: Python x DDD!!</a></p></li>
+<li><p><a class="reference external" href="https://2024.pycon.jp/ja/talk/MXKU77" rel="noreferrer" target="_blank">PyCon JP 2024: SQLModel入門</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">外部のLLMの <strong>API</strong> を使うアプリケーション</h3>
+<div class="literal-block-wrapper docutils container" id="id67">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://blog.hirokiky.org/entry/2023/03/14/163203" rel="noreferrer" target="_blank">ChatGPTを非同期でPythonから利用する方法</a> (2023時点)</span></div>
+<pre><code class="python" data-noescape="" data-trim="">class GPTView(View):
+    async def post(request):
+        res = await openai.ChatCompletion.acreate({...})</code></pre>
+</div>
+<ul class="simple">
+<li><p><strong>非同期IO</strong> が有効。皆やってみたさがあり、FastAPIを選択</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">小さい単位で <strong>都度設計</strong> しながら進めています</h3>
+<ul class="simple">
+<li><p>最初に全機能設計したわけではありません</p></li>
+<li><p><strong>path 1つ、operation 1つ</strong> に絞って（既存を拡張するよう）設計し、実装</p></li>
+<li><p>これを繰り返す。 <strong>その時点の最適解</strong> を更新していく</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">XP（eXtreme Programming）🏃‍♂️</h3>
+<ul class="simple">
+<li><p>アジャイル開発の1手法</p></li>
+<li><p>小さい価値でも届け、そこからの学びを活かす <strong>サイクル</strong> を何度も何度も回す（今回のAPIは3ヶ月経過）</p></li>
+<li><p>対象の <em>ドメイン</em> や使っている技術の理解が少しずつ増えていく</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">開発の流れ</h3>
+<ul class="simple">
+<li><p>開発単位：ユーザストーリー</p></li>
+<li><p>完了条件となる受け入れテストを書く（<strong>ATDD</strong>）</p></li>
+<li><p>既存実装を拡張する設計を考え、テスト駆動開発（&amp;ペアプログラミング）で実装</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">同僚による🏃‍♂️</h3>
+<iframe allowfullscreen="true" class="speakerdeck-iframe" data-ratio="1.7777777777777777" frameborder="0" src="https://speakerdeck.com/player/f4d5c3d15476469591749e0597f4fd36?slide=16" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" title="受け入れテスト駆動開発で不確実性に段階的に対処する/Addressing Uncertainty Incrementally with Acceptance Test-Driven-Development"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デプロイ先は <strong>Kubernetes</strong></h3>
+<ul class="simple">
+<li><p>マイクロサービスなAPI群</p></li>
+<li><p>今回のFastAPIアプリもコンテナ化</p></li>
+<li><p>GKEにデプロイ</p></li>
+</ul>
+<p>私が暗黙の前提にしてるかも</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">サンプルアプリケーション</h3>
+<ul class="simple">
+<li><p>書籍アプリ</p></li>
+<li><p><a class="reference external" href="https://github.com/iktakahiro/dddpy" rel="noreferrer" target="_blank">iktakahiro/dddpy</a> の一部を再実装（一覧と作成のみ）</p></li>
+<li><p><a class="reference external" href="https://github.com/ftnext/fastapi-playground/tree/djangocongressjp-2025-v1/book-app/api" rel="noreferrer" target="_blank">https://github.com/ftnext/fastapi-playground/tree/djangocongressjp-2025-v1/book-app/api</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">お品書き：FastAPIの現場から</h3>
+<ol class="arabic simple">
+<li><p><strong>非同期IO</strong></p></li>
+<li><p>クリーンなアーキテクチャを志向する</p></li>
+<li><p>Twelve-Factor App</p></li>
+</ol>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">非同期IO</h2>
+<ul class="simple">
+<li><p>FastAPI</p></li>
+<li><p>SQLModel (SQLAlchemy)</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">FastAPI</h2>
+<p>Starlette + Pydantic + 作者tiangolo氏の工夫</p>
+<p><a class="reference external" href="https://fastapi.tiangolo.com/features/" rel="noreferrer" target="_blank">https://fastapi.tiangolo.com/features/</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">encode/starlette</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/encode/starlette" rel="noreferrer" target="_blank">https://github.com/encode/starlette</a></p></li>
+<li><p>lightweight ASGI framework（非同期IOサポート）</p></li>
+<li><p><strong>高いパフォーマンス</strong> （<a class="reference external" href="https://www.techempower.com/benchmarks/#section=data-r17&amp;hw=ph&amp;test=fortune&amp;l=zijzen-1" rel="noreferrer" target="_blank">Web Framework Benchmarks</a> 0.18.0時点。FastAPIにも恩恵）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Pydantic</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/pydantic/pydantic" rel="noreferrer" target="_blank">https://github.com/pydantic/pydantic</a></p></li>
+<li><p>型ヒントに沿って <strong>パース</strong> するライブラリ（『<a class="reference external" href="https://www.oreilly.co.jp/books/9784814400171/" rel="noreferrer" target="_blank">ロバストPython</a>』）</p></li>
+<li><p>エディタでの補完や、実行時バリデーション</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">FastAPIの <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code></h2>
+<pre data-id="fastapi-async-def"><code class="python" data-noescape="" data-trim="">@app.get("/sync")  # path operation decorator
+def path_operation_function_def():
+    return {"message": "Hello World"}
+
+@app.get("/async")
+async def path_operation_function_async_def():
+    return {"message": "どんなときにasync defにする？"}</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">雑な回答</h3>
+<p>📣「FastAPIなら <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> でしょ！」</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">処理は2種類（『<a class="reference external" href="https://gihyo.jp/book/2020/978-4-297-11111-3" rel="noreferrer" target="_blank">Python実践入門</a>』）</h3>
+<ul>
+<li><p>IOバウンド</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>外部との通信（APIやDB）</p></li>
+<li><p>ファイルの読み書き</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>CPUバウンド</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>CPUで計算</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">そもそも非同期IOが有効なのは</h3>
+<ul class="simple">
+<li><p><strong>IOバウンド</strong> な処理（CPUバウンドではない）</p></li>
+<li><p>CPUをIO待ちにしないで他の処理を進める</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">FastAPIのドキュメント曰く</h3>
+<ul class="simple">
+<li><p>非同期IOをサポートするライブラリを使うなら、パスオペレーション関数は <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code></p></li>
+<li><p>Pythonの文法として <code class="docutils literal notranslate"><span class="pre">await</span></code> が使えるのは <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> の中だけ</p></li>
+</ul>
+<pre data-id="id17"><code class="python" data-noescape="" data-trim="">client = AsyncOpenAI()
+
+@app.get("/async")
+async def use_async_support_library():
+    chat_completion = await client.chat.completions.create(...)</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">FastAPIのドキュメント曰く</h3>
+<ul class="simple">
+<li><p>非同期IOをサポートしないライブラリなら、パスオペレーション関数は <code class="docutils literal notranslate"><span class="pre">def</span></code></p></li>
+<li><p>＝ブロッキングIOでは <code class="docutils literal notranslate"><span class="pre">def</span></code></p></li>
+</ul>
+<pre data-id="id17"><code class="python" data-noescape="" data-trim="">@app.get("/sync")
+def use_blocking_io_library():
+    response = requests.get(...)</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">質問：CPUバウンドな処理は、どっち？</h3>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">FastAPIでは <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> ‼️</h3>
+<blockquote>
+<div><p>it's better to use <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> unless your path operation functions use code that performs blocking I/O.</p>
+</div></blockquote>
+<p>「パスオペレーション関数がブロッキングIOするコードを使わない場合、 <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> がよい」</p>
+<p><a class="reference external" href="https://fastapi.tiangolo.com/async/#path-operation-functions" rel="noreferrer" target="_blank">https://fastapi.tiangolo.com/async/#path-operation-functions</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">FastAPIでの非同期IO🥟</h3>
+<ul class="simple">
+<li><p><strong>非同期IOをサポートしたライブラリを使って</strong>、パスオペレーション関数を <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> で書こう！</p></li>
+<li><p>CPUバウンドな処理もFastAPIでは <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> で書くとよい</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">SQLModel</h2>
+<p>SQLAlchemy + Pydantic + 作者tiangolo氏の工夫</p>
+<p><a class="reference external" href="https://sqlmodel.tiangolo.com/features/" rel="noreferrer" target="_blank">https://sqlmodel.tiangolo.com/features/</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">速習SQLModel🏃‍♂️ (PyCon JP 2024)</h3>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/x7qCG9RP7u4?si=_cwx2RHSBf0CZkxL" title="YouTube video player" width="560"></iframe><p><a class="reference external" href="https://sqlmodel.tiangolo.com/tutorial/" rel="noreferrer" target="_blank">チュートリアル</a> の内容を30分でカバーしてます</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ここでもPydantic</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SQLModel</span></code> を継承したクラスは、Pydanticの <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code> でもあるので、 <strong>FastAPIで使える</strong></p></li>
+<li><p>ORMを扱う際にもエディタで補完が効く</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">SQLAlchemy</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/sqlalchemy/sqlalchemy" rel="noreferrer" target="_blank">https://github.com/sqlalchemy/sqlalchemy</a></p></li>
+<li><p>代表的なORM</p></li>
+<li><p><strong>DBの非同期IO</strong> をサポート！（ありがとう！！）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">DBの非同期IO</h2>
+<ul class="simple">
+<li><p><strong>SQLAlchemy</strong> にSQLModelは乗っかる（SQLAlchemyの話になります）</p></li>
+<li><p>PostgreSQLの例</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">SQLModelとして</h3>
+<pre data-id="id20"><code class="python" data-noescape="" data-trim="">from sqlalchemy.ext.asyncio import create_async_engine
+from sqlmodel.ext.asyncio.session import AsyncSession
+
+database_url = "postgresql+asyncpg://developer:mysecretpassword@127.0.0.1:5432/practice"
+engine = create_async_engine(database_url)
+async with AsyncSession(engine) as session:
+    ...</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">IMO： <code class="docutils literal notranslate"><span class="pre">async_sessionmaker</span></code> といいとこ取り</h3>
+<pre data-id="imo-async-sessionmaker"><code class="python" data-noescape="" data-trim="">from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlmodel.ext.asyncio.session import AsyncSession as SQLModelAsyncSession
+
+database_url = "postgresql+asyncpg://developer:mysecretpassword@127.0.0.1:5432/practice"
+engine = create_async_engine(database_url)
+AsyncSession = async_sessionmaker(engine, class_=SQLModelAsyncSession)
+async with AsyncSession() as session:  # AsyncSession.begin() もできる
+    ...</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">SQLModelが提供するDBセッション</h3>
+<pre data-id="sqlmodeldb"><code class="python" data-noescape="" data-trim="">from sqlmodel import Session
+from sqlmodel.ext.asyncio.session import AsyncSession</code></pre>
+<ul class="simple">
+<li><p><strong>DBとのやり取り</strong> はセッションを通して</p></li>
+<li><p>SQLAlchemyの <code class="docutils literal notranslate"><span class="pre">Session</span></code> や <code class="docutils literal notranslate"><span class="pre">AsyncSession</span></code> を継承したクラス</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">DBセッション比較</h3>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>ライブラリ</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">execute()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">exec()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>SQLAlchemy</p></td>
+<td><p><strong>ある</strong></p></td>
+<td><p>ない</p></td>
+</tr>
+<tr class="row-odd"><td><p>SQLModel</p></td>
+<td><p>ある</p></td>
+<td><p><strong>ある</strong> （推奨）</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">SQLModelのDBセッションは <strong>型が当たる</strong></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Session</span></code> インスタンスに <code class="docutils literal notranslate"><span class="pre">statement</span></code> を渡して、 <code class="docutils literal notranslate"><span class="pre">exec()</span></code> メソッドを呼ぶ</p></li>
+</ul>
+<pre data-id="id21"><code class="python" data-line-numbers="3" data-noescape="" data-trim="">statement = select(Hero)
+async with AsyncSession(async_engine) as session:
+    results = await session.exec(statement)
+    for hero in results:
+        print(repr(hero))</code></pre>
+<ul class="simple">
+<li><p>SQLAlchemyのSessionの <code class="docutils literal notranslate"><span class="pre">execute().scalars()</span></code> メソッドを呼んで実現🏃‍♂️</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">sessionmaker</span></code> の提供</h3>
+<dl class="field-list simple">
+<dt class="field-odd">SQLAlchemy<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ある。セッションの <strong>ファクトリ</strong> クラスを返すため、常に <code class="docutils literal notranslate"><span class="pre">engine</span></code> を渡して初期化しなくてよくなる</p>
+</dd>
+<dt class="field-even">SQLModel<span class="colon">:</span></dt>
+<dd class="field-even"><p>ない。<a class="reference external" href="https://github.com/fastapi/sqlmodel/issues/75#issuecomment-1311796665" rel="noreferrer" target="_blank">tiangolo氏</a> 「常に <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">Session(engine)</span></code> すればよい」（IMO：せやろか？）</p>
+</dd>
+</dl>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">提案：sessionmakerでSQLModelのセッションを返させる</h3>
+<pre data-id="sessionmakersqlmodel"><code class="python" data-line-numbers="4" data-noescape="" data-trim="">from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlmodel.ext.asyncio.session import AsyncSession as SQLModelAsyncSession
+
+AsyncSession = async_sessionmaker(engine, class_=SQLModelAsyncSession)</code></pre>
+<ul class="simple">
+<li><p>SQLModelのセッションのファクトリなので <code class="docutils literal notranslate"><span class="pre">exec()</span></code> が使える！</p></li>
+<li><p>現状、世にはSQLAlchemyの例が多いので、DB接続部分は参考にできる</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">提案の参考🏃‍♂️</h3>
+<ul class="simple">
+<li><p>大元 <a class="reference external" href="https://github.com/fastapi/sqlmodel/issues/75#issuecomment-2109911909" rel="noreferrer" target="_blank">Add sessionmaker #75</a></p></li>
+<li><p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/sqlmodel-postgres-sync-connection-sqlalchemy-sessionmaker-integration" rel="noreferrer" target="_blank">SQLModel素振りの記：PostgreSQLに同期接続 〜selectして見えた、SQLAlchemyのsessionmakerのclass_引数によるいいとこ取り案〜</a></p></li>
+<li><p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/sqlmodel-postgres-async-connection-proposal-sqlalchemy-sessionmaker-integration" rel="noreferrer" target="_blank">SQLModelでPostgreSQLに非同期接続する実装を考える</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">IMO：SQLModel所感</h2>
+<ul class="simple">
+<li><p>SQLModelでFastAPIアプリは <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">def</span></code> で書けるが、まだまだ発展途上（0.0.22）</p></li>
+<li><p><strong>SQLAlchemyの経験</strong> がある方にだけ、オススメします</p></li>
+<li><p>経験ない我が身には、SQLModel + SQLAlchemyと <em>学びが2倍</em> だった🙌</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">IMO：SQLModelの現状🏃‍♂️</h3>
+<ul class="simple">
+<li><p>チュートリアルはtoy exampleで実務レベルの例がない（プルリクチャンス！）</p></li>
+<li><p><a class="reference external" href="https://www.david-dahan.com/blog/comparing-fastapi-and-django" rel="noreferrer" target="_blank">先の比較記事</a> より、シングルメンテナゆえに判断を誤ったのでは</p></li>
+<li><p>FastAPIユーザが <strong>分断</strong> されてしまっている（SQLModel採用のアプリケーション例が見つかりにくい）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お品書き：FastAPIの現場から</h2>
+<ol class="arabic simple">
+<li><p>非同期IO</p></li>
+<li><p><strong>クリーンなアーキテクチャを志向する</strong></p></li>
+<li><p>Twelve-Factor App</p></li>
+</ol>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">The Clean Architecture</h2>
+<ul class="simple">
+<li><p>Robert C. Martin (Uncle Bob) によるブログ</p></li>
+<li><p><a class="reference external" href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html" rel="noreferrer" target="_blank">https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html</a></p></li>
+<li><p>氏による書籍『<a class="reference external" href="https://asciidwango.jp/post/176293765750/clean-architecture" rel="noreferrer" target="_blank">Clean Architecture</a>』と区別してます</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">XXXアーキテクチャに共通するもの</h3>
+<ul class="simple">
+<li><p>Hexagonal (=Ports and Adapters) / Onion / e.t.c.</p></li>
+<li><p><strong>レイヤ分け</strong> による <strong>関心の分離</strong></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">「共通するもの」の概要（schematic）</h3>
+<a class="reference internal image-reference" href="../_images/uncle-bob-CleanArchitecture.jpg"><img alt="../_images/uncle-bob-CleanArchitecture.jpg" src="../_images/uncle-bob-CleanArchitecture.jpg" style="width: 617.6px; height: 453.6px;"/>
+</a>
+<p>注：この4層を導入すれば、クリーンアーキテクチャ <strong>ではありません</strong></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">The Dependency Rule</h3>
+<blockquote>
+<div><p>source code dependencies can only point inwards.</p>
+</div></blockquote>
+<p>各レイヤは、自分より <strong>内側のレイヤだけに依存</strong> する</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">なぜ提唱されたのか（私の理解）</h3>
+<ul class="simple">
+<li><p>例えば、DjangoのModel-View-Template</p></li>
+<li><p>アプリケーションの中心にあるのは、フレームワーク（Django・FastAPI）や具体のDBになってませんか？</p></li>
+<li><p>ユーザ価値を提供する <strong>ビジネスルール</strong> をアプリケーションの中心に置きたい！</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">The Clean Architecture は</h3>
+<ul class="simple">
+<li><p><strong>中心にはビジネスルール</strong></p></li>
+<li><p>フレームワークやデータベースから <strong>独立</strong> （差し替え可能）</p></li>
+<li><p>詳細の決定を遅らせる</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Clean Architectureを学んできた道🏃‍♂️</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://gihyo.jp/magazine/SD/archive/2023/202306" rel="noreferrer" target="_blank">Software Design 2023年6月号</a> 第1特集</p></li>
+<li><p>『<a class="reference external" href="https://gihyo.jp/book/2022/978-4-297-13234-7" rel="noreferrer" target="_blank">ちょうぜつソフトウェア設計入門</a>』</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">レイヤ分け</h2>
+<pre data-id="id27"><code class="txt" data-noescape="" data-trim="">src/api
+├── domain/
+├── driver/
+├── gateway/
+├── port/
+├── rest/
+└── use_case/</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">このレイヤ分けで実現したいこと</h3>
+<div class="literal-block-wrapper docutils container" id="id68">
+<div class="code-block-caption"><span class="caption-text">FastAPIのpath operation関数に <code class="docutils literal notranslate"><span class="pre">use_case</span></code> を注入</span></div>
+<pre><code class="python" data-line-numbers="3,5" data-noescape="" data-trim="">@app.get("/books", response_model=list[BookReadModel])
+async def get_books(
+    use_case: Annotated[ListBooksUseCase, Depends(inject_list_books_use_case)],
+):
+    books = await use_case.execute()
+    return [BookReadModel.from_book(book) for book in books]</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">同心円の内側 -&gt; 外側の向きに見ていきます</h3>
+<img alt="../_images/uncle-bob-CleanArchitecture.jpg" src="../_images/uncle-bob-CleanArchitecture.jpg"/>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">domain</h2>
+<img alt="../_images/domain.drawio.png" src="../_images/domain.drawio.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">domain</h3>
+<ul class="simple">
+<li><p>同心円の一番内側（図ではEntities）</p></li>
+<li><p><strong>システムがなくても存在</strong> するビジネスルール（例：銀行）</p></li>
+<li><p>事業領域をコードで表現する（<em>ドメインモデリング</em> 。ここに時間を使えています）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ドメインモデリング 参考資料🏃‍♂️</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://speakerdeck.com/minodriven/kusokododong-hua-userkurasu-dekao-eruji-shu-de-fu-zhai-jie-xiao-falseguan-dian" rel="noreferrer" target="_blank">クソコード動画「Userクラス」で考える技術的負債解消の観点</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/live/2mfj_yjalqk?si=VGeuDgSataYyfjaA" rel="noreferrer" target="_blank">概念投影によるオブジェクト指向設計の考え方とその方法</a></p></li>
+<li><p><a class="reference external" href="https://speakerdeck.com/masuda220/aligning-software-architecture-and-business-strategy-2024-8-forkwill" rel="noreferrer" target="_blank">ソフトウェアの実装と事業戦略を結びつける</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Pydanticの <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code> を使って実装</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">frozen=True</span></code> 変更できなくする</p></li>
+</ul>
+<pre data-id="pydantic-basemodel"><code class="python" data-noescape="" data-trim="">class Book(BaseModel, frozen=True):
+    id: str
+    isbn: ISBN
+    title: str
+    page: int</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Pydanticの <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code> を使って実装</h3>
+<ul class="simple">
+<li><p>同値性 （<code class="docutils literal notranslate"><span class="pre">__eq__()</span></code>）</p></li>
+<li><p><strong>特殊メソッドを追加</strong> （コレクションの例： <code class="docutils literal notranslate"><span class="pre">__iter__()</span></code> でイテラブルに）</p></li>
+</ul>
+<pre data-id="pydantic-basemodel"><code class="python" data-noescape="" data-trim="">class Books(BaseModel, frozen=True):
+    values: list[Book]
+
+    def __iter__(self) -&gt; Generator[Book, None, None]:  # type: ignore[override]
+        yield from self.values</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">usecase</h2>
+<img alt="../_images/use-case.drawio.png" src="../_images/use-case.drawio.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">usecase</h3>
+<ul class="simple">
+<li><p>同心円の内側から2番目</p></li>
+<li><p>システムで <strong>事業領域の課題を解決するロジック</strong> （＝アプリケーション）</p></li>
+<li><p>メモリ上では完璧に構築（IOなどはないので使えない）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">usecaseが知っているもの（内側のみ）</h3>
+<ul class="simple">
+<li><p>usecaseは内側のdomainを知っている</p></li>
+<li><p>usecaseは <em>port</em> も知っている（メソッドは呼び出せる）</p></li>
+</ul>
+<pre data-id="id33"><code class="python" data-noescape="" data-trim="">await self.fetch_books_port.fetch()</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">port</h2>
+<img alt="../_images/port.drawio.png" src="../_images/port.drawio.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">port</h3>
+<ul class="simple">
+<li><p><strong>インターフェース</strong></p></li>
+</ul>
+<pre data-id="id34"><code class="python" data-noescape="" data-trim="">class FetchBooksPort(ABC):
+    @abstractmethod
+    async def fetch(self) -&gt; Books:
+        raise NotImplementedError</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">usecaseは</h3>
+<ul class="simple">
+<li><p>portの <strong>使い方を知っている</strong> （例：<code class="docutils literal notranslate"><span class="pre">fetch()</span></code> メソッドはある！）</p></li>
+<li><p>中身がどんな実装をされているか（例：データ取得がファイルからかデータベースからか）は知らない</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">usecaseにportが渡る</h3>
+<pre data-id="usecaseport"><code class="python" data-noescape="" data-trim="">class ListBooksUseCase:
+    def __init__(self, fetch_books_port: FetchBooksPort) -&gt; None:
+        self.fetch_books_port = fetch_books_port</code></pre>
+<ul class="simple">
+<li><p>作ると使うを一緒にせずに <strong>分ける</strong></p></li>
+<li><p>usecaseは <strong>使うだけ</strong> （<em>依存性の逆転</em>）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">gateway</h2>
+<img alt="../_images/gateway.drawio.png" src="../_images/gateway.drawio.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">gateway</h3>
+<ul class="simple">
+<li><p>portを実装する</p></li>
+<li><p>usecaseには（portを実装した）gatewayを渡す</p></li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id69">
+<div class="code-block-caption"><span class="caption-text">「データベース」と技術詳細が顔を出す</span></div>
+<pre><code class="python" data-noescape="" data-trim="">class FetchBooksFromDatabase(FetchBooksPort):</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">usecaseはgatewayに依存する</h3>
+<div class="literal-block-wrapper docutils container" id="id70">
+<div class="code-block-caption"><span class="caption-text">作って使えたらな...</span></div>
+<pre><code class="python" data-noescape="" data-trim="">class ListBooksUseCase:
+    def execute(self) -&gt; Books:
+        fetch_books = FetchBooksFromDatabase()
+        return await fetch_books.fetch()</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">作ると使うを分ける</h3>
+<div class="literal-block-wrapper docutils container" id="id71">
+<div class="code-block-caption"><span class="caption-text">外からgatewayが渡ってくる。 <strong>使うだけ</strong></span></div>
+<pre><code class="python" data-noescape="" data-trim="">class ListBooksUseCase:
+    def __init__(self, fetch_books: FetchBooksFromDatabase) -&gt; None:
+        self.fetch_books = fetch_books
+
+    def execute(self) -&gt; Books:
+        return await self.fetch_books.fetch()</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">依存性の逆転（DIP）</h3>
+<ul class="simple">
+<li><p>具体のgatewayではなく、port＝インターフェース（<strong>使い方</strong>） <strong>に依存</strong> する</p></li>
+<li><p>usecaseは詳細は知らなくても使える</p></li>
+</ul>
+<pre data-id="dip"><code class="python" data-noescape="" data-trim="">class ListBooksUseCase:
+    def __init__(self, fetch_books_port: FetchBooksPort) -&gt; None:
+        self.fetch_books_port = fetch_books_port
+
+    async def execute(self) -&gt; Books:
+        return await self.fetch_books_port.fetch()</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">gatewayでデータを <strong>変換</strong></h2>
+<ul class="simple">
+<li><p>ORM（SQLModel）をgatewayに置く</p></li>
+<li><p>外界（プログラミング言語プリミティブな型で表現）から、ドメインの型に変換する</p></li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id72">
+<div class="code-block-caption"><span class="caption-text">外界（データベース）</span></div>
+<pre><code class="python" data-noescape="" data-trim="">class BookRecord(SQLModel, table=True):</code></pre>
+</div>
+<div class="literal-block-wrapper docutils container" id="id73">
+<div class="code-block-caption"><span class="caption-text">ドメイン</span></div>
+<pre><code class="python" data-noescape="" data-trim="">class Book(BaseModel, frozen=True):</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">さらにgatewayでもインターフェースを定義する</h2>
+<ul class="simple">
+<li><p>gateway自身はこのインターフェースを知っている</p></li>
+<li><p>driverが実装する（再び登場、 <strong>依存性の逆転</strong>）</p></li>
+</ul>
+<pre data-id="id39"><code class="python" data-noescape="" data-trim="">class DatabaseDriver(ABC):
+    @abstractmethod
+    async def select_books(self) -&gt; list[BookRecord]:
+        raise NotImplementedError</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">driver</h2>
+<img alt="../_images/driver.drawio.png" src="../_images/driver.drawio.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">driver</h3>
+<ul class="simple">
+<li><p>一番外側</p></li>
+<li><p>外界に接する：HTTPリクエスト、DB</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code> など、プログラミング言語プリミティブな型で扱う（ドメインの型ではない）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">gatewayのインターフェースを実装</h3>
+<div class="literal-block-wrapper docutils container" id="id74">
+<div class="code-block-caption"><span class="caption-text">具体的な技術詳細が登場（PostgreSQL）</span></div>
+<pre><code class="python" data-noescape="" data-trim="">class PostgresqlDatabaseDriver(DatabaseDriver):
+    async def select_books(self) -&gt; list[BookRecord]:
+        # 初期化で渡されるセッションを使って、DBとやり取り</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">rest</h2>
+<img alt="../_images/rest.drawio.png" src="../_images/rest.drawio.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">rest</h3>
+<ul class="simple">
+<li><p>これもまた外界：Web APIにして外界に接する</p></li>
+<li><p><strong>FastAPIのフレームワークの機能を活用</strong> （HTTPリクエストを処理するcontrollerも兼ねる）</p></li>
+<li><p>実装では、Web APIとして動かすための依存を渡した</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">usecaseを組み立てる</h3>
+<pre data-id="id43"><code class="python" data-noescape="" data-trim="">def inject_list_books_use_case(
+    session: Annotated[type[SQLModelAsyncSession], Depends(get_session)],
+) -&gt; ListBooksUseCase:
+    return ListBooksUseCase(FetchBooksFromDatabase(PostgresqlDatabaseDriver(session)))</code></pre>
+<p>これをpath operation関数で実行</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">APIのレスポンスの型を定義</h3>
+<ul class="simple">
+<li><p><strong>ドメインの型を直接は返さない</strong></p></li>
+<li><p>API利用者に見せるレスポンスの型を作る（たまたまドメインの型と同じ属性になることもある）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🥟 クリーンなアーキテクチャを志向したレイヤ分け</h2>
+<pre data-id="id44"><code class="txt" data-noescape="" data-trim="">src/api
+├── domain/    # システムによらないビジネスルールを表現
+├── use_case/  # domainを操作して課題解決
+├── port/      # インターフェース。use_caseが依存し、gatewayで実装
+├── gateway/   # portを実装。データの変換。driver向けにインターフェースを定義
+├── driver/    # gatewayのインターフェースを実装。DBやWeb APIと接する
+└── rest/      # Webアプリ。今回はFastAPIの機能を使った</code></pre>
+<p>上ほど同心円の内側</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">知識をレイヤに閉じ込めるために</h2>
+<p>工夫2つを共有（議論の種として）</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">1️⃣FastAPIのDepends</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">rest層でこれがやりたかった（再掲）</h3>
+<div class="literal-block-wrapper docutils container" id="id75">
+<div class="code-block-caption"><span class="caption-text">path operation関数に <code class="docutils literal notranslate"><span class="pre">use_case</span></code> を注入</span></div>
+<pre><code class="python" data-noescape="" data-trim="">def inject_list_books_use_case(
+    session: Annotated[type[SQLModelAsyncSession], Depends(get_session)],
+) -&gt; ListBooksUseCase:
+    return ListBooksUseCase(FetchBooksFromDatabase(PostgresqlDatabaseDriver(session)))
+
+@app.get("/books", response_model=list[BookReadModel])
+async def get_books(
+    use_case: Annotated[ListBooksUseCase, Depends(inject_list_books_use_case)],
+):
+    books = await use_case.execute()
+    return [BookReadModel.from_book(book) for book in books]</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">FastAPIの <code class="docutils literal notranslate"><span class="pre">Depends</span></code> 🌟</h3>
+<p><a class="reference external" href="https://fastapi.tiangolo.com/tutorial/dependencies/" rel="noreferrer" target="_blank">https://fastapi.tiangolo.com/tutorial/dependencies/</a></p>
+<pre data-id="fastapi-depends"><code class="python" data-noescape="" data-trim="">async def common_parameters(q: str | None = None, skip: int = 0, limit: int = 100):
+    return {"q": q, "skip": skip, "limit": limit}
+
+@app.get("/items/")
+async def read_items(commons: Annotated[dict, Depends(common_parameters)]):
+    return commons</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">Annotated[...,</span> <span class="pre">Depends(...)]</span></code></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">typing.Annotated[&lt;type&gt;,</span> <span class="pre">&lt;metadata&gt;]</span></code> メタデータを付与</p></li>
+<li><p>メタデータの <code class="docutils literal notranslate"><span class="pre">Depends(関数)</span></code> は、 <strong>関数を実行して返り値を型ヒントしてる変数に代入</strong></p></li>
+<li><p>IMO：動きが <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/sphinx-extension-e2e-app-status-warning-are-pytest-fixtures#pytest%E3%81%AE%E3%83%95%E3%82%A3%E3%82%AF%E3%82%B9%E3%83%81%E3%83%A3%E3%81%AF%E5%BC%95%E6%95%B0%E3%81%AB%E3%81%82%E3%82%8B%E5%88%A5%E3%81%AE%E3%83%95%E3%82%A3%E3%82%AF%E3%82%B9%E3%83%81%E3%83%A3%E3%82%92%E5%AE%9F%E8%A1%8C%E3%81%A7%E3%81%8D%E3%82%8B" rel="noreferrer" target="_blank">pytestのフィクスチャ</a> っぽい</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Dependsは <strong>連鎖</strong> する⛓️</h3>
+<p><a class="reference external" href="https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/" rel="noreferrer" target="_blank">https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/</a></p>
+<pre data-id="depends"><code class="python" data-noescape="" data-trim="">def query_extractor(q: str | None = None):
+    # 省略
+
+def query_or_cookie_extractor(
+    q: Annotated[str, Depends(query_extractor)],
+    last_query: Annotated[str | None, Cookie()] = None,
+):
+    # 省略
+
+@app.get("/items/")
+async def read_query(
+    query_or_default: Annotated[str, Depends(query_or_cookie_extractor)],
+):
+    # 省略</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">Depends</span></code> の連鎖を使ってDBセッションを注入</h3>
+<div class="literal-block-wrapper docutils container" id="id76">
+<div class="code-block-caption"><span class="caption-text">rest層</span></div>
+<pre><code class="python" data-noescape="" data-trim="">def inject_list_books_use_case(
+    session: Annotated[type[SQLModelAsyncSession], Depends(get_session)],
+) -&gt; ListBooksUseCase:</code></pre>
+</div>
+<div class="literal-block-wrapper docutils container" id="id77">
+<div class="code-block-caption"><span class="caption-text">driver層</span></div>
+<pre><code class="python" data-noescape="" data-trim="">async def get_session():
+    yield AsyncSession  # モジュールスコープでasync_sessionmakerしている</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">出典は <a class="reference external" href="https://github.com/rhoboro/async-fastapi-sqlalchemy" rel="noreferrer" target="_blank">rhoboro/async-fastapi-sqlalchemy</a></h3>
+<ul class="simple">
+<li><p>Sub-dependenciesに加えて <a class="reference external" href="https://fastapi.tiangolo.com/tutorial/dependencies/classes-as-dependencies/" rel="noreferrer" target="_blank">Classes as Dependencies</a></p></li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id78">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/rhoboro/async-fastapi-sqlalchemy/blob/12683934b451c76af5eea7ee5bf4e6c8342ca165/app/api/notes/views.py#L27-L31" rel="noreferrer" target="_blank">views.py</a> 抜粋</span></div>
+<pre><code class="python" data-noescape="" data-trim="">@router.get("")
+async def read_all(
+    use_case: ReadAllNote = Depends(ReadAllNote),
+) -&gt; ReadAllNoteResponse:</code></pre>
+</div>
+</section>
+<section>
+<div class="literal-block-wrapper docutils container" id="id79">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/rhoboro/async-fastapi-sqlalchemy/blob/12683934b451c76af5eea7ee5bf4e6c8342ca165/app/api/notes/use_cases.py#L22-L24" rel="noreferrer" target="_blank">use_cases.py</a> 抜粋</span></div>
+<pre><code class="python" data-noescape="" data-trim="">class ReadAllNote:
+    def __init__(self, session: AsyncSession) -&gt; None:
+        self.async_session = session</code></pre>
+</div>
+<div class="literal-block-wrapper docutils container" id="id80">
+<div class="code-block-caption"><span class="caption-text"><a class="reference external" href="https://github.com/rhoboro/async-fastapi-sqlalchemy/blob/12683934b451c76af5eea7ee5bf4e6c8342ca165/app/db.py#L24-L31" rel="noreferrer" target="_blank">db.py</a> 抜粋</span></div>
+<pre><code class="python" data-noescape="" data-trim="">async def get_session() -&gt; AsyncIterator[async_sessionmaker]:
+    ...
+
+AsyncSession = Annotated[async_sessionmaker, Depends(get_session)]</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">FastAPIの <code class="docutils literal notranslate"><span class="pre">Depends</span></code> は積極的に活用できない</h3>
+<ul class="simple">
+<li><p><strong>レイヤ分け</strong> を優先すると、 <code class="docutils literal notranslate"><span class="pre">Depends</span></code> は domain や usecase には型ヒントできない（FastAPIはrest層の技術詳細）</p></li>
+<li><p>FastAPIは <code class="docutils literal notranslate"><span class="pre">Depends</span></code> を使い倒した方が開発者は楽ができそう（差し替え可能より優先する判断もあり得る）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">2️⃣拡張関数を志向する</h2>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">拡張関数（例：Kotlin）</h3>
+<ul class="simple">
+<li><p>継承しなくてもクラスにメソッドを追加できる</p></li>
+<li><p><a class="reference external" href="https://kotlinlang.org/docs/extensions.html" rel="noreferrer" target="_blank">https://kotlinlang.org/docs/extensions.html</a></p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">拡張する例</h3>
+<div class="literal-block-wrapper docutils container" id="id81">
+<div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">MutableList&lt;Int&gt;</span></code> に <code class="docutils literal notranslate"><span class="pre">swap</span></code> メソッドを追加</span></div>
+<pre><code class="kotlin" data-noescape="" data-trim="">fun MutableList&lt;Int&gt;.swap(index1: Int, index2: Int) {
+    val tmp = this[index1] // 'this' corresponds to the list
+    this[index1] = this[index2]
+    this[index2] = tmp
+}</code></pre>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">MutableList</span></code> はcollectionの1つ</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">レイヤ分けにおける拡張関数の出番</h3>
+<ul class="simple">
+<li><p>gateway層：ドメインの型と、外界の型（言語プリミティブな型）の <strong>変換</strong></p></li>
+<li><p>ドメインは、DBのレコードの型（同心円の外側）を知り得ない</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">gatewayでドメインを拡張する案</h3>
+<pre data-id="id52"><code class="python" data-noescape="" data-trim="">def books_from_records(book_records: list[BookRecord]) -&gt; Books:
+    return Books(...)
+
+Books.from_ = staticmethod(books_from_records)  # type: ignore[attr-defined]</code></pre>
+<p>gatewayにおけるBooksドメインに <code class="docutils literal notranslate"><span class="pre">from_()</span></code> メソッドを実行時に生やした</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Python版 <em>拡張関数</em></h3>
+<ul class="simple">
+<li><p>レイヤ間の関心の分離は達成！</p></li>
+<li><p><strong>実質はメタプログラミング</strong> 。型チェックで怒られ、コードジャンプに影響</p></li>
+</ul>
+<p>他の方法は今は浮かんでいません...</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お品書き：FastAPIの現場から</h2>
+<ol class="arabic simple">
+<li><p>非同期IO</p></li>
+<li><p>クリーンなアーキテクチャを志向する</p></li>
+<li><p><strong>Twelve-Factor App</strong></p></li>
+</ol>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://12factor.net/ja/" rel="noreferrer" target="_blank">Twelve-Factor App</a></h3>
+<blockquote>
+<div><p>このドキュメントは、多種多様なSaaSアプリケーション開発現場での私たちの経験と観察をすべてまとめたものである。</p>
+</div></blockquote>
+<p>環境変数とロギングの2つについて取り上げます</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">1️⃣ III. 設定</h2>
+<blockquote>
+<div><p>設定を環境変数に格納する</p>
+</div></blockquote>
+<p><a class="reference external" href="https://12factor.net/ja/config" rel="noreferrer" target="_blank">https://12factor.net/ja/config</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">設定を <strong>環境変数</strong> に</h3>
+<ul class="simple">
+<li><p>設定とは例えばデータベース接続</p></li>
+<li><p>設定をコードから厳密に分離したい</p></li>
+<li><p>環境変数を変えることで、 <strong>コードは変更しない</strong> が実現できる</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">pydantic-settings</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.pydantic.dev/latest/concepts/pydantic_settings/" rel="noreferrer" target="_blank">https://docs.pydantic.dev/latest/concepts/pydantic_settings/</a></p></li>
+<li><p>環境変数を読み込む + Pydanticによるパース</p></li>
+<li><p>環境変数だけでなく <code class="file docutils literal notranslate"><span class="pre">.env</span></code> もサポート</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">pydantic-settingsでの設定例</h3>
+<pre data-id="id56"><code class="python" data-noescape="" data-trim="">from pydantic import PostgresDsn
+from pydantic_settings import BaseSettings
+
+
+class Config(BaseSettings):
+    pg_dsn: PostgresDsn
+
+
+config = Config()</code></pre>
+<p>環境変数 <code class="docutils literal notranslate"><span class="pre">PG_DSN</span></code> で設定できる</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ネストも可能</h3>
+<p>DBの設定、LLM APIの設定と分けたい</p>
+<pre data-id="id57"><code class="python" data-noescape="" data-trim="">class DB(BaseModel):
+    pg_dsn: PostgresDsn
+
+class LlmApi(BaseModel):
+    api_key: str
+
+class Config(BaseSettings):
+    model_config = SettingsConfigDict(env_nested_delimiter="__")
+    db: DB
+    llm: LlmApi
+
+config = Config()</code></pre>
+<p>環境変数 <code class="docutils literal notranslate"><span class="pre">DB__PG_DSN</span></code> や <code class="docutils literal notranslate"><span class="pre">LLM__API_KEY</span></code></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">設定の使い方</h3>
+<div class="literal-block-wrapper docutils container" id="id82">
+<div class="code-block-caption"><span class="caption-text">driver層</span></div>
+<pre><code class="python" data-line-numbers="1,3" data-noescape="" data-trim="">from books_api.config import config
+
+async_engine = create_async_engine(str(config.pg_dsn))
+AsyncSession = async_sessionmaker(async_engine, class_=SQLModelAsyncSession)</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">🏃‍♂️脱線：pydantic-settingsでCLIも作れます！</h3>
+<ul class="simple">
+<li><p>個人的イチオシポイント（さよならargparse）</p></li>
+<li><p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/pydantic-settings-cli-application-args-optional-environment-positional" rel="noreferrer" target="_blank">pydantic-settingsで環境変数からも指定できるオプション引数を持つCLIを作る</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">2️⃣ XI. ログ</h2>
+<blockquote>
+<div><p>ログをイベントストリームとして扱う</p>
+</div></blockquote>
+<p><a class="reference external" href="https://12factor.net/ja/logs" rel="noreferrer" target="_blank">https://12factor.net/ja/logs</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ファイルではなく <strong>ストリーム</strong></h3>
+<blockquote>
+<div><p>それぞれの実行中のプロセスはイベントストリームをstdout（標準出力）にバッファリングせずに書きだす。</p>
+</div></blockquote>
+<p>k8s(GKE)のPodや、Google CloudのCloud Loggingで見ています</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">uvicornによるロギング</h3>
+<ul class="simple">
+<li><p><strong class="command">uvicorn app:app</strong></p></li>
+<li><p><a class="reference external" href="https://www.uvicorn.org/settings/#logging" rel="noreferrer" target="_blank">https://www.uvicorn.org/settings/#logging</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--log-level</span></code> や <strong>--log-config</strong></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fastapi</span></code> コマンドより高機能なのでこちらを選択</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Pythonのロギングの要素（抜粋）</h3>
+<ul class="simple">
+<li><p>ロガー</p></li>
+<li><p>ハンドラ</p></li>
+<li><p>フォーマッタ</p></li>
+</ul>
+<p>2週前のPyCon mini Shizuoka 2024 continueで <a class="reference external" href="https://ftnext.github.io/2025-slides/pyconshizu/logging-with-nullhandler.html#/1" rel="noreferrer" target="_blank">ロギングの話</a> をしました</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デフォルトのlog config</h3>
+<ul>
+<li><p>uvicornロガー（標準エラー出力）</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>uvicorn.errorロガーからpropagate</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>uvicorn.accessロガー（標準出力）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">色が付くのはuvicorn自前のフォーマッタによる</h3>
+<ul>
+<li><p>uvicorn.logging.DefaultFormatter</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ログレコードの <code class="docutils literal notranslate"><span class="pre">levelprefix</span></code> に色を付ける</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>uvicorn.logging.AccessFormatter</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">設定の仕方は標準ライブラリ logging.config より</h3>
+<div class="literal-block-wrapper docutils container" id="id83">
+<div class="code-block-caption"><span class="caption-text">uvicornロガーの設定（抜粋）</span></div>
+<pre><code class="yaml" data-noescape="" data-trim="">version: 1
+formatters:
+  default:
+    class: uvicorn.logging.DefaultFormatter
+    format: '%(levelprefix)s %(message)s'
+    use_colors: null
+handlers:
+  default:
+    formatter: default
+    class: logging.StreamHandler
+    stream: ext://sys.stderr
+loggers:
+  uvicorn:
+    handlers:
+      - default
+    level: INFO
+    propagate: false
+  uvicorn.error:
+    level: INFO
+disable_existing_loggers: false</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">設定例：発行されるSQLをログ出力</h3>
+<div class="literal-block-wrapper docutils container" id="id84">
+<div class="code-block-caption"><span class="caption-text">sqlalchemy.engineロガーを設定</span></div>
+<pre><code class="yaml" data-noescape="" data-trim="">formatters:
+  default:
+    class: uvicorn.logging.DefaultFormatter
+    format: '%(asctime)s - %(name)s - %(levelprefix)s - %(message)s'
+    use_colors: null
+handlers:
+  default_stdout:
+    formatter: default
+    class: logging.StreamHandler
+    stream: ext://sys.stdout
+loggers:
+  sqlalchemy.engine:
+    handlers:
+      - default_stdout
+    level: INFO</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">小まとめ🥟 Twelve-Factor App</h2>
+<ul class="simple">
+<li><p><strong>pydantic-settings</strong> による、環境変数での設定</p></li>
+<li><p>ロギングは <strong>logging.config に沿って uvicorn</strong> を設定</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯 FastAPIの現場から</h2>
+<ul class="simple">
+<li><p>SQLModel（SQLAlchemy）で <strong>全部 async def で書ける</strong> FastAPIアプリ！</p></li>
+<li><p><strong>レイヤ分け</strong> してビジネスロジックとフレームワークやDBを切り離したアーキテクチャ</p></li>
+<li><p>環境変数から設定できる pydantic-settings。uvicornでのロギング</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

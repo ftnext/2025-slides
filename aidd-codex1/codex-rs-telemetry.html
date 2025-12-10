@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides/aidd-codex1/codex-rs-telemetry.html">
+    <meta property="og:title" content="ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？">
+    <meta property="og:description" content="Codex Meetup Japan #1">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/aidd-codex1.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？</h1>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">デモ準備メモ</h2>
+<ul class="simple">
+<li><p>VS Codeでcodex-rs、rust-v0.42.0タグ + ローカルの変更を開く</p></li>
+<li><p>VS Codeのターミナルで <code class="file docutils literal notranslate"><span class="pre">.env</span></code> 読み込み</p></li>
+<li><p>ブラウザは <a class="reference external" href="https://logfire-us.pydantic.dev/ftnext/first-time-logfire" rel="noreferrer" target="_blank">https://logfire-us.pydantic.dev/ftnext/first-time-logfire</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？</h2>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Codex Meetup Japan #1</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/10/14 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">お前、誰よ？（<strong>Python使い</strong> の自己紹介）</h2>
+<ul class="simple">
+<li><p>nikkie（にっきー）</p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p><a class="reference external" href="https://www.uzabase.com/jp/info/20250901/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">宣伝：書籍『<a class="reference external" href="https://publishing.newspicks.com/books/9784910063447" rel="noreferrer" target="_blank">サム・アルトマン</a>』、いかがですか？</h3>
+<a class="reference internal image-reference" href="../_images/sama-book.jpg"><img alt="../_images/sama-book.jpg" src="../_images/sama-book.jpg" style="width: 80%;"/>
+</a>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">持論：コーディングエージェントは <strong>全て</strong> 分かりたい</h2>
+<p><em>ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？</em></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Codexは <strong>Rust</strong> 実装（<a class="reference external" href="https://github.com/openai/codex/tree/main/codex-rs" rel="noreferrer" target="_blank">codex-rs</a>）</h3>
+<blockquote>
+<div><p>リリース１ヶ月後にはTypeScriptからRustにスクラッチで書き直され</p>
+</div></blockquote>
+<p>laisoさん <a class="reference external" href="https://blog.lai.so/codex-rs-intro/" rel="noreferrer" target="_blank">新Codex CLIの使い方</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><a class="reference external" href="https://github.com/openai/codex/releases/tag/rust-v0.44.0" rel="noreferrer" target="_blank">v0.44.0</a> で <strong>OpenTelemetry</strong> <a class="footnote-reference brackets" href="#otel" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> の実装が入った</h3>
+<blockquote>
+<div><p><a class="reference external" href="https://github.com/openai/codex/pull/2103" rel="noreferrer" target="_blank">#2103</a> OpenTelemetry events</p>
+</div></blockquote>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="otel" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id7" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
+<p>OpenTelemetryは、可観測性（システムの出力から内部状態を理解する能力）を得る手段</p>
+</aside>
+</aside>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">OpenTelemetry events (<a class="reference external" href="https://github.com/openai/codex/pull/2103" rel="noreferrer" target="_blank">#2103</a> v0.44.0)</h2>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">デフォルト設定（<code class="file docutils literal notranslate"><span class="pre">~/.codex/config.toml</span></code>）</span></div>
+<pre><code class="toml" data-noescape="" data-trim="">[otel]
+environment = "staging"
+exporter = "none"
+log_user_prompt = false</code></pre>
+</div>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><code class="docutils literal notranslate"><span class="pre">otel.exporter</span></code> を指定して起動</h3>
+<pre data-id="otel-exporter"><code class="bash" data-noescape="" data-trim="">codex -c 'otel.log_user_prompt=true' \
+  -c "otel.exporter={otlp-http={endpoint=\"https://logfire-us.pydantic.dev/v1/logs\",headers={Authorization=\"Bearer $LOGFIRE_TOKEN\"},protocol=\"json\"}}"</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">今回は <em>Logfire</em> で観測します</h3>
+<img alt="../_images/codex-rs-otel-export.png" src="../_images/codex-rs-otel-export.png"/>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">Codex CLIのコンテキスト、もっと見たい！</h2>
+<p>システムプロンプトなど、 <strong>どんなコンテキストエンジニアリングをしているか</strong> を見たい、分かりたい</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Using OpenAI Codex &amp; Pydantic Logfire to Debug Rust Code</h3>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/hr6pFn46pKk?si=7XzOcKTj2wMiwnEI" title="YouTube video player" width="560"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Using OpenAI Codex &amp; Pydantic Logfire to Debug Rust Code</h3>
+<ul class="simple">
+<li><p>Pydantic社による配信のアーカイブ</p></li>
+<li><p><a class="reference external" href="https://pydantic.dev/logfire" rel="noreferrer" target="_blank">Logfire</a> という可観測性サービス。<a class="reference external" href="https://github.com/pydantic/logfire-rust" rel="noreferrer" target="_blank">Rust向けのSDK</a> も提供</p></li>
+<li><p><strong>codex-rsにLogfire Rust SDKを組み込んで</strong>、Codexの挙動を観測</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Codex CLIは手元でビルドできる！</h3>
+<ul class="simple">
+<li><p>v0.44.0 の前の <strong>v0.42.0</strong> (<a class="reference external" href="https://github.com/openai/codex/tree/rust-v0.42.0/codex-rs" rel="noreferrer" target="_blank">rust-v0.42.0</a>)</p></li>
+<li><p><strong class="command">cargo run --bin codex</strong></p></li>
+<li><p>⚠️v0.44.0 で入ったOpenTelemetryの実装とLogfireを一緒に動かせてないです</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ：手元でビルド〜Logfireに記録</h3>
+<img alt="../_images/codex-rs-logfire1.png" src="../_images/codex-rs-logfire1.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">デモ：手元でビルド〜Logfireに記録</h3>
+<img alt="../_images/codex-rs-logfire2.png" src="../_images/codex-rs-logfire2.png"/>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯：ねぇ、Codex CLI。私だけにあなたのコンテキスト、教えて？</h2>
+<ul class="simple">
+<li><p>持論：コーディングエージェントは全て分かりたい -&gt; <strong>可観測性</strong></p></li>
+<li><p><strong class="command">codex -c</strong> でOpenTelemetryのexporterを指定できる</p></li>
+<li><p>Logfire Rust SDKを組み込む動画に沿ってローカルでビルドし、コンテキストを覗いてみた</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<p>Enjoy coding with Codex!</p>
+<p>Appendixが続きます</p>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">OpenTelemetryの補足</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://opentelemetry.io/ja/docs/what-is-opentelemetry/" rel="noreferrer" target="_blank">OpenTelemetry</a> は、テレメトリの送出・処理・受信のオープンソース</p></li>
+<li><p>ベンダー・ツール非依存</p></li>
+<li><p>今回テレメトリの保存と表示は <em>Logfire</em> に任せた（他のツールに差し替え可能）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Logfire Rust SDK を入れた箇所</h3>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text"><code class="file docutils literal notranslate"><span class="pre">codex-rs/tui/src/lib.rs</span></code></span></div>
+<pre><code class="diff" data-noescape="" data-trim="">-    let _ = tracing_subscriber::registry().with(file_layer).try_init();
++    let logfire = logfire::configure()
++        .local()
++        .with_service_name("codex")
++        .finish()
++        .expect("Failed to configure Logfire");
++
++    let _ = tracing_subscriber::registry().with(file_layer).with(logfire.tracing_layer()).try_init();</code></pre>
+</div>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/try-using-openai-codex-and-pydantic-logfire-to-debug-rust-code" rel="noreferrer" target="_blank">Pydantic 社の動画アーカイブに沿って Logfire Rust SDK を追加し、Codex CLI 動作中の情報を Logfire に記録する</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Claude Code で可観測性</h3>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">これだけでコンソールに出ます</span></div>
+<pre><code class="bash" data-noescape="" data-trim="">export CLAUDE_CODE_ENABLE_TELEMETRY=1
+export OTEL_LOGS_EXPORTER=console</code></pre>
+</div>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/claude-code-supports-opentelemetry" rel="noreferrer" target="_blank">Claude Code が OpenTelemetry をサポートしていました</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Gemini CLI で可観測性</h3>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">これだけでファイルに出ます</span></div>
+<pre><code class="bash" data-noescape="" data-trim="">export GEMINI_TELEMETRY_ENABLED=true
+export GEMINI_TELEMETRY_OUTFILE='gemini-telemetry.log'</code></pre>
+</div>
+<p><strong>システムプロンプトまで</strong> 見えます</p>
+<p>拙ブログ <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/gemini-cli-observability-with-opentelemetry-get-started" rel="noreferrer" target="_blank">テレメトリを有効にして、Gemini CLI から Gemini API へのリクエスト・レスポンスを覗けるようにする</a></p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">準備は <strong>Codex CLIにコードを読ませて</strong> 進めた</h3>
+<ul class="simple">
+<li><p>試しにcodexに質問したら、Logfire SDKのソースコードまで読みに行っていた</p></li>
+<li><p>そこからはガンガン読ませていった（ただv0.44.0で動かすまではいけてません）</p></li>
+<li><p>1回で数万〜10万トークン使うので、Proゆえの富豪アプローチかも（Pulseを体験したくて）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">過去のAI駆動開発勉強会LT</h3>
+<ul class="simple">
+<li><p>Devin Meetup Japan #2 <a class="reference external" href="https://ftnext.github.io/2025-slides/aid-devin2/llm-devin.html" rel="noreferrer" target="_blank">コマンドラインからDevinを呼び出してみないか？</a></p></li>
+<li><p>Claude Code Meetup Japan #1 <a class="reference external" href="https://ftnext.github.io/2025-slides/aidd-cc1/llm-claude-code.html#1" rel="noreferrer" target="_blank">Claude CodeでVibe codingして作った、Claude Codeをコマンドラインから呼ぶためのsimonw/llmプラグイン</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">EOF</h2>
+</section>
+</section>
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>クイズ！ GPT・Claude・Geminiのうち、Web検索が一番うまいのはどのモデルでしょう？</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides//.html">
+    <meta property="og:title" content="">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">クイズ！ GPT・Claude・Geminiのうち、Web検索が一番うまいのはどのモデルでしょう？</h1>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">前準備メモ</h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docker</span></code> 起動</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">uvx</span> <span class="pre">mcp-server-fetch</span></code> は1回やっておく（ハング対策）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">クイズ！ GPT・Claude・Geminiのうち、Web検索が一番うまいのはどのモデルでしょう？</h2>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>みんなのPython勉強会#113</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/03/27 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">LLM入場</h2>
+<ul class="simple">
+<li><p>GPT</p></li>
+<li><p>Claude</p></li>
+<li><p>Gemini</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">GPT</h3>
+<ul class="simple">
+<li><p>OpenAIが提供する <a class="reference external" href="https://platform.openai.com/docs/models" rel="noreferrer" target="_blank">LLMのシリーズ</a></p></li>
+<li><p>直近では <a class="reference external" href="https://openai.com/index/introducing-4o-image-generation/" rel="noreferrer" target="_blank">4oが画像生成できるようになった</a></p></li>
+<li><p>今回使うのは <strong>gpt-4o</strong> （有料）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Claude</h3>
+<ul class="simple">
+<li><p>Anthropicが提供する <a class="reference external" href="https://www.anthropic.com/claude" rel="noreferrer" target="_blank">LLMのシリーズ</a></p></li>
+<li><p>最新は <a class="reference external" href="https://www.anthropic.com/news/claude-3-7-sonnet" rel="noreferrer" target="_blank">Claude 3.7 Sonnet</a></p></li>
+<li><p>今回使うのは <strong>claude-3-5-sonnet-latest</strong> （有料）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Gemini</h3>
+<ul class="simple">
+<li><p>Googleが提供する <a class="reference external" href="https://ai.google.dev/gemini-api/docs/models?hl=ja" rel="noreferrer" target="_blank">LLMのシリーズ</a></p></li>
+<li><p>最新は <a class="reference external" href="https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/" rel="noreferrer" target="_blank">Gemini 2.5 Pro</a></p></li>
+<li><p>今回使うのは <strong>gemini-2.0-flash</strong> （無料だが、訓練データになる。OpenAI API互換でも使える）</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">LLMがWeb検索？</h2>
+<p>「チャットできるだけですよね？」</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">人類はLLMを拡張したい（Augmented）</h3>
+<ul class="simple">
+<li><p>知っている知識は訓練時点までに限定される（カットオフ）</p></li>
+<li><p>文章の続きを作るだけなので、計算機のような正確な計算はできない</p></li>
+</ul>
+<p>🏃‍♂️2024年話題になっていた <em>RAG</em> は拡張の1つ。参照する文書を追加する</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>Tool use</strong> による拡張</h3>
+<a class="reference internal image-reference" href="../_images/claude-tool-use-course-simple.png"><img alt="../_images/claude-tool-use-course-simple.png" src="../_images/claude-tool-use-course-simple.png" style="width: 800.0px; height: 449.6px;"/>
+</a>
+<p><a class="reference external" href="https://github.com/anthropics/courses/blob/b4f26aedef55e06ad5eead5de83985249d1fab2f/tool_use/02_your_first_simple_tool.ipynb" rel="noreferrer" target="_blank">Anthropic提供のCourse</a> より</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>Tool use</strong> による拡張</h3>
+<ul class="simple">
+<li><p>LLMに「こんなToolも使えるよ」と示す</p></li>
+<li><p>LLMはToolを使うかを判定し、使うときは <strong>Toolを使っているテキストを出力</strong></p></li>
+<li><p>Toolを実行するのは、私たちのプログラム</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">いまホットな例：MCP</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://modelcontextprotocol.io/introduction" rel="noreferrer" target="_blank">Model Context Protocol</a></p></li>
+<li><p><a class="reference external" href="https://www.anthropic.com/news/model-context-protocol" rel="noreferrer" target="_blank">Anthropicが提案</a> (2024/11)</p></li>
+<li><p>2025/03時点で、ほとんどデファクトスタンダード（無視できない）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">MCP</h3>
+<ul class="simple">
+<li><p>サーバとクライアント</p></li>
+<li><p>クライアントの例：Claude Desktop、Cursorなどなど。今回 <a class="reference external" href="https://github.com/ftnext/mcp-practice/tree/dc7017fe59ef22bd3ab26cf718a1e8f121aa4ba3/deep-research" rel="noreferrer" target="_blank">自作</a></p></li>
+<li><p>TypeScript・Python・Go・Rustで多様なサーバが日々増えてます！</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">デモ！！</h2>
+<ul class="simple">
+<li><p>使えるツール： <strong>Brave Search（検索）</strong> 、Webページ取得</p></li>
+<li><p>「PyCon JP 2025のテーマやコンセプトについて調査してください」</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">gemini-2.0-flash</h3>
+<p>検索の様子 <a class="reference external" href="https://gist.github.com/ftnext/cf974195c3d8257ee73d0724eaf8033c" rel="noreferrer" target="_blank">https://gist.github.com/ftnext/cf974195c3d8257ee73d0724eaf8033c</a></p>
+<pre data-id="gemini-2-0-flash"><code class="markdown" data-noescape="" data-trim="">PyCon JP 2025は、2025年9月26-27日に広島国際会議場で開催される予定です。現在、主催メンバーが中心となって、全体的なコンセプトとテーマを決定するための作業が進められています。具体的なテーマやコンセプトはまだ発表されていません。</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">gpt-4o</h3>
+<p>検索の様子 <a class="reference external" href="https://gist.github.com/ftnext/43685381d8ac331f9216e141b5f0710c" rel="noreferrer" target="_blank">https://gist.github.com/ftnext/43685381d8ac331f9216e141b5f0710c</a></p>
+<pre data-id="gpt-4o"><code class="markdown" data-noescape="" data-trim="">PyCon JP 2025 is scheduled to take place on September 26-27, 2025, at the International Conference Center Hiroshima. The event is organized by volunteers, and they are currently preparing for ticket sales, speaker recruitment, and sponsorship opportunities. However, specific details about the theme or concept for PyCon JP 2025 have not been disclosed yet. For the latest updates, you might want to keep an eye on their [official website](https://2025.pycon.jp/).</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">claude-3-5-sonnet-latest</h3>
+<p>検索の様子 <a class="reference external" href="https://gist.github.com/ftnext/113e8e6a7077b14adb7558004b3fbf17" rel="noreferrer" target="_blank">https://gist.github.com/ftnext/113e8e6a7077b14adb7558004b3fbf17</a></p>
+<pre data-id="claude-3-5-sonnet-latest"><code class="markdown" data-noescape="" data-trim="">公式サイトを確認しましたが、現時点ではまだテーマやコンセプトは公開されていないことが確認できました。サイトは基本的な開催情報（日時・場所）のみが掲載されており、現在も準備段階であることが分かります。
+
+まとめると：
+- PyCon JP 2025は広島で初めて開催される大規模なPythonカンファレンスです
+- 開催日時と場所は決定していますが、テーマやコンセプトについては現在も運営チームによって検討が進められている段階です
+- 正式なテーマやコンセプトは、今後の運営チームのミーティングを経て発表される予定です
+
+テーマやコンセプトについての最新情報は、PyCon JP 2025の公式サイト（https://2025.pycon.jp/）や公式SNSアカウントで随時発表されると思われます。</code></pre>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">実は <strong>座長日報</strong> があります</h3>
+<p><a class="reference external" href="https://pyconjp-2025-chair.nishimotz.com/2025/01/21/concepts-for-pycon-jp.html" rel="noreferrer" target="_blank">PyCon JP 2025 のコンセプト</a></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">これはまだ正式なメッセージではありませんが、 3.14 からの連想で、コンセプトの言語化を試みたので、ご紹介します。</div>
+<div class="line">「Python の輪、広島から広がる」</div>
+</div>
+</div></blockquote>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">所感</h2>
+<ul class="simple">
+<li><p>ClaudeだけTool use <strong>別格</strong> では？</p></li>
+<li><p>OpenAI API互換エンドポイント利用でGeminiには不利だったかも</p></li>
+<li><p>openai-agents SDKやgoogle-genai SDKを組み込んで、よりフェアな評価が残る</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">IMO：Anthropic、したたかすぎでは？</h3>
+<ul class="simple">
+<li><p>プロトコルって人畜無害な顔して展開（言語非依存なのでハッカーが集った）</p></li>
+<li><p>Tool useが現在一番うまいのはClaude</p></li>
+<li><p><strong>MCPが広がるほど、Claudeが輝く</strong> 名プロデュース</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">以上、nikkie（にっきー）でした！</h2>
+<ul class="simple">
+<li><p>みんなのPython勉強会 スタッフ・4代目LT王子</p></li>
+<li><p>機械学習エンジニア・LLM・自然言語処理（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+<li><p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/" rel="noreferrer" target="_blank">ブログ</a> 連続 <strong>860</strong> 日突破</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Appendix：ブログ版</h3>
+<p><a class="reference external" href="https://nikkie-ftnext.hatenablog.com/entry/comparison-llms-with-mcp-servers-brave-search-and-fetch" rel="noreferrer" target="_blank">GPT・Claude・Geminiのうち、Brave Search toolの使い方が一番うまいのは誰でしょう？クイズ〜〜！！</a></p>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

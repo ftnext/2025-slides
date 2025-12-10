@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>SWE-1.5、速さは 魔性</title>
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/dist/reveal.css?v=d4488b42" />
+    <link rel="stylesheet" href="../_static/revealjs/dist/theme/black.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/revealjs/plugin/highlight/zenburn.css?v=83d5745d" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/common.css?v=b04cc698" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-revealjs/css/footnotes.css?v=c46a0db2" />
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ftnext">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://ftnext.github.io/2025-slides//.html">
+    <meta property="og:title" content="">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="https://ftnext.github.io/2025-slides/_static/ogps/.png">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section>
+<section>
+<h1 style="word-break: keep-all; overflow-wrap: break-word;">SWE-1.5、速さは <strong>魔性</strong></h1>
+<dl class="field-list simple">
+<dt class="field-odd">Event<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Devin 1st Anniversary Meetup Japan</p>
+</dd>
+<dt class="field-even">Presented<span class="colon">:</span></dt>
+<dd class="field-even"><p>2025/12/10 nikkie</p>
+</dd>
+</dl>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">㊗️Devin 1周年🎂 happy birthday!</h2>
+<p>Cognitionつながりで <strong>Windsurf</strong> を話します</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ちなみに最近のDevin遣い</h3>
+<blockquote class="twitter-tweet" data-align="center" data-conversation="none" data-dnt="true" data-lang="ja"><p dir="ltr" lang="ja">裏話ですが、Devinに30人入れて予約可能なサイトを見つけてもらい、有識者に確認もしました。<br/><br/>Devin、幹事できます！！（食べログなどを見て予約可能か判断できるのが単なる検索に比べて大助かり）</p>— nikkie(にっきー) / にっP (@ftnext) <a href="https://twitter.com/ftnext/status/1991537715553415395?ref_src=twsrc%5Etfw">2025年11月20日</a></blockquote> <script async="" charset="utf-8" src="https://platform.twitter.com/widgets.js"></script></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Devinは忘年会のお店探し、できます！ 🏃‍♂️</h3>
+<ul class="simple">
+<li><p><strong>ブラウザ</strong> を持っているのが武器</p></li>
+<li><p>食べログなどを開いて予約できるお店を見つけられる</p></li>
+<li><p>「<a class="reference external" href="https://x.com/hawkymisc/status/1991538958191456493" rel="noreferrer" target="_blank">JTCジュニア層の仕事が、今日もまたひとつ、AIに奪われた。</a>」</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">SWE-1.5、速さは魔性</h2>
+<p>さて、Windsurf</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">10月発表、SWE-1.5 <a class="footnote-reference brackets" href="#swe-15-blog" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></h3>
+<blockquote class="twitter-tweet" data-align="center" data-dnt="true" data-lang="ja"><p dir="ltr" lang="en">Today we’re releasing SWE-1.5, our fast agent model.<br/><br/>It achieves near-SOTA coding performance while setting a new standard for speed. Now available in <a href="https://twitter.com/windsurf?ref_src=twsrc%5Etfw">@windsurf</a>. <a href="https://t.co/0RvQVLezA0">pic.twitter.com/0RvQVLezA0</a></p>— Cognition (@cognition) <a href="https://twitter.com/cognition/status/1983662836896448756?ref_src=twsrc%5Etfw">2025年10月29日</a></blockquote> <script async="" charset="utf-8" src="https://platform.twitter.com/widgets.js"></script><aside class="footnote-list brackets">
+<aside class="footnote brackets" id="swe-15-blog" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a href="#id3" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://cognition.ai/blog/swe-1-5" rel="noreferrer" target="_blank">Introducing SWE-1.5: Our Fast Agent Model</a></p>
+</aside>
+</aside>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">AI駆動開発カンファレンス2025秋合わせ？</h3>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/3xzRQN3LbBY?si=e97Jpr3hdS2TXCf3&amp;start=1055" title="YouTube video player" width="560"></iframe></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Composer-1やOpus 4.5も <strong>速い</strong></h3>
+<ul class="simple">
+<li><p>SWE-1.5 (Windsurf)</p></li>
+<li><p><a class="reference external" href="https://cursor.com/ja/blog/composer" rel="noreferrer" target="_blank">Composer-1</a> (Cursor)</p></li>
+<li><p><a class="reference external" href="https://www.anthropic.com/news/claude-opus-4-5" rel="noreferrer" target="_blank">Claude Opus 4.5</a> (Claude Codeなど)</p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;"><strong>賢くて速い</strong> はゲームチェンジ</h2>
+<ul class="simple">
+<li><p>賢いけど待つ -&gt; 賢くて速い</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">伴走（t-wadaさん🦁）への影響</h3>
+<iframe allowfullscreen="true" class="speakerdeck-iframe" data-ratio="1.7777777777777777" frameborder="0" src="https://speakerdeck.com/player/8ea3dd02d66343099e2099f5000880c6?slide=21" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" title="AI時代のソフトウェア開発を考える（2025/07版） / Agentic Software Engineering Findy 2025-07 Edition"></iframe></section>
+<section>
+<blockquote class="twitter-tweet" data-align="center" data-dnt="true" data-lang="ja"><p dir="ltr" lang="ja">Windsurfに入ったSWE-1.5、めちゃめちゃ快適です。<br/>実に「速さは魔性」。これ音声入力も使ったらマイナステンポでは<br/>2週間Free trialできますよ〜 <a href="https://t.co/HHKDTYUsnZ">https://t.co/HHKDTYUsnZ</a></p>— nikkie(にっきー) / にっP (@ftnext) <a href="https://twitter.com/ftnext/status/1984821322426564983?ref_src=twsrc%5Etfw">2025年11月2日</a></blockquote> <script async="" charset="utf-8" src="https://platform.twitter.com/widgets.js"></script></section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;"><strong>音声入力</strong> へ</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://x.com/karpathy/status/1886192184808149383" rel="noreferrer" target="_blank">Vibe coding</a> の所作の一つとしては知っていた</p></li>
+<li><p>SWE-1.5のあまりの速さに <strong>打鍵より速い入力</strong> を求めた</p></li>
+<li><p>macOSでは <a class="reference external" href="https://support.apple.com/ja-jp/guide/mac-help/mh40584/mac" rel="noreferrer" target="_blank">マイクキー</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">デモ</h2>
+<p>口にした次の瞬間、コードになっている</p>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">Voice Input</h3>
+<ul class="simple">
+<li><p>Cascade (Windsurfの右側) 自体にも音声入力機能あり（今回は使ってません）</p></li>
+<li><p><a class="reference external" href="https://docs.windsurf.com/windsurf/cascade/cascade#voice-input" rel="noreferrer" target="_blank">https://docs.windsurf.com/windsurf/cascade/cascade#voice-input</a></p></li>
+</ul>
+</section>
+</section>
+<section>
+<section>
+<h2 style="word-break: keep-all; overflow-wrap: break-word;">まとめ🌯 SWE-1.5、速さは魔性</h2>
+<ul class="simple">
+<li><p>伴走すると、打鍵での入力がボトルネックになるほど <strong>速いモデル</strong> が登場した</p></li>
+<li><p>速いモデル + <strong>音声入力</strong> をお試しあれ（<a class="reference external" href="https://windsurf.com/refer?referral_code=nytzuh9zn8vgfxh5" rel="noreferrer" target="_blank">Windsurfリファラルリンク</a>）</p></li>
+</ul>
+</section>
+<section>
+<h3 style="word-break: keep-all; overflow-wrap: break-word;">ご清聴ありがとうございました</h3>
+<ul class="simple">
+<li><p>nikkie（にっきー）・Python使い・<span class="fab fa-github"></span> <a class="reference external" href="https://github.com/ftnext" rel="noreferrer" target="_blank">@ftnext</a> <a class="reference external" href="https://nikkie-ftnext.hatenablog.com/" rel="noreferrer" target="_blank">ブログ</a> 連続1100日突破</p></li>
+<li><p>機械学習エンジニア。 <a class="reference external" href="https://jp.ub-speeda.com/news/speeda-promotion-gallery/" rel="noreferrer" target="_blank">Speeda AI Agent</a> 開発（<a class="reference external" href="https://hrmos.co/pages/uzabase/jobs/1829077236709650481" rel="noreferrer" target="_blank">We're hiring!</a>）</p></li>
+</ul>
+<img alt="../_images/uzabase-white-logo.png" src="../_images/uzabase-white-logo.png"/>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="../_static/revealjs/dist/reveal.js"></script>
+    
+    
+      <script src="../_static/revealjs/plugin/highlight/highlight.js"></script>
+      <script src="../_static/revealjs/plugin/notes/notes.js"></script>
+      <script src="../_static/revealjs/plugin/copycode/copycode.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, {"controls": true, "progress": true, "history": true, "center": true, "transition": "none", "slideNumber": "c/t", "scrollActivationWidth": null});
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,RevealNotes,CopyCode,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>
