@@ -1,3 +1,9 @@
+:ogp_title: SWE-1.5、速さは魔性
+:ogp_event_name: aidd-devin-1st
+:ogp_slide_name: windsurf-minus-tempo
+:ogp_description: Devin 1st Anniversary Meetup Japan
+:ogp_image_name: aidd-devin-1st
+
 ======================================================================
 SWE-1.5、速さは **魔性**
 ======================================================================
